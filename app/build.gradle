@@ -1,0 +1,97 @@
+plugins {
+  id 'groovy'
+  id 'application'
+  id 'org.openjfx.javafxplugin' version '0.0.10'
+} 
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+sourceSets.main.java.srcDirs = []
+sourceSets.main.groovy.srcDirs = ["src/main/java"]
+
+
+
+task versionTxt()  {
+    doLast {
+        new File("${projectDir}/src/main/resources" , "version.txt").text = new Date().format('yyyyMMdd-HHmmss')
+    }
+}
+
+compileJava {
+	dependsOn versionTxt 
+}
+
+repositories {
+	mavenCentral()
+    maven {
+        url "https://dev-iesl.cs.umass.edu/nexus/content/repositories/releases/"
+    }
+}
+
+javafx {
+    version = "16" // v17 has a scrollto bug 
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.web', 'javafx.graphics', 'javafx.base', 'javafx.swing']
+}
+
+application {
+    mainClass = 'cre.CitedReferencesExplorerFX' 
+}
+ 
+
+
+
+dependencies {
+	/* REMOVED Lucene Search due to module problems
+	compile group: 'org.apache.lucene', name: 'lucene-core', version: '8.4.0'
+	compile group: 'org.apache.lucene', name: 'lucene-queryparser', version: '8.4.0'
+    */
+    
+    implementation 'org.codehaus.groovy:groovy-all:3.0.9' 
+
+    implementation 'com.github.mpkorstanje:simmetrics-core:4.1.1'
+	implementation group: 'javax.json', name: 'javax.json-api', version: '1.1'
+	implementation group: 'org.glassfish', name: 'javax.json', version: '1.1'
+	implementation group: 'com.opencsv', name: 'opencsv', version: '3.9'
+	implementation group: 'org.jfree', name: 'jfreechart', version: '1.0.19'
+	implementation group: 'org.jfree', name: 'jfreechart-fx', version: '1.0.1'
+	implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+	implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+ 
+ 	runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:win"
+	runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:linux"
+	runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:mac"
+ 	runtimeOnly "org.openjfx:javafx-controls:$javafx.version:win"
+ 	runtimeOnly "org.openjfx:javafx-controls:$javafx.version:linux"
+ 	runtimeOnly "org.openjfx:javafx-controls:$javafx.version:mac"
+ 	runtimeOnly "org.openjfx:javafx-fxml:$javafx.version:win"
+ 	runtimeOnly "org.openjfx:javafx-fxml:$javafx.version:linux"
+ 	runtimeOnly "org.openjfx:javafx-fxml:$javafx.version:mac"
+ 	runtimeOnly "org.openjfx:javafx-web:$javafx.version:win"
+ 	runtimeOnly "org.openjfx:javafx-web:$javafx.version:linux"
+ 	runtimeOnly "org.openjfx:javafx-web:$javafx.version:mac"
+ 	runtimeOnly "org.openjfx:javafx-base:$javafx.version:win"
+ 	runtimeOnly "org.openjfx:javafx-base:$javafx.version:linux"
+ 	runtimeOnly "org.openjfx:javafx-base:$javafx.version:mac"
+ 	runtimeOnly "org.openjfx:javafx-swing:$javafx.version:win"
+ 	runtimeOnly "org.openjfx:javafx-swing:$javafx.version:linux"
+ 	runtimeOnly "org.openjfx:javafx-swing:$javafx.version:mac"
+
+
+	// testImplementation('org.junit.jupiter:junit-jupiter-api:5.4.2')
+    // testRuntime('org.junit.jupiter:junit-jupiter-engine:5.4.2')
+}
+
+
+jar {
+	duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+
+    manifest {
+        attributes 'Main-Class': 'cre.CitedReferencesExplorer'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+	baseName = 'crexplorer'
+}
