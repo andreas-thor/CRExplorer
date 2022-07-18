@@ -126,7 +126,8 @@ public class WoS_txt extends ImportReader {
 			int pos = corr.indexOf(']');
 			if (pos>0) {
 				String names = corr.substring(1, pos);
-				String affiliation = corr.substring (pos+2);
+				String affiliation = "";
+				if (pos+2 <= corr.length()) corr.substring (pos+2);
 				for (String name: names.split("; ")) {
 					pub.addC1(new String[] { name, affiliation });
 					pub.addAA(affiliation);
