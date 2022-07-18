@@ -3,8 +3,8 @@
 .vscode
 
 # Ignore Gradle build output directory
-app/build
-app/bin
+/app/build
+/app/bin
 
-data
-crs
+/data
+/crs
