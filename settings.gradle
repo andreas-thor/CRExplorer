@@ -8,4 +8,4 @@
  */
 
 rootProject.name = 'crexplorer'
-include('app') 
+include('app')
