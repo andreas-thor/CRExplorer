@@ -10,5 +10,5 @@ public class Script {
     
     public static void main(String[] args) throws CompilationFailedException, IOException {
         ScriptExecutionEngine.main(args);
-    }
+    } 
 }
