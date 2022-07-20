@@ -1,0 +1,38 @@
+body {
+	font-family: sans-serif;
+
+}
+	
+div.header {
+    background-color:black;
+    color:white;
+    text-align:center;
+    padding:5px;
+	background-image:url('CRLogo_white.png');
+	background-size: Auto 90%;
+	background-repeat: no-repeat; /* for vertical repeat */
+}
+
+div.nav {
+    width:10em;
+    float:left;
+	padding:5px;
+}
+
+div.section {
+   	width:auto;
+   	overflow:hidden;
+	padding:5px;
+}
+
+div.footer {
+    clear:both;
+    text-align:center;
+    padding:5px;
+    border-top-style: solid;
+    border-top-width: 1px;
+}
+
+ol.publist {margin-left:0; padding-left:0; counter-reset:item}
+ol.publist>li {margin-left:0; padding-left:0; counter-increment:item; list-style:none inside}
+ol.publist>li:before {content:"[" counter(item) "]"; padding-right:0.5em}
