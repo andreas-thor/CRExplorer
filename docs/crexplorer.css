@@ -36,3 +36,19 @@ div.footer {
 ol.publist {margin-left:0; padding-left:0; counter-reset:item}
 ol.publist>li {margin-left:0; padding-left:0; counter-increment:item; list-style:none inside}
 ol.publist>li:before {content:"[" counter(item) "]"; padding-right:0.5em}
+
+
+ /* Style buttons */
+ .btn {
+    background-color: DodgerBlue;
+    border: none;
+    color: white;
+    padding: 12px 30px;
+    cursor: pointer;
+    font-size: 20px;
+  }
+  
+  /* Darker background on mouse-over */
+  .btn:hover {
+    background-color: RoyalBlue;
+  } 

@@ -3,7 +3,7 @@
 <head>
 	<link type="text/css" rel="stylesheet" href="crexplorer.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	
+
 	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 	<link rel="icon" href="favicon.ico" type="image/x-icon">
 	<title>CRExplorer - Cited References Explorer</title>
@@ -103,72 +103,44 @@
 	<div class="section">
 		<h1>Running CRExplorer &amp; System Requirements</h1>
 		<p>
-			CRExplorer requires a system with Java 17 (or higher) support.
-			
-			<button class="btn"><i class="fa fa-download"></i> Download</button>
+			CRExplorer is packaged as a Java Archive (JAR) and requires a system with Java 17 (or higher) support.
+			<br /><br />
+			<a href="https://github.com/andreas-thor/CRExplorer/releases/download/20220718-200507/crexplorer.jar">
+				<button class="btn"><i class="fa fa-download"></i> Download Version 2.0</button>
+			</a>
 
-			Download a <a href="https://github.com/andreas-thor/CRExplorer/releases/download/v1.9/CitedReferencesExplorerFull.1.9.0.jar">download runnable JAR file</a>. 
-				
-				On most systems a double click on the JAR file
-			will start CRExplorer. If you want to run the JAR file from command
-			line please refer to the official Java documentation on <a href="https://docs.oracle.com/javase/tutorial/deployment/jar/run.html">
-				Running JAR-Packaged Software</a>. Here you can also set the heap space
-			size if you are processing large files.
-				</p>
-		
-		<ol>
-			<!--
-			<li><b>Java Web Start</b>: Click the <a
-				href="http://www1.hft-leipzig.de/thor/crexplorer/CitedReferencesExplorer.jnlp">CRExplorer
-					Start link</a> to launch CRExplorer directly from this web page using
-				Java Web Start Launcher. If you start CRExplorer for the first time
-				your computer system will likely refuse to run the program due to
-				security reasons. If so, you have to put the URL <a
-				href="http://www1.hft-leipzig.de">http://www1.hft-leipzig.de</a> in
-				the list of exceptions in your Java configuration. Please follow the
-				official Java instructions on <a
-				href="https://www.java.com/en/download/faq/exception_sitelist.xml">
-					How can I configure the Exception Site List?</a>. This has to be done
-				only once.<br /> <br /></li> -->
-			<li><b></li>
-		</ol>
+			<br /><br />
+
+			On most systems a double click on the runnable JAR file will start CRExplorer. If you want to run the JAR file from command line please refer to the official Java documentation on <a href="https://docs.oracle.com/javase/tutorial/deployment/jar/run.html">Running JAR-Packaged Software</a>. Here you can also set the heap space size if you are processing large files.
+		</p>
+
 		<p>
-			If you want to employ CRExplorer's script language, you can <a href="https://github.com/andreas-thor/CRExplorer/releases/download/v1.9/CitedReferencesExplorerScript.1.9.0.jar">download
-				a runnable JAR file</a> that can be started from the command line as
-			follows:
-		<pre>java -jar CitedReferencesExplorerScript.1.9.0.jar [myscript.crs]</pre>
-		where [myscript.crs] should be replaced by the user's script filename.
+			If you want to employ CRExplorer's script language, you run your script with the following command line:
+			<br />
+		<pre>java -cp crexplorer.jar cre.Script [myscript.crs]</pre>
+		<br />where [myscript.crs] should be replaced by the user's script filename.
 		</p>
 
 		<h2>Releases</h2>
 
-		<p>CRExplorer version 1.9 was released on July 16, 2018. This
-			version includes the following new features and improvements:</p>
+		<p>
+			CRExplorer version 1.9 was released on July 16, 2018. This version includes the following new features and improvements:
+		</p>
 		<ul>
 
-			<li><b>CrossRef</b>: CRExplorer opens one or several datasets
-				from <a href="https://www.crossref.org/">CrossRef</a>. In addition,
-				cited references data can be directly imported into the CRExplorer
-				by using the search interface for CrossRef data.</li>
-			<li><b>Drawing several samples</b>: Since the introduction of
-				the reference publication year spectroscopy (RPYS) method and the
-				corresponding program CRExplorer, many studies have been published
-				revealing the historical roots of topics, fields, and researchers.
-				The application of the method was restricted up to now by the
-				available memory of the computer used for running the CRExplorer.
-				Thus, many users could not perform RPYS for broader research fields
-				or topics. Now, the script language of the CRExplorer can be used to
-				draw many samples from the full population dataset. First empirical
-				explorations (see <a href="https://arxiv.org/abs/1807.04673">The
-					introduction of RPYS sampling using the example of climate change
-					research</a>) have shown, that the RPYS based on many samples can lead
-				to very similar results as the results based on the full population
-				dataset.</li>
+			<li>
+				<b>CrossRef</b>: CRExplorer opens one or several datasets from <a href="https://www.crossref.org/">CrossRef</a>. In addition, cited references data can be directly imported into the CRExplorer by using the search interface for CrossRef data.
+			</li>
+			<li>
+				<b>Drawing several samples</b>: Since the introduction of the reference publication year spectroscopy (RPYS) method and the corresponding program CRExplorer, many studies have been published revealing the historical roots of topics, fields, and researchers. The application of the method was restricted up to now by the available memory of the computer used for running the CRExplorer. Thus, many users could not perform RPYS for broader research fields or topics. Now, the script language of the CRExplorer can be used to draw many samples from the full population dataset. First empirical explorations (see <a href="https://arxiv.org/abs/1807.04673">The introduction of RPYS sampling using the example of climate change research</a>) have shown, that the RPYS based on many samples can lead to very similar results as the results based on the full population
+				dataset.
+			</li>
 		</ul>
 
 
-		<p>CRExplorer version 1.8.2 was released on February 1, 2018. This
-			version includes the following new features and improvements:</p>
+		<p>
+			CRExplorer version 1.8.2 was released on February 1, 2018. This version includes the following new features and improvements:
+		</p>
 		<ul>
 
 			<li><b>Sequence</b>: To reveal impact sequences over time for
@@ -430,12 +402,14 @@
 	<div class="section">
 		<h1>Software Development</h1>
 		<p>
-			Andreas Thor<br /> University of Applied Sciences for
-			Telecommunications Leipzig (HfTL)<br /> Gustav-Freytag-Str. 43-45<br />
-			04277 Leipzig, Germany<br /> Email: thor@hft-leipzig.de
+			Andreas Thor<br/>
+			HTWK Leipzig University of Applied Sciences<br/>
+			Zschochersche Str. 69<br/>
+			04299 Leipzig<br/>
+			Email: andreas.thor@htwk-leipzig.de
 		</p>
 		<p>
-			Questions? Bugs? Feature wishes? <a href='mailto:thor@hft-leipzig.de?subject=Feedback CRExplorer'>Please
+			Questions? Bugs? Feature wishes? <a href='mailto:andreas.thor@htwk-leipzig.de?subject=Feedback CRExplorer'>Please
 				send us feedback!</a>
 		</p>
 
@@ -477,13 +451,13 @@
 
 	<div class="section">
 		<h1>Legal Disclosure</h1>
-		Information in accordance with Section 5 TMG <br> <br />Hochschule
-		für Telekommunikation Leipzig (HfTL) <br>Gustav-Freytag-Str.
-		43-45, <br>04277 Leipzig<br>
+		Information in accordance with Section 5 TMG 
 		<h2>Contact Information</h2>
-		Andreas Thor<br /> Telephone: +49 341 3062-287 <br>E-Mail: <a href="mailto:thor@hft-leipzig.de">thor@hft-leipzig.de</a><br>Internet
-		address: <a href="https://www.hft-leipzig.de/en.html" target="_blank">https://www.hft-leipzig.de/en.html</a><br>
-		<br>
+		Andreas Thor<br /> 
+		HTWK Leipzig University of Applied Sciences<br/>
+		Email: andreas.thor@htwk-leipzig.de<br/>
+		<a href="https://www.htwk-leipzig.de/en/htwk-leipzig/" target="_blank">https://www.htwk-leipzig.de/en/htwk-leipzig/</a><br/>
+		<br/>
 		<h2>Disclaimer</h2>
 		Accountability for content<br> The contents of our pages have
 		been created with the utmost care. However, we cannot guarantee the
@@ -518,7 +492,7 @@
 	</div>
 
 	<div class="footer">
-		<a href="https://www.hft-leipzig.de/en.html"><img align="middle" height="50em" src="hftl.jpg" /></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="http://www.mpg.de/en"><img align="middle" height="50em" src="mpg.png" /></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="http://www.uva.nl/en/home"><img align="middle" height="25em" src="uva.jpg" /></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="https://www.ethz.ch/en.html"><img align="middle" height="50em" src="eth.jpg" /></a>
+		<a href="https://www.htwk-leipzig.de/en/htwk-leipzig/"><img align="middle" height="50em" src="HTWK_Zusatz_de_V_Black.jpg" /></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="http://www.mpg.de/en"><img align="middle" height="50em" src="mpg.png" /></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="http://www.uva.nl/en/home"><img align="middle" height="25em" src="uva.jpg" /></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="https://www.ethz.ch/en.html"><img align="middle" height="50em" src="eth.jpg" /></a>
 
 	</div>
 
