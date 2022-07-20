@@ -1,20 +1,24 @@
 <html>
+
 <head>
-<link type="text/css" rel="stylesheet" href="crexplorer.css">
-<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-<link rel="icon" href="favicon.ico" type="image/x-icon">
-<title>CRExplorer - Cited References Explorer</title>
-<meta charset="utf-8" />
-<script>
-	function showSection(n) {
-		var x = document.getElementsByClassName("section");
-		for (var i = 0; i < x.length; i++) {
-			x[i].style.display = "none";
+	<link type="text/css" rel="stylesheet" href="crexplorer.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+	<title>CRExplorer - Cited References Explorer</title>
+	<meta charset="utf-8" />
+	<script>
+		function showSection(n) {
+			var x = document.getElementsByClassName("section");
+			for (var i = 0; i < x.length; i++) {
+				x[i].style.display = "none";
+			}
+			x[n].style.display = "block";
 		}
-		x[n].style.display = "block";
-	}
-</script>
+	</script>
 </head>
+
 <body onload="showSection(0);">
 
 	<div class="header">
@@ -33,7 +37,7 @@
 		</p>
 		<p>
 			<a href="landmark.html" target="_new">WoS Landmark Papers</a>
-		</p>		
+		</p>
 		<p>
 			<a href="#" onclick="showSection(3);">Papers</a>
 		</p>
@@ -47,100 +51,71 @@
 
 	<div class="section">
 		<h1>Introduction</h1>
-		<p>Which are the most important papers in the history of a field?
-			On whose shoulders of giants does an author stand? Where to look for
-			the intellectual roots of a research topic? These questions can be
-			answered by using the program CitedReferencesExplorer (CRExplorer).</p>
+		<p>
+			Which are the most important papers in the history of a field? On whose shoulders of giants does an author stand? Where to look for the intellectual roots of a research topic? These questions can be answered by using the program CitedReferencesExplorer (CRExplorer).
+		</p>
+		<p>
+			The CRExplorer uses data from Web of Science (Clarivate Analytics) or Scopus (Elsevier) as input. Publication sets have to be downloaded including the references cited. The program focusses on the analysis of the cited references, in particular on the referenced publication years. Over time, "citation classics" of a field become more pronounced. When the aggregated citations are plotted along the time axis, one obtains a "spectrogram" with distinct peaks. CRExplorer visualizes this spectrogram, cleans the cited references (disambiguation), and uses a smoothing algorithm to suppress the noise.
+		</p>
 
-		<p>The CRExplorer uses data from Web of Science (Clarivate
-			Analytics) or Scopus (Elsevier) as input. Publication sets have to be
-			downloaded including the references cited. The program focusses on
-			the analysis of the cited references, in particular on the referenced
-			publication years. Over time, "citation classics" of a field become
-			more pronounced. When the aggregated citations are plotted along the
-			time axis, one obtains a "spectrogram" with distinct peaks.
-			CRExplorer visualizes this spectrogram, cleans the cited references
-			(so-called "disambiguation"), and uses a smoothing algorithm to
-			suppress the noise.</p>
-
+		<h2>Example study: Greenhouse Effect</h2>
 
 		<p>
-			The method Reference Publication Year Spectroscopy (RPYS) was
-			developed by Werner Marx, who used it for the first time in the field
-			of meteorology (<a
-				href="papers/RMetS-Newsletter-2010.pdf">see
-				his study on page 11</a>). For demonstration of the potential of the
-			method, figure 1 shows the citation classics concerning the discovery
-			of the “greenhouse effect”, a basic component of climate change.
+			The method Reference Publication Year Spectroscopy (RPYS) was developed by Werner Marx, who used it for the first time in the field of meteorology (<a href="papers/RMetS-Newsletter-2010.pdf">see his study on page 11</a>). For demonstration of the potential of the method, Figure 1 shows the citation classics concerning the discovery of the <i>Greenhouse Effect</i>, a basic component of climate change.
 		</p>
 
 		<figure style="display: table; float: left;">
-			<a href="fig1.png"><img src="fig1.png" width="350px"
-				alt="Figure 1"></a>
+			<a href="fig1.png"><img src="fig1.png" width="350px" alt="Figure 1"></a>
 			<figcaption style="display: table-caption; caption-side: bottom;">
-				<i>Figure 1: Citation classics concerning the discovery of the
-					“greenhouse effect” and appearing as peaks in the spectrogram
-					provided by the CRExplorer.</i>
+				<i>Figure 1: Citation classics concerning the discovery of the <i>Greenhouse Effect</i> and appearing as peaks in the spectrogram provided by the CRExplorer.</i>
 			</figcaption>
 		</figure>
 
-		<p>We downloaded from the Web of Science 3,244 publications
-			containing the term "greenhouse effect” in the title or in the
-			abstract or as a keyword. These papers contain 81,126 references to
-			publications published over 379 years. The graph produced by the
-			CRExplorer shows three distinct peaks during the 19th century and a
-			few others during the first half of the 20th century.</p>
-
-		<p>The first three pronounced peaks go back to the following
-			publications:</p>
-
-		<ul>
-			<li>Fourier’s 1827 paper, entitled "Mémoire sur les températures
-				du globe terrestre et des espaces planétaires", can be seen as the
-				first decisive publication. Fourier found that the earth is warmer
-				than expected. He attributed this to the phenomenon that the earth’s
-				atmosphere is transparent for solar radiation but not for the
-				infrared radiation from the ground. Thus, he discovered the
-				(natural) greenhouse effect.</li>
-			<li>Tyndall's (1861) study, entitled "On the absorption and
-				radiation of heat by gases and vapours, and on the physical
-				connexion of radiation, absorption, and conduction", proved that the
-				earth's atmosphere has a greenhouse effect. He concluded that water
-				vapour is the principal gas controlling air temperature.</li>
-			<li>Arrhenius (1896, entitled "On the influence of carbonic acid
-				in the air upon the temperature of the ground") published the first
-				study with a calculation of how changes in the levels of carbon
-				dioxide in the atmosphere can alter the surface temperature through
-				the greenhouse effect.</li>
-
-		</ul>
-
-		<p>The subsequently following peaks can be assigned to the works
-			of Chamberlin (1898), Arrhenius (1908), and Callendar (1938, 1949).
-			These are citation classics in the climate change literature. They
-			deal with the possibility that climatic change results from changes
-			in the concentration of atmospheric carbon dioxide—thereby supporting
-			the calculationtheory of Arrhenius. Whereas Chamberlin (1898) and
-			Callendar (1938, 1949) have been written for scientists, Arrhenius
-			(1908) book was directed at a general audience.</p>
-
 		<p>
-			In sum, the discovery of the earth’s greenhouse effect and the role
-			of carbon dioxide and water vapor as greenhouse gases are no recent
-			findings but date back to the beginning of the nineteenth century.
-			(See <a
-				href="http://link.springer.com/article/10.1007/s11192-016-2177-x">here</a>
-			for more information.)
+			We downloaded from the Web of Science 3,244 publications containing the term <i>Greenhouse Effect</i> in the title or in the abstract or as a keyword. These papers contain 81,126 references to publications published over 379 years. The graph produced by the CRExplorer shows three distinct peaks during the 19<sup>th</sup> century and a few others during the first half of the 20<sup>th</sup> century.
 		</p>
 
+		<p>The first three pronounced peaks go back to the following publications:</p>
+
+		<ul>
+			<li>
+				Fourier's 1827 paper, entitled <i>Mémoire sur les températures du globe terrestre et des espaces planétaires</i>, can be seen as the first decisive publication. Fourier found that the earth is warmer than expected. He attributed this to the phenomenon that the earth's atmosphere is transparent for solar radiation but not for the infrared radiation from the ground. Thus, he discovered the (natural) greenhouse effect.
+			</li>
+			<li>
+				Tyndall's (1861) study, entitled <i>On the absorption and radiation of heat by gases and vapours, and on the physical connexion of radiation, absorption, and conduction</i>, proved that the earth's atmosphere has a greenhouse effect. He concluded that water vapour is the principal gas controlling air temperature.
+			</li>
+			<li>
+				Arrhenius (1896, entitled <i>On the influence of carbonic acid in the air upon the temperature of the ground</i>) published the first study with a calculation of how changes in the levels of carbon dioxide in the atmosphere can alter the surface temperature through the greenhouse effect.
+			</li>
+		</ul>
+
+		<p>
+			The subsequently following peaks can be assigned to the works of Chamberlin (1898), Arrhenius (1908), and Callendar (1938, 1949). These are citation classics in the climate change literature. They deal with the possibility that climatic change results from changes in the concentration of atmospheric carbon dioxide—thereby supporting the calculationtheory of Arrhenius. Whereas Chamberlin (1898) and Callendar (1938, 1949) have been written for scientists, Arrhenius (1908) book was directed at a general audience.
+		</p>
+
+		<p>
+			In sum, the discovery of the earth's greenhouse effect and the role of carbon dioxide and water vapor as greenhouse gases are no recent findings but date back to the beginning of the nineteenth century. (see <a href="http://link.springer.com/article/10.1007/s11192-016-2177-x">here</a> for more information.)
+		</p>
 	</div>
 
 
 
 	<div class="section">
 		<h1>Running CRExplorer &amp; System Requirements</h1>
-		<p>CRExplorer requires a system with Java 8 support. There are two
-			options to run CRExplorer in the GUI mode:</p>
+		<p>
+			CRExplorer requires a system with Java 17 (or higher) support.
+			
+			<button class="btn"><i class="fa fa-download"></i> Download</button>
+
+			Download a <a href="https://github.com/andreas-thor/CRExplorer/releases/download/v1.9/CitedReferencesExplorerFull.1.9.0.jar">download runnable JAR file</a>. 
+				
+				On most systems a double click on the JAR file
+			will start CRExplorer. If you want to run the JAR file from command
+			line please refer to the official Java documentation on <a href="https://docs.oracle.com/javase/tutorial/deployment/jar/run.html">
+				Running JAR-Packaged Software</a>. Here you can also set the heap space
+			size if you are processing large files.
+				</p>
+		
 		<ol>
 			<!--
 			<li><b>Java Web Start</b>: Click the <a
@@ -155,18 +130,10 @@
 				href="https://www.java.com/en/download/faq/exception_sitelist.xml">
 					How can I configure the Exception Site List?</a>. This has to be done
 				only once.<br /> <br /></li> -->
-			<li><b>Download</b>: You can <a
-				href="https://github.com/andreas-thor/CRExplorer/releases/download/v1.9/CitedReferencesExplorerFull.1.9.0.jar">download
-					a runnable JAR file</a>. On most systems a double click on the JAR file
-				will start CRExplorer. If you want to run the JAR file from command
-				line please refer to the official Java documentation on <a
-				href="https://docs.oracle.com/javase/tutorial/deployment/jar/run.html">
-					Running JAR-Packaged Software</a>. Here you can also set the heap space
-				size if you are processing large files.</li>
+			<li><b></li>
 		</ol>
 		<p>
-			If you want to employ CRExplorer's script language, you can <a
-				href="https://github.com/andreas-thor/CRExplorer/releases/download/v1.9/CitedReferencesExplorerScript.1.9.0.jar">download
+			If you want to employ CRExplorer's script language, you can <a href="https://github.com/andreas-thor/CRExplorer/releases/download/v1.9/CitedReferencesExplorerScript.1.9.0.jar">download
 				a runnable JAR file</a> that can be started from the command line as
 			follows:
 		<pre>java -jar CitedReferencesExplorerScript.1.9.0.jar [myscript.crs]</pre>
@@ -284,8 +251,7 @@
 				reference in the table and selects “Data” – “Retain Publications
 				Citing Selected Cited References”, all cited references which are
 				co-cited with the marked cited reference in citing publications are
-				kept (all other cited references are dropped). See <a
-				href="http://arxiv.org/abs/1608.07960">Which early works are
+				kept (all other cited references are dropped). See <a href="http://arxiv.org/abs/1608.07960">Which early works are
 					cited most frequently in climate change research literature? A
 					bibliometric approach based on Reference Publication Year
 					Spectroscopy</a> for a first use case.</li>
@@ -297,8 +263,7 @@
 
 		<p>
 			CRExplorer version 1.6.7 was released on July 5, 2016. This version
-			includes the following new features and improvements (see <a
-				href="http://arxiv.org/abs/1607.01266">New features of
+			includes the following new features and improvements (see <a href="http://arxiv.org/abs/1607.01266">New features of
 				CRExplorer</a> for a detailed description):
 		</p>
 		<ul>
@@ -335,8 +300,7 @@
 			<li><a href="http://dx.doi.org/10.1016/j.joi.2016.02.005">Introducing
 					CitedReferencesExplorer (CRExplorer): A program for Reference
 					Publication Year Spectroscopy with Cited References Disambiguation</a><br />by
-				Andreas Thor, Werner Marx, Loet Leydesdorff, and Lutz Bornmann (<a
-				href="http://arxiv.org/abs/1601.01199">arXiv</a>)<br /> <br /></li>
+				Andreas Thor, Werner Marx, Loet Leydesdorff, and Lutz Bornmann (<a href="http://arxiv.org/abs/1601.01199">arXiv</a>)<br /> <br /></li>
 			<!-- 
 			<li><a href="CRE-Instructions.pdf">Analysing cited
 					references via the CRExplorer: A practically oriented short guide</a><br />by
@@ -344,20 +308,17 @@
 			-->
 			<li><a href="https://doi.org/10.1007/s11192-016-2082-3">New
 					features of CitedReferencesExplorer (CRExplorer)</a><br />by Andreas
-				Thor, Werner Marx, Loet Leydesdorff, and Lutz Bornmann (<a
-				href="http://arxiv.org/abs/1607.01266">arXiv</a>)<br /> <br /></li>
+				Thor, Werner Marx, Loet Leydesdorff, and Lutz Bornmann (<a href="http://arxiv.org/abs/1607.01266">arXiv</a>)<br /> <br /></li>
 
 			<li><a href="https://doi.org/10.1007/s11192-018-2733-7">Identifying
 					single influential publications in a research field: New analysis
 					opportunities of the CRExplorer</a> <br />by Andreas Thor, Lutz
-				Bornmann, Werner Marx, and Rüdiger Mutz (<a
-				href="https://arxiv.org/abs/1801.08720">arXiv</a>)<br /> <br /></li>
+				Bornmann, Werner Marx, and Rüdiger Mutz (<a href="https://arxiv.org/abs/1801.08720">arXiv</a>)<br /> <br /></li>
 
 			<li>How to identify the roots of broad research topics and
 				fields? The introduction of RPYS sampling using the example of
 				climate change research <br />by Robin Haunschild, Werner Marx,
-				Andreas Thor, and Lutz Bornmann (<a
-				href="https://arxiv.org/abs/1807.04673">arXiv</a>)<br /> <br />
+				Andreas Thor, and Lutz Bornmann (<a href="https://arxiv.org/abs/1807.04673">arXiv</a>)<br /> <br />
 			</li>
 
 		</ol>
@@ -383,57 +344,53 @@
 			<li><a href="http://dx.doi.org/10.1002/asi.23089">Detecting
 					the historical roots of research fields by reference publication
 					year spectroscopy (RPYS)</a> <br />by Werner Marx, Lutz Bornmann,
-				Andreas Barth, and Loet Leydesdorff (<a
-				href="http://arxiv.org/abs/1307.8239">arXiv</a>)<br /> <br /></li>
+				Andreas Barth, and Loet Leydesdorff (<a href="http://arxiv.org/abs/1307.8239">arXiv</a>)<br /> <br /></li>
 
 			<li><a href="https://doi.org/10.1007/s11192-014-1465-6">Philosophy
 					of science viewed through the lense of "References Publication
-					Years spectrosopy" (RPYS)</a><br />by K. Brad Wray and Lutz Bornmann (<a
-				href="http://arxiv.org/abs/1410.3461">arXiv</a>)<br /> <br /></li>
+					Years spectrosopy" (RPYS)</a><br />by K. Brad Wray and Lutz Bornmann (<a href="http://arxiv.org/abs/1410.3461">arXiv</a>)<br /> <br /></li>
 
 			<li><a href="https://doi.org/10.1007/s11192-013-1200-8">Tracing
 					the origin of a scientific legend by Reference Publication Year
 					Spectroscopy (RPYS): the legend of the Darwin finches </a><br />by
-				Werner Marx and Lutz Bornmann (<a
-				href="http://arxiv.org/abs/1311.5665">arXiv</a>)<br /> <br /></li>
+				Werner Marx and Lutz Bornmann (<a href="http://arxiv.org/abs/1311.5665">arXiv</a>)<br /> <br /></li>
 
 			<li><a href="https://doi.org/10.1016/j.joi.2013.11.006">Referenced
 					Publication Years Spectroscopy applied to iMetrics: Scientometrics,
 					Journal of Informetrics, and a relevant subset of JASIST </a><br />by
 				Loet Leydesdorff, Lutz Bornmann, Werner Marx, and Sta&#353;a
 				Milojevic (<a href="http://arxiv.org/abs/1309.5706">arXiv</a>)<br />
-				<br /></li>
+				<br />
+			</li>
 
 			<li><a href="https://doi.org/10.1080/09737766.2016.1177948">Identifying
 					seminal works most important for research fields: Software for the
 					Reference Publication Year Spectroscopy (RPYS) </a><br />by Lutz
-				Bornmann, Andreas Thor, Werner Marx, and Loet Leydesdorff (<a
-				href="https://dx.doi.org/10.6084/m9.figshare.1422015">figshare</a>)<br />
-				<br /></li>
+				Bornmann, Andreas Thor, Werner Marx, and Loet Leydesdorff (<a href="https://dx.doi.org/10.6084/m9.figshare.1422015">figshare</a>)<br />
+				<br />
+			</li>
 
 			<li><a href="https://doi.org/10.1140/epjp/i2014-14111-6">On
 					the origins and the historical roots of the Higgs boson research
 					from a bibliometric perspective </a><br />by Andreas Barth, Werner
-				Marx, Lutz Bornmann, and Ruediger Mutz (<a
-				href="http://arxiv.org/abs/1402.4223">arXiv</a>)<br /> <br /></li>
+				Marx, Lutz Bornmann, and Ruediger Mutz (<a href="http://arxiv.org/abs/1402.4223">arXiv</a>)<br /> <br /></li>
 
 			<li><a href="https://doi.org/10.1002/asi.23769">Identification
 					of long-term concept-symbols among citations: Can documents be
 					clustered in terms of common intellectual histories?</a><br />by
-				Jordan A. Comins and Loet Leydesdorff (<a
-				href="http://arxiv.org/abs/1601.00288">arXiv</a>)<br /> <br /></li>
+				Jordan A. Comins and Loet Leydesdorff (<a href="http://arxiv.org/abs/1601.00288">arXiv</a>)<br /> <br /></li>
 
 			<li><a href="https://doi.org/10.1007/s11192-016-1877-6">Detecting
 					the historical roots of tribology research: a bibliometric analysis</a><br />by
-				Bakthavachalam Elango, Lutz Bornmann, and Govindaraju Kannan (<a
-				href="http://arxiv.org/abs/1601.00141">arXiv</a>)<br /> <br /></li>
+				Bakthavachalam Elango, Lutz Bornmann, and Govindaraju Kannan (<a href="http://arxiv.org/abs/1601.00141">arXiv</a>)<br /> <br /></li>
 
 			<li><a href="https://doi.org/10.1007/s11192-016-2177-x">Which
 					early works are cited most frequently in climate change research
 					literature? A bibliometric approach based on Reference Publication
 					Year Spectroscopy</a> <br />by Werner Marx, Robin Haunschild, Andreas
 				Thor, and Lutz Bornmann (<a href="http://arxiv.org/abs/1608.07960">arXiv</a>)<br />
-				<br /></li>
+				<br />
+			</li>
 
 			<li><a href="https://doi.org/10.1108/JKM-01-2016-0019">Tracing
 					the historical origins of knowledge management issues through
@@ -445,8 +402,7 @@
 					analysis by referenced publication year spectroscopy </a> <br />by
 				Jianhua Hou<br /> <br /></li>
 
-			<li><a
-				href="https://www.researchgate.net/publication/320296535_Identification_of_seminal_works_that_built_the_foundation_for_functional_magnetic_resonance_imaging_studies_of_taste_and_food">
+			<li><a href="https://www.researchgate.net/publication/320296535_Identification_of_seminal_works_that_built_the_foundation_for_functional_magnetic_resonance_imaging_studies_of_taste_and_food">
 					Identification of seminal works that built the foundation for
 					functional magnetic resonance imaging studies of taste and food </a> <br />by
 				Andy Wai Kan Yeung<br /> <br /></li>
@@ -479,8 +435,7 @@
 			04277 Leipzig, Germany<br /> Email: thor@hft-leipzig.de
 		</p>
 		<p>
-			Questions? Bugs? Feature wishes? <a
-				href='mailto:thor@hft-leipzig.de?subject=Feedback CRExplorer'>Please
+			Questions? Bugs? Feature wishes? <a href='mailto:thor@hft-leipzig.de?subject=Feedback CRExplorer'>Please
 				send us feedback!</a>
 		</p>
 
@@ -526,8 +481,7 @@
 		für Telekommunikation Leipzig (HfTL) <br>Gustav-Freytag-Str.
 		43-45, <br>04277 Leipzig<br>
 		<h2>Contact Information</h2>
-		Andreas Thor<br /> Telephone: +49 341 3062-287 <br>E-Mail: <a
-			href="mailto:thor@hft-leipzig.de">thor@hft-leipzig.de</a><br>Internet
+		Andreas Thor<br /> Telephone: +49 341 3062-287 <br>E-Mail: <a href="mailto:thor@hft-leipzig.de">thor@hft-leipzig.de</a><br>Internet
 		address: <a href="https://www.hft-leipzig.de/en.html" target="_blank">https://www.hft-leipzig.de/en.html</a><br>
 		<br>
 		<h2>Disclaimer</h2>
@@ -552,30 +506,22 @@
 		prior consent of the respective owner of the rights. Individual
 		reproductions of a work are only allowed for private use. The
 		materials from these pages are copyrighted and any unauthorized use
-		may violate copyright laws. <br> <br> <i>Quelle: </i><a
-			href="http://www.translate-24h.de" target="_blank">translate-24h.de</a>
+		may violate copyright laws. <br> <br> <i>Quelle: </i><a href="http://www.translate-24h.de" target="_blank">translate-24h.de</a>
 		<br> <br>
 
 
 		<h2>Privacy</h2>
 
-		This website is hosted on GitHub Pages. Please see <a
-			href="https://help.github.com/articles/github-privacy-statement/">GitHub's
+		This website is hosted on GitHub Pages. Please see <a href="https://help.github.com/articles/github-privacy-statement/">GitHub's
 			Privacy Statement</a>.
 
 	</div>
 
 	<div class="footer">
-		<a href="https://www.hft-leipzig.de/en.html"><img align="middle"
-			height="50em" src="hftl.jpg" /></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
-			href="http://www.mpg.de/en"><img align="middle" height="50em"
-			src="mpg.png" /></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
-			href="http://www.uva.nl/en/home"><img align="middle"
-			height="25em" src="uva.jpg" /></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
-			href="https://www.ethz.ch/en.html"><img align="middle"
-			height="50em" src="eth.jpg" /></a>
+		<a href="https://www.hft-leipzig.de/en.html"><img align="middle" height="50em" src="hftl.jpg" /></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="http://www.mpg.de/en"><img align="middle" height="50em" src="mpg.png" /></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="http://www.uva.nl/en/home"><img align="middle" height="25em" src="uva.jpg" /></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="https://www.ethz.ch/en.html"><img align="middle" height="50em" src="eth.jpg" /></a>
 
 	</div>
 
 </body>
+
 </html>
