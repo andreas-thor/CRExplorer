@@ -48,17 +48,23 @@ public class CitedReferencesExplorerFX extends Application {
 		launch(args);
 	}
 
-	
-	public void start(Stage stage) throws Exception {
-
+	public static void updateTitle () {
 		// we include the version info into the Window title 
 		// version.txt is created / updated during the build process by gradle
 		try {
-			title = String.format("%s (Build Version %s)", 
-				title, 	
-				new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/version.txt"))).lines().collect(Collectors.joining(""))
+			CitedReferencesExplorerFX.title = String.format("%s (Build Version %s)", 
+				CitedReferencesExplorerFX.title, 	
+				new BufferedReader(new InputStreamReader(CitedReferencesExplorerFX.class.getResourceAsStream("/version.txt"))).lines().collect(Collectors.joining(""))
 			);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			System.out.println("aaaaa");
+		}
+	}
+
+	
+	public void start(Stage stage) throws Exception {
+
+		updateTitle();
 
 		Locale.setDefault(Locale.US);
 		Platform.setImplicitExit(true);
