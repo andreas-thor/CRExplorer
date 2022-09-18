@@ -8,11 +8,14 @@
 
 
 
+
 ## Log
 
 
 
+### 2022-07-18
 
+- Wegen [Bug in v17 JavaFX ](https://bugs.openjdk.org/browse/JDK-8276553?attachmentSortBy=dateTime) downgrade zu JavaFX v16
 
 ### 2022-07-17
 
