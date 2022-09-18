@@ -1,6 +1,18 @@
 
 
+## Eine neue Version deployen
+
+- Tag-Name in [Workflow File](.github/workflows/gradle_build.yml) setzen
+    - bei "Delete previous release"
+    - bei "Create release"
+
+
+
 ## Log
+
+
+
+
 
 ### 2022-07-17
 
