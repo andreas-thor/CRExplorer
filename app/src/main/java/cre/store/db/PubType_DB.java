@@ -19,7 +19,7 @@ public class PubType_DB extends PubType<CRType_DB> {
 	final static CharSequence arraySeparator2 = "\t"; 
 	
 	final static Collector<? super String, ?, String> joinByNewLine = Collectors.joining("\n");
-	final static Function<String, Stream<String>> splitByNewLine = s -> (s==null) ? Stream.empty() : Arrays.stream(s.split("\n"));
+	final static Function<String, Stream<String>> splitByNewLine = s -> (s==null) ? Stream.empty() : Arrays.stream(s.split("\n", -1));
 	
 	public static void addToBatch (PreparedStatement pst, PubType<?> pub) throws SQLException {
 

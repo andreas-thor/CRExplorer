@@ -6,5 +6,7 @@
 /app/build
 /app/bin
 
+# Don't make internal data available
 /data
 /crs
+/app/src/test/resources/testdata

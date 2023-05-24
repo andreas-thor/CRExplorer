@@ -7,9 +7,9 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
-sourceSets.main.java.srcDirs = []
-sourceSets.main.groovy.srcDirs = ["src/main/java"]
-
+sourceSets.main.java.srcDirs = ["src/main/java"]
+sourceSets.main.groovy.srcDirs = []
+sourceSets.test.java.srcDirs = ["src/test/java"]
 
 
 task versionTxt()  {
@@ -36,10 +36,19 @@ javafx {
 
 application {
     mainClass = 'cre.CitedReferencesExplorerFX' 
+	// mainClass = 'cre.Script' 
+	
 }
  
 
-
+test {
+  filter {
+    excludeTestsMatching "cre.FileFormats"
+	excludeTestsMatching "cre.IndicatorsExample"
+    excludeTestsMatching "cre.StorageEngine"
+    // excludeTestsMatching "cre.StorageEngineShort"
+   }
+} 
 
 dependencies {
 	/* REMOVED Lucene Search due to module problems
@@ -56,7 +65,7 @@ dependencies {
 	implementation group: 'org.jfree', name: 'jfreechart', version: '1.0.19'
 	implementation group: 'org.jfree', name: 'jfreechart-fx', version: '1.0.1'
 	implementation group: 'commons-io', name: 'commons-io', version: '2.6'
-	implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+	implementation group: 'com.h2database', name: 'h2', version: '2.1.214'
  
  	runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:win"
 	runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:linux"
@@ -77,6 +86,8 @@ dependencies {
  	runtimeOnly "org.openjfx:javafx-swing:$javafx.version:linux"
  	runtimeOnly "org.openjfx:javafx-swing:$javafx.version:mac"
 
+
+    testCompileOnly 'org.apiguardian:apiguardian-api:1.0.0'
 
 	// testImplementation('org.junit.jupiter:junit-jupiter-api:5.4.2')
     // testRuntime('org.junit.jupiter:junit-jupiter-engine:5.4.2')

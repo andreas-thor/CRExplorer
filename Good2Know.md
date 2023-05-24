@@ -7,6 +7,14 @@
     - bei "Create release"
 
 
+## Gradle commands
+
+- Run: 
+- Run specific tests: 
+    - ``./gradlew test --tests cre.FileFormats``
+    - ``./gradlew test --tests cre.StorageEngine``
+
+
 
 
 ## Log

@@ -81,7 +81,7 @@ public class Statistics_DB implements Statistics {
 
 	@Override
 	public IntRange getMaxRangeRPY(boolean visibleOnly) {
-		long[] res = executeSelect("SELECT MIN(CR_RPY), MAX(CR_RPY) FROM CR WHERE CR_VI = 1");
+		long[] res = executeSelect("SELECT MIN(CR_RPY), MAX(CR_RPY) FROM CR WHERE CR_VI = TRUE");
 		return new IntRange (res[0], res[1]);
 	}
 
@@ -92,7 +92,7 @@ public class Statistics_DB implements Statistics {
 
 	@Override
 	public int getNumberOfCRsByVisibility(boolean visible) {
-		return (int) executeSelect(String.format("SELECT COUNT(*) FROM CR WHERE CR_VI = %d", visible?1:0))[0];
+		return (int) executeSelect(String.format("SELECT COUNT(*) FROM CR WHERE CR_VI = %b", visible))[0];
 	}
 
 	@Override

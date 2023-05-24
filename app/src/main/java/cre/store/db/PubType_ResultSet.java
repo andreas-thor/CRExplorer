@@ -43,7 +43,7 @@ public class PubType_ResultSet implements Iterator<PubType_DB> {
 			pub.setPT(rs.getString("PUB_PT"));
 			PubType_DB.splitByNewLine.apply(rs.getString("PUB_AU")).forEach(it -> pub.addAU(it));
 			PubType_DB.splitByNewLine.apply(rs.getString("PUB_AF")).forEach(it -> pub.addAF(it));
-			PubType_DB.splitByNewLine.apply(rs.getString("PUB_C1")).forEach(it -> pub.addC1(it.split(PubType_DB.arraySeparator2.toString())));
+			PubType_DB.splitByNewLine.apply(rs.getString("PUB_C1")).forEach(it -> pub.addC1(it.split(PubType_DB.arraySeparator2.toString(), 2)));
 			PubType_DB.splitByNewLine.apply(rs.getString("PUB_EM")).forEach(it -> pub.addEM(it));
 			PubType_DB.splitByNewLine.apply(rs.getString("PUB_AA")).forEach(it -> pub.addAA(it));
 			pub.setTI(rs.getString("PUB_TI"));
