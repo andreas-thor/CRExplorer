@@ -34,52 +34,79 @@ class CRType_ResultSet implements Iterator<CRType_DB> {
 		}
 	}
 
+
+	private Integer readInt (String name, Integer defaultValue) throws SQLException   {
+		int i = rs.getInt(name);
+		return rs.wasNull() ? defaultValue : Integer.valueOf(i);
+	}
+
+	private Double readDouble (String name, Double defaultValue) throws SQLException   {
+		double d = rs.getDouble(name);
+		return rs.wasNull() ? defaultValue : Double.valueOf(d);
+	}
+
+	private String readString (String name, String defaultValue) throws SQLException   {
+		String s = rs.getString(name);
+		return rs.wasNull() ? defaultValue : s;
+	}
+
+	private Boolean readBoolean (String name, Boolean defaultValue) throws SQLException   {
+		boolean b = rs.getBoolean(name);
+		return rs.wasNull() ? defaultValue : Boolean.valueOf(b);
+	}
+
+	
+
+
+
 	@Override
 	public CRType_DB next() {
 		try {
 			CRType_DB cr = new CRType_DB();
-			cr.setID(rs.getInt("CR_ID"));
-			cr.setCR(rs.getString("CR_CR"));
-			cr.setRPY(rs.getInt("CR_RPY"));
-			if (rs.wasNull()) {
-				cr.setRPY(null);
-			}
-			cr.setN_CR (rs.getInt("CR_N_CR"));
-			cr.setAU(rs.getString("CR_AU"));
-			cr.setAU_L(rs.getString("CR_AU_L"));
-			cr.setAU_F(rs.getString("CR_AU_F"));
-			cr.setAU_A(rs.getString("CR_AU_A"));
-			cr.setTI(rs.getString("CR_TI"));
-			cr.setJ(rs.getString("CR_J"));
-			cr.setJ_N(rs.getString("CR_J_N"));
-			cr.setJ_S(rs.getString("CR_J_S"));
-			cr.setVOL(rs.getString("CR_VOL"));
-			cr.setPAG(rs.getString("CR_PAG"));
-            cr.setDOI(rs.getString("CR_DOI"));
-            cr.setCluster(rs.getInt("CR_ClusterId1"), rs.getInt("CR_ClusterId2"), rs.getInt("CR_ClusterSize"));
-			cr.setVI(rs.getBoolean("CR_VI"));
-			cr.setFormatType(FORMATTYPE.valueOf(rs.getString("CR_Format")));
+			cr.setID(readInt("CR_ID", null));
+			cr.setCR(readString("CR_CR",null));
+			cr.setRPY(readInt("CR_RPY", null));
+			cr.setN_CR (readInt("CR_N_CR", null));
+			cr.setAU(readString("CR_AU",null));
+			cr.setAU_L(readString("CR_AU_L",null));
+			cr.setAU_F(readString("CR_AU_F",null));
+			cr.setAU_A(readString("CR_AU_A",null));
+			cr.setTI(readString("CR_TI",null));
+			cr.setJ(readString("CR_J",null));
+			cr.setJ_N(readString("CR_J_N",null));
+			cr.setJ_S(readString("CR_J_S",null));
+			cr.setVOL(readString("CR_VOL",null));
+			cr.setPAG(readString("CR_PAG",null));
+            cr.setDOI(readString("CR_DOI",null));
+            cr.setCluster(readInt("CR_ClusterId1", null), readInt("CR_ClusterId2", null), readInt("CR_ClusterSize", null));
+			cr.setVI(readBoolean("CR_VI", true));
+			cr.setFormatType(FORMATTYPE.valueOf(readString("CR_Format",null)));
 
-			cr.setPERC_YR(rs.getDouble("CR_PERC_YR"));
-			cr.setPERC_ALL(rs.getDouble("CR_PERC_ALL"));
-			cr.setN_PYEARS(rs.getInt("CR_N_PYEARS"));
-			cr.setPYEAR_PERC(rs.getDouble("CR_PYEAR_PERC"));
+			cr.setPERC_YR(readDouble("CR_PERC_YR", 0d));
+			cr.setPERC_ALL(readDouble("CR_PERC_ALL", 0d));
+			cr.setN_PYEARS(readInt("CR_N_PYEARS", 0));
+			cr.setPYEAR_PERC(readDouble("CR_PYEAR_PERC", 0d));
 
-			int[] N_PCT = { rs.getInt("CR_N_PCT_P50"), rs.getInt("CR_N_PCT_P75"), rs.getInt("CR_N_PCT_P90"), rs.getInt("CR_N_PCT_P99"), rs.getInt("CR_N_PCT_P999") };
-			if (!rs.wasNull()) {
-				cr.setN_PCT(N_PCT);
-			}
-			int[] N_PCT_AboveAverage = { rs.getInt("CR_N_PCT_AboveAverage_P50"),
-					rs.getInt("CR_N_PCT_AboveAverage_P75"), rs.getInt("CR_N_PCT_AboveAverage_P90"),
-					rs.getInt("CR_N_PCT_AboveAverage_P99"), rs.getInt("CR_N_PCT_AboveAverage_P999") };
-			if (!rs.wasNull()) {
-				cr.setN_PCT_AboveAverage(N_PCT_AboveAverage);
-			}
+			cr.setN_PCT(new int[]{ 
+				readInt("CR_N_PCT_P50", 0), 
+				readInt("CR_N_PCT_P75", 0), 
+				readInt("CR_N_PCT_P90", 0),
+				readInt("CR_N_PCT_P99", 0),
+				readInt("CR_N_PCT_P999", 0) 
+			});
+			
+			cr.setN_PCT_AboveAverage(new int[]{ 
+				readInt("CR_N_PCT_AboveAverage_P50", 0),
+				readInt("CR_N_PCT_AboveAverage_P75", 0), 
+				readInt("CR_N_PCT_AboveAverage_P90", 0),
+				readInt("CR_N_PCT_AboveAverage_P99", 0), 
+				readInt("CR_N_PCT_AboveAverage_P999", 0) 
+			});
+			
+			cr.setSEQUENCE(readString("CR_SEQUENCE",null));
+			cr.setTYPE(readString("CR_TYPE",null));
 
-			cr.setSEQUENCE(rs.getString("CR_SEQUENCE"));
-			cr.setTYPE(rs.getString("CR_TYPE"));
-
-			cr.setBlockingkey(rs.getString("CR_BLOCKINGKEY"));
+			cr.setBlockingkey(readString("CR_BLOCKINGKEY",null));
 
 			return cr;
 		} catch (Exception e) {

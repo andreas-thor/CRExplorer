@@ -1,5 +1,10 @@
 
 
+## TODO
+
+- dbstore: n_cr aktualisieren via SQL --> Performanz!
+- pub auch eine id bei MM
+
 ## Eine neue Version deployen
 
 - Tag-Name in [Workflow File](.github/workflows/gradle_build.yml) setzen

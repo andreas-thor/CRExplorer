@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -372,9 +373,11 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 		dbStore.removeCR(String.format("(%d<=CR_N_CR) AND (%d>=CR_N_CR)", range.getMin(), range.getMax()));
 	}
 
+
 	@Override
 	public void removeCRByPERC_YR(String comp, double threshold) {
-		dbStore.removeCR(String.format("CR_PERC_YR %s %f", comp, threshold));
+		// locale US to force decimal point
+		dbStore.removeCR(String.format(Locale.US, "COALESCE(CR_PERC_YR,0) %s %f", comp, threshold));
 	}
 
 	
@@ -385,13 +388,13 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	@Override
 	public void removePubByCR(List<Integer> selCR) {
 		String crIds = selCR.stream().map(crId -> String.valueOf(crId)).collect(Collectors.joining(","));
-		dbStore.removePub(String.format("PUB_ID NOT IN (SELECT PUB_ID FROM PUB_CR WHERE CR_ID IN (%s))", crIds));
+		dbStore.removePub(String.format("NOT IN (SELECT PUB_ID FROM PUB_CR WHERE CR_ID IN (%s))", crIds));
 	}
 	
 
 	@Override
 	public void retainPubByCitingYear(IntRange range) {
-		dbStore.removePub(String.format("(PUB_PY IS NULL) OR (%d > PUB_PY) OR (PUB_PY > %d)", range.getMin(), range.getMax()));
+		dbStore.removePub(String.format("IN (SELECT PUB_ID FROM PUB WHERE (PUB_PY IS NULL) OR (%d > PUB_PY) OR (PUB_PY > %d))", range.getMin(), range.getMax()));
 	}
 
 	@Override

@@ -230,19 +230,82 @@ class DB_Store {
 
 	}
 	
+	// PUB_ID NOT IN (SELECT PUB_ID FROM PUB_CR WHERE CR_ID IN (%s))"
 	
-	
+	/**
+	 * Remove all citing publications, that do *not* reference any of the given CRs 
+	 * @param crIds comma-separated ids
+	 */
+
+	void removePub (String predicate) {
+		try {
+			Statement stmt = dbCon.createStatement();
+
+			// String.format("PUB_ID NOT IN (SELECT PUB_ID FROM PUB_CR WHERE CR_ID IN (%s))", crIds)
+
+			// mark CR that reference at least one publication (--> N_CR=NULL)
+			stmt.executeUpdate(String.format ("""
+				UPDATE CR 
+				SET CR_N_CR = NULL 
+				WHERE CR_ID IN (
+					SELECT CR_ID 
+					FROM PUB_CR 
+					WHERE PUB_ID %s
+				)
+				""",  predicate));
+			
+			// we do delete pubs, because we may consider pubs without references
+			// stmt.executeUpdate(String.format ("""
+			// 	DELETE PUB 
+			// 	WHERE PUB_ID NOT IN (
+			// 		SELECT PUB_ID 
+			// 		FROM PUB_CR 
+			// 		WHERE CR_ID IN (%s)
+			// 	)
+			// 	""", crIds));
+
+			// delete pub-cr-relationship (must be after pubs because we need the pub_cr info to identify the pubs to be removed)
+			stmt.executeUpdate(String.format ("DELETE PUB_CR WHERE PUB_ID %s", predicate));
+			
+			// update N_CR 
+			stmt.executeUpdate("""
+				UPDATE CR 
+				SET CR_N_CR = (
+					SELECT COUNT(*) 
+					FROM PUB_CR 
+					WHERE PUB_CR.CR_ID = CR.CR_ID
+				) 
+				WHERE CR_N_CR IS NULL
+			""");
+			
+			// remove CRs with N_CR=0
+			removeCR("CR_N_CR = 0"); 
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+
+	/*
 	void removePub (String predicate) {
 		
 		try {
 			Statement stmt = dbCon.createStatement();
 
-			// mark CR that reference at least one publication (--> N_CR=NULL)
-			stmt.executeUpdate(String.format ("UPDATE CR SET CR_N_CR = NULL WHERE CR_ID IN (SELECT CR_ID FROM PUB_CR WHERE PUB_ID IN (SELECT PUB_ID FROM PUB WHERE %s))",  predicate));
+			// mark CR that reference at least one publication to be deleted (--> N_CR=NULL)
+			stmt.executeUpdate(String.format ("""
+				UPDATE CR 
+				SET CR_N_CR = NULL 
+				WHERE CR_ID IN (
+					SELECT CR_ID 
+					FROM PUB_CR 
+					WHERE PUB_ID IN (SELECT PUB_ID FROM PUB WHERE %s))
+				""",  predicate));
 			
 			// delete pub-cr-relationship and pubs
-			stmt.executeUpdate(String.format ("DELETE PUB_CR WHERE PUB_ID IN (SELECT PUB_ID FROM PUB WHERE %s)",  predicate));
 			stmt.executeUpdate(String.format ("DELETE PUB WHERE %s",  predicate));
+			stmt.executeUpdate(String.format ("DELETE PUB_CR WHERE PUB_ID IN (SELECT PUB_ID FROM PUB WHERE %s)",  predicate));
 			
 			// update N_CR 
 			stmt.executeUpdate("UPDATE CR SET CR_N_CR = (SELECT COUNT(*) FROM PUB_CR WHERE PUB_CR.CR_ID = CR.CR_ID) WHERE CR_N_CR IS NULL");
@@ -254,7 +317,7 @@ class DB_Store {
 		}
 		
 	}
-	
+	*/
 	
 
 	int getNumber (String sql) {
