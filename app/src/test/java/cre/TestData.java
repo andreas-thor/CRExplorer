@@ -11,7 +11,6 @@ import cre.data.type.abs.CRTable;
 import cre.data.type.abs.Statistics.IntRange;
 import cre.format.exporter.ExportFormat;
 import cre.format.importer.ImportFormat;
-import cre.ui.UISettings;
 import cre.ui.dialog.Sampling;
 
 /**

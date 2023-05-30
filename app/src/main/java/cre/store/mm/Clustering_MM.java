@@ -93,7 +93,6 @@ public class Clustering_MM extends Clustering<CRType_MM, PubType_MM> {
 		StringMetric l = StringMetrics.levenshtein();
 		
 		AtomicLong testCount = new AtomicLong(0);
-		Long stop1 = System.currentTimeMillis(); 
 		
 		// TODO: handle missing values
 		// TODO: incorporate title (from scopus)
@@ -123,8 +122,6 @@ public class Clustering_MM extends Clustering<CRType_MM, PubType_MM> {
 		matchResult.forEach(it -> { addPair(it, false, true, null); });
 		
 		
-		Long stop2 = System.currentTimeMillis();
-		System.out.println("Match time is " + ((stop2-stop1)/100) + " deci-seconds");
 		
 		assert testCount.get() == getNumberOfMatches(false);
 		

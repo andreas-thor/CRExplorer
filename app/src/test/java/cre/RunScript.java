@@ -6,7 +6,7 @@ import org.codehaus.groovy.control.CompilationFailedException;
 
 import cre.scriptlang.ScriptExecutionEngine;
 
-public class Script {
+public class RunScript {
 
 	
 	

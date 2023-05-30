@@ -101,8 +101,17 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 	
 	
 	public void generateInitialClustering () {
+		Long stop1 = System.currentTimeMillis(); 
+
 		generateAutoMatching();
+
+		Long stop2 = System.currentTimeMillis();
+		System.out.println(String.format("generateInitialClustering > generateAutoMatching > Time is %.1f seconds", (stop2-stop1)/1000.0));
+
 		updateClustering(Clustering.ClusteringType.INIT, null, min_threshold, false, false, false);
+
+		Long stop3 = System.currentTimeMillis();
+		System.out.println(String.format("generateInitialClustering > updateClustering > Time is %.1f seconds", (stop3-stop2)/1000.0));
 	}
 	
 	

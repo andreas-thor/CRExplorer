@@ -96,8 +96,6 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 	public void generateAutoMatching() {
 
 		
-		Long stop1 = System.currentTimeMillis(); 
-		
 		// standard blocking: year + first letter of last name
 		StatusBar.get().setValue(String.format("Blocking of %d objects...", CRTable.get().getStatistics().getNumberOfCRs()));
 		
@@ -170,9 +168,6 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 			e.printStackTrace();
 		}
 
-		Long stop2 = System.currentTimeMillis();
-		System.out.println("Match time is " + ((stop2-stop1)/100) + " deci-seconds");
-		StatusBar.get().setValue("Matching done");
 	}
 
 
@@ -207,12 +202,17 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 
 			if (type == Clustering.ClusteringType.INIT) {	// consider manual (automatic?) matches only
 				// reset all clusters (each CR forms an individual clustering)
-				dbCon.createStatement().execute("UPDATE CR SET CR_ClusterId1 = CR_ID, CR_ClusterId2 = CR_ID");
+				dbCon.createStatement().execute(
+					String.format(Locale.US, DB_Store.Queries.getQuery("clustering/init.sql"), 
+						threshold));
 			}
 			
 			if (type == Clustering.ClusteringType.REFRESH) {
 				// reset clusterId2 only 
-				dbCon.createStatement().execute(String.format("UPDATE CR SET CR_ClusterId2 = CR_ID %s", changeCRIds==null ? "" : String.format("WHERE CR_ID IN (%s)", changeCRIds)));
+				dbCon.createStatement().execute(
+					String.format(Locale.US, DB_Store.Queries.getQuery("clustering/refresh.sql"), 
+						threshold, 
+						changeCRIds==null ? "" : String.format("WHERE CR_ID IN (%s)", changeCRIds)));
 			}
 		
 			StatusBar.get().initProgressbar(1, String.format("Clustering %d objects (%s) with threshold %.2f", CRTable.get().getStatistics().getNumberOfCRs(), type.toString(), threshold));
@@ -226,16 +226,22 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 			and += (changeCRIds != null) ? String.format ("AND CR2.CR_ID IN (%s) ", changeCRIds) : "";
 			
 			// Locale.US makes sure that the threshold value has a point and no comma (-> would lead to SQL syntax error)
-			PreparedStatement updateclustering_PrepStmt = dbCon.prepareStatement(String.format(Locale.US, DB_Store.Queries.getQuery("updateclustering.sql"), threshold, and));
-			
+			PreparedStatement updateclustering_PrepStmt = dbCon.prepareStatement(
+				String.format(Locale.US, DB_Store.Queries.getQuery("clustering/update.sql"), 
+				and));
+
+
 			int noOfUpdates = -1;
+			System.out.println(String.format("updateClustering Start"));
+			Long stop1 = System.currentTimeMillis();
 			while ((noOfUpdates = updateclustering_PrepStmt.executeUpdate()) > 0) { 
-				// System.out.println("NoOfUpdates = " + noOfUpdates);
-				
+				Long stop2 = System.currentTimeMillis();
+				System.out.println(String.format("updateClustering NoOfUpdates = %d, time = %.1f", noOfUpdates, (stop2-stop1)/1000.0));
+				stop1 = System.currentTimeMillis();				
 			}
 			updateclustering_PrepStmt.close();
 			
-			dbCon.createStatement().execute(DB_Store.Queries.getQuery("updateclustersize.sql"));
+			dbCon.createStatement().execute(DB_Store.Queries.getQuery("clustering/finish.sql"));
 
 			
 		} catch (SQLException e) {

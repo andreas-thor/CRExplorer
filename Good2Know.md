@@ -3,7 +3,9 @@
 ## TODO
 
 - dbstore: n_cr aktualisieren via SQL --> Performanz!
-- pub auch eine id bei MM
+- pub auch eine id bei MM (um Äquivalenz bei Export der Stores sicherzustellen)
+- matching mit großén Daten testen
+    - mit climate500t: MM in ~1min; DB > 10min!!!
 
 ## Eine neue Version deployen
 
