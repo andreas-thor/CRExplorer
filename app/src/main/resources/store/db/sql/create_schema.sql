@@ -20,6 +20,7 @@ CREATE TABLE CR (
 	CR_ClusterId2 int,  
 	CR_ClusterSize int,  
 	CR_VI boolean, 
+	CR_SORT_ORDER int, 
 	CR_Format varchar, 
 	
 	CR_PERC_YR double, 

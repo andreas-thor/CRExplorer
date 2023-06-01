@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cre.data.type.abs.CRTable;
+import cre.data.type.abs.CRType;
 import cre.data.type.abs.Statistics;
 import cre.data.type.abs.Statistics.IntRange;
 import cre.format.cre.Reader;
@@ -20,6 +21,7 @@ import cre.store.db.DB_Store.Queries;
 import cre.store.mm.CRType_MM;
 import cre.store.mm.PubType_MM;
 import cre.ui.statusbar.StatusBar;
+import javafx.collections.ObservableList;
 
 public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
@@ -38,6 +40,8 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	private Statistics_DB statistics;
 	private Clustering_DB clustering;
 	private Reader_DB reader;
+
+	private OberservableCRList_DB observableCRList;
 	
 
 	public static CRTable_DB get() {
@@ -63,6 +67,18 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 		return this.clustering;
 	}
 
+	@Override
+	public ObservableList<CRType<?>> getObservableCRList() {
+		// I don't know why but we need to create an new instance here
+		observableCRList = new OberservableCRList_DB(dbCon, dbStore, statistics);
+		return observableCRList;
+	}
+
+
+	public void updateObservableCRList() {
+		this.observableCRList.invalidateCache();
+	}
+
 	
 	DB_Store getDBStore() {
 		return this.dbStore;
@@ -82,6 +98,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 			statistics = new Statistics_DB(dbCon);
 			clustering = new Clustering_DB(dbCon);
 			reader = new Reader_DB(dbCon);
+			observableCRList = new OberservableCRList_DB(dbCon, dbStore, statistics);
 			
 		} catch (ClassNotFoundException | SQLException | IOException | URISyntaxException e) {
 			// TODO Auto-generated catch block
@@ -204,6 +221,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 			rs.close();
 
 			computeForAllCRs (range_RPY, range_PY, NCR_ALL, NCR_RPY, CNT_RPY);
+			updateObservableCRList();
 			
 			getChartData().updateChartData(range_RPY, NCR_RPY, CNT_RPY);
 			
@@ -373,25 +391,17 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 		dbStore.removeCR(String.format("(%d<=CR_N_CR) AND (%d>=CR_N_CR)", range.getMin(), range.getMax()));
 	}
 
-
 	@Override
 	public void removeCRByPERC_YR(String comp, double threshold) {
-		// locale US to force decimal point
-		dbStore.removeCR(String.format(Locale.US, "COALESCE(CR_PERC_YR,0) %s %f", comp, threshold));
+		dbStore.removeCR(String.format(Locale.US, "COALESCE(CR_PERC_YR,0) %s %f", comp, threshold));	// locale US to force decimal point
 	}
 
-	
-	/**
-	 * Remove all citing publications, that do *not* reference any of the given CRs 
-	 * @param selCR list of CRs
-	 */
 	@Override
 	public void removePubByCR(List<Integer> selCR) {
 		String crIds = selCR.stream().map(crId -> String.valueOf(crId)).collect(Collectors.joining(","));
 		dbStore.removePub(String.format("NOT IN (SELECT PUB_ID FROM PUB_CR WHERE CR_ID IN (%s))", crIds));
 	}
 	
-
 	@Override
 	public void retainPubByCitingYear(IntRange range) {
 		dbStore.removePub(String.format("IN (SELECT PUB_ID FROM PUB WHERE (PUB_PY IS NULL) OR (%d > PUB_PY) OR (PUB_PY > %d))", range.getMin(), range.getMax()));
@@ -421,6 +431,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 		dbStore.updateCR_VI("1", null);
 		this.showNull = true;		
 	}
+
 
 
 }

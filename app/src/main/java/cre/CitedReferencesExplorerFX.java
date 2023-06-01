@@ -20,8 +20,10 @@ public class CitedReferencesExplorerFX extends Application {
 
 	public static Stage stage;
 	public static Application app;
-	public static String manual_url = "http://andreas-thor.github.io/cre/manual.pdf";
-	public static String url = "http://www.crexplorer.net";
+	
+	public static final String manual_url = "https://andreas-thor.github.io/CRExplorer/manual.pdf";
+	public static final String url = "http://www.crexplorer.net";
+	
 	public static String title = "CRExplorer";
 	public static String loadOnOpen = null;
 
@@ -30,11 +32,6 @@ public class CitedReferencesExplorerFX extends Application {
 		if ((args.length > 1) && (args[0].equals("-open"))) {
 			loadOnOpen = args[1];
 		}
-
-//		title += " " + String.join(" ", args);
-		
-
-		
 
 		for (String arg: args) {
 			if (arg.toLowerCase().startsWith("-db")) {

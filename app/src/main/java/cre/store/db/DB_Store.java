@@ -57,9 +57,10 @@ class DB_Store {
 		this.dbCon = dbCon;
 	}
 	
+
+
 	
 	void init () throws SQLException, URISyntaxException, IOException {
-
 
 		dbCon.setAutoCommit(false);
 		
@@ -210,6 +211,7 @@ class DB_Store {
 			Statement stmt = dbCon.createStatement();
 			stmt.executeUpdate(String.format ("UPDATE CR SET CR_VI = %s %s", newValue, (predicate==null)?"":"WHERE " + predicate)); 
 			dbCon.commit();
+			CRTable_DB.get().updateObservableCRList();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

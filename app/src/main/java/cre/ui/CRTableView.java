@@ -1,16 +1,21 @@
 package cre.ui;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.SortEvent;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRType;
 import cre.data.type.extern.CRType_ColumnView;
+
+import cre.store.db.OberservableCRList_DB;
 
 public class CRTableView extends TableView<CRType<?>> {
 
@@ -99,6 +104,25 @@ public class CRTableView extends TableView<CRType<?>> {
 		getColumns().addAll(columns);
 		setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 		getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+		if (CRTable.type == CRTable.TABLE_IMPL_TYPES.DB) {
+			addEventHandler(SortEvent.ANY, event -> {
+				System.out.println("HEY, Sorted???");
+				// System.out.println(event);
+				System.out.println (((CRTableView) event.getSource()).getSortOrder().size());
+
+				if (getItems() != null) {
+					((OberservableCRList_DB<?>) getItems()).setSortOrder (
+						((CRTableView) event.getSource()).getSortOrder().stream()
+						.map(o -> String.format("CR_%s %s", o.getText(),  o.getSortType() == TableColumn.SortType.DESCENDING ? " DESC" : ""))
+						.collect( Collectors.joining(", ") )
+					);
+				}
+				refresh();
+				event.consume();
+
+			});
+		}
 	}
 	
 	
@@ -151,9 +175,10 @@ public class CRTableView extends TableView<CRType<?>> {
 		/* sort by year ASC, n_cr desc */
 		columns[CRType_ColumnView.CRColumn.RPY.ordinal()].setSortType(TableColumn.SortType.ASCENDING);
 		columns[CRType_ColumnView.CRColumn.N_CR.ordinal()].setSortType(TableColumn.SortType.DESCENDING);
-		getSortOrder().clear();
-		getSortOrder().add(columns[CRType_ColumnView.CRColumn.RPY.ordinal()]);
-		getSortOrder().add(columns[CRType_ColumnView.CRColumn.N_CR.ordinal()]);
+		// getSortOrder().clear();
+		getSortOrder().setAll(
+			columns[CRType_ColumnView.CRColumn.RPY.ordinal()], 
+			columns[CRType_ColumnView.CRColumn.N_CR.ordinal()]);
 		sort();
 		Optional<CRType<?>> first = getItems().stream().filter(cr -> (cr.getRPY()!=null) && (cr.getRPY().intValue() == year)).findFirst();
 		if (first.isPresent()) {

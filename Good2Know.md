@@ -4,8 +4,15 @@
 
 - dbstore: n_cr aktualisieren via SQL --> Performanz!
 - pub auch eine id bei MM (um Äquivalenz bei Export der Stores sicherzustellen)
-- matching mit großén Daten testen
+- matching mit großén Daten testen 
     - mit climate500t: MM in ~1min; DB > 10min!!!
+    - --> besser (ca. 4:30min bei DB)
+
+
+- sortieren bei db
+    - db spaltenname ist nicht immer cr_[name] ... vielleicht in Column angeben?
+    - klick in Diagramm .. getItems().stream() geht nicht ... abstrahieren :-)
+
 
 ## Eine neue Version deployen
 

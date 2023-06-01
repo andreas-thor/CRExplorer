@@ -15,6 +15,8 @@ import cre.data.type.abs.Statistics;
 import cre.data.type.abs.Statistics.IntRange;
 import cre.format.cre.Reader;
 import cre.ui.statusbar.StatusBar;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 
@@ -59,6 +61,11 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	}
 
 
+	@Override
+	public ObservableList<CRType<?>> getObservableCRList() {
+		// we return the entire CRTable as list for the TableView in the UI
+		return FXCollections.observableArrayList(getCR().filter(cr -> cr.getVI()).collect(Collectors.toList()));
+	}
 
 
 	
@@ -525,6 +532,8 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 		this.showNull = true;
 		getCR().forEach ( cr -> cr.setVI(true) );
 	}
+
+
 
 
 

@@ -10,8 +10,9 @@ import cre.format.cre.Reader;
 import cre.store.db.CRTable_DB;
 import cre.store.mm.CRTable_MM;
 import cre.store.mm.PubType_MM;
+import javafx.collections.ObservableList;
 
-public abstract class CRTable <C extends CRType<P>, P extends PubType<C>>{
+public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> {
  
 	public static enum COMPARATOR { LT, LTE, EQ, GTE, GT };
 	
@@ -60,6 +61,8 @@ public abstract class CRTable <C extends CRType<P>, P extends PubType<C>>{
 	
 	public abstract Clustering<C,P> getClustering();
 	
+	public abstract ObservableList<CRType<?>> getObservableCRList();
+
 	public CRChartData getChartData() {
 		if (chartData == null) {
 			chartData = new CRChartData();

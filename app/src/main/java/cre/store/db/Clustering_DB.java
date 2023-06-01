@@ -196,6 +196,10 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 	@Override
 	public void updateClustering(ClusteringType type, Set<CRType_DB> changeCR, double threshold, boolean useVol, boolean usePag, boolean useDOI) {
 		
+
+		StatusBar.get().initProgressbar(1, String.format("Clustering %d objects (%s) with threshold %.2f", CRTable.get().getStatistics().getNumberOfCRs(), type.toString(), threshold));
+
+
 		try {
 
 			String changeCRIds = (changeCR != null) ? changeCR.stream().map(cr -> String.valueOf(cr.getID())).collect(Collectors.joining(",")) : null; 
@@ -215,7 +219,6 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 						changeCRIds==null ? "" : String.format("WHERE CR_ID IN (%s)", changeCRIds)));
 			}
 		
-			StatusBar.get().initProgressbar(1, String.format("Clustering %d objects (%s) with threshold %.2f", CRTable.get().getStatistics().getNumberOfCRs(), type.toString(), threshold));
 
 			
 			String and = "";
@@ -234,14 +237,26 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 			int noOfUpdates = -1;
 			System.out.println(String.format("updateClustering Start"));
 			Long stop1 = System.currentTimeMillis();
+			int statusBarSize = -1;
 			while ((noOfUpdates = updateclustering_PrepStmt.executeUpdate()) > 0) { 
+				
+				// we approximate the statusBarSize (=number of iterations) from the number of updated rows in the first iteration step
+				if (statusBarSize == -1) {
+					statusBarSize = (int) Math.ceil(Math.log(noOfUpdates)/Math.log(2))+1;
+					StatusBar.get().initProgressbar(statusBarSize);
+				}
+
+				StatusBar.get().incProgressbar();
+				
 				Long stop2 = System.currentTimeMillis();
 				System.out.println(String.format("updateClustering NoOfUpdates = %d, time = %.1f", noOfUpdates, (stop2-stop1)/1000.0));
 				stop1 = System.currentTimeMillis();				
 			}
 			updateclustering_PrepStmt.close();
 			
+
 			dbCon.createStatement().execute(DB_Store.Queries.getQuery("clustering/finish.sql"));
+			StatusBar.get().setValue("Clustering done");
 
 			
 		} catch (SQLException e) {

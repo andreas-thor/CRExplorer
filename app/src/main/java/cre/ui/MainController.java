@@ -270,7 +270,11 @@ public class MainController {
 			tableView.getItems().clear();
 			tableView.getSortOrder().clear();
 			// FIXME: filter (cr -> false). um zu verhindern, dass was angezeigt wird
-			tableView.setItems(FXCollections.observableArrayList(crTable.getCR()./*filter (cr -> false).*/filter(cr -> cr.getVI()).collect(Collectors.toList())));
+			
+			
+		
+
+			tableView.setItems(crTable.getObservableCRList());
 
 			// ... reset old sort order
 			for (TableColumn<CRType<?>, ?> x : oldSort) {
@@ -301,6 +305,7 @@ public class MainController {
 			}
 			tableView.getColumns().get(0).setVisible(false);
 			tableView.getColumns().get(0).setVisible(true);
+			
 
 			StatusBar.get().updateInfo();
 		});
