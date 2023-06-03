@@ -35,6 +35,10 @@ public class OberservableCRList_DB<E> implements ObservableList<CRType<?>> {
 
 
     public void setSortOrder (String sortOrder) {
+        // default sort order is by Id
+        if ((sortOrder==null) || (sortOrder.trim().length()==0)) {
+            sortOrder = "CR_ID";
+        }
         this.sortOrder = sortOrder;
         invalidateCache();
     }

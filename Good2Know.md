@@ -13,6 +13,7 @@
     - db spaltenname ist nicht immer cr_[name] ... vielleicht in Column angeben?
     - klick in Diagramm .. getItems().stream() geht nicht ... abstrahieren :-)
 
+- clustering db und dann vol anklicken --> führt zu Eception
 
 ## Eine neue Version deployen
 

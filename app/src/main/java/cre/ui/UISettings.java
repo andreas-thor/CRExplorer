@@ -255,6 +255,10 @@ public class UISettings {
 		return columnVisible[idx];
 	}
 
+	public SimpleBooleanProperty getColumnVisibleProperty(CRType_ColumnView.CRColumn col) {
+		return columnVisible[col.ordinal()];
+	}
+
 	public boolean[] getChartLine() {
 		return Arrays.copyOf(chartLine, chartLine.length);
 	}

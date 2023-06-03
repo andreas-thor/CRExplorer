@@ -1,5 +1,7 @@
 package cre.ui;
 
+import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -32,6 +34,44 @@ public class CRTableView extends TableView<CRType<?>> {
 		GridPane.setVgrow(this, Priority.ALWAYS);
 		GridPane.setHgrow(this, Priority.ALWAYS);
 		
+		
+		columns = Arrays.stream(CRType_ColumnView.CRColumn.values())
+			.map(col -> {
+				TableColumn<CRType<?>, ? extends Serializable> tabCol = null;
+				switch (col.type) {
+					case INT: 
+						tabCol = new TableColumn<CRType<?>, Number>(col.id); 
+						((TableColumn<CRType<?>, Number>) tabCol).setCellValueFactory(cellData -> (ObservableValue<Number>) col.prop.apply (cellData.getValue()));
+					 	break;
+					case DOUBLE: 
+						tabCol = new TableColumn<CRType<?>, Number>(col.id); 
+						((TableColumn<CRType<?>, Number>) tabCol).setCellValueFactory(cellData -> (ObservableValue<Number>) col.prop.apply (cellData.getValue()));
+						((TableColumn<CRType<?>, Number>) tabCol).setCellFactory(column -> 
+							new TableCell<CRType<?>, Number>() {
+								@Override
+								protected void updateItem(Number value , boolean empty) {
+									super.updateItem(value, empty);
+									setText (((value == null) || empty) ? null : UISettings.get().getFormat().format(value.doubleValue()));
+								}
+							} 
+						); 						
+					 	break;
+					case STRING: 
+						tabCol = new TableColumn<CRType<?>, String>(col.id); 
+						((TableColumn<CRType<?>, String>) tabCol).setCellValueFactory(cellData -> (ObservableValue<String>) col.prop.apply (cellData.getValue()));
+						((TableColumn<CRType<?>, String>) tabCol).setComparator((o1, o2) -> { 
+							if (o1==null) return 1;
+							if (o2==null) return -1;
+							return o1.compareToIgnoreCase(o2); 
+						});
+					default: assert false; 
+				}
+				tabCol.setUserData(col);
+				tabCol.visibleProperty().bindBidirectional(UISettings.get().getColumnVisibleProperty(col));
+				return tabCol;
+			}).toArray(TableColumn[]::new);
+
+/*			
 		CRType_ColumnView.CRColumn[] colInfo = CRType_ColumnView.CRColumn.values();
 		columns = new TableColumn[colInfo.length];
 		for (int i=0; i<colInfo.length; i++) {
@@ -40,6 +80,7 @@ public class CRTableView extends TableView<CRType<?>> {
 			switch (col.type) {
 				case INT:  
 					columns[i] = new TableColumn<CRType<?>, Number>(col.id); 
+					columns[i].setUserData(col);
 					((TableColumn<CRType<?>, Number>) columns[i]).setCellValueFactory(cellData -> (ObservableValue<Number>) col.prop.apply (cellData.getValue()));
 					break;
 				case DOUBLE: 
@@ -63,7 +104,7 @@ public class CRTableView extends TableView<CRType<?>> {
 						if (o2==null) return -1;
 						return o1.compareToIgnoreCase(o2); 
 					});
-					break;
+					// break;
 //				case CRCLUSTER: 
 //					columns[i] = new TableColumn<CRType, CRCluster>(col.id); 
 //					((TableColumn<CRType, CRCluster>) columns[i]).setCellValueFactory(cellData -> (ObservableValue<CRCluster>) col.prop.apply (cellData.getValue()));
@@ -80,7 +121,7 @@ public class CRTableView extends TableView<CRType<?>> {
 
 		}
 		
-		
+*/	
 		
 //		setRowFactory(x -> {
 //			TableRow<CRType> row = new TableRow<CRType>() {
@@ -105,6 +146,7 @@ public class CRTableView extends TableView<CRType<?>> {
 		setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 		getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
+		// if we use the Database Storage Engine --> we perform the sorting in the db
 		if (CRTable.type == CRTable.TABLE_IMPL_TYPES.DB) {
 			addEventHandler(SortEvent.ANY, event -> {
 				System.out.println("HEY, Sorted???");
@@ -114,7 +156,7 @@ public class CRTableView extends TableView<CRType<?>> {
 				if (getItems() != null) {
 					((OberservableCRList_DB<?>) getItems()).setSortOrder (
 						((CRTableView) event.getSource()).getSortOrder().stream()
-						.map(o -> String.format("CR_%s %s", o.getText(),  o.getSortType() == TableColumn.SortType.DESCENDING ? " DESC" : ""))
+						.map(o -> String.format("%s %s", ((CRType_ColumnView.CRColumn) o.getUserData()).sqlName,  o.getSortType() == TableColumn.SortType.DESCENDING ? " DESC" : ""))
 						.collect( Collectors.joining(", ") )
 					);
 				}
