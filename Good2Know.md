@@ -8,7 +8,10 @@
     - bei "Delete previous release"
     - bei "Create release"
  
- 
+
+- Build wird aktiviert, wenn push in Repo und commit message beinhalt "[build]"
+
+
 ## Gradle commands
 
 - Run: 
