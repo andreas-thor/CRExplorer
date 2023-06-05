@@ -7,8 +7,8 @@
 - Tag-Name in [Workflow File](.github/workflows/gradle_build.yml) setzen
     - bei "Delete previous release"
     - bei "Create release"
-
-
+ 
+ 
 ## Gradle commands
 
 - Run: 
