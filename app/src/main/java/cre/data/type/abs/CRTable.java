@@ -11,7 +11,6 @@ import cre.store.db.CRTable_DB;
 import cre.store.mm.CRTable_MM;
 import cre.store.mm.PubType_MM;
 import cre.ui.CRTableView;
-import javafx.collections.ObservableList;
 
 public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> {
  

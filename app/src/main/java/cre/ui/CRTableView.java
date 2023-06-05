@@ -7,7 +7,6 @@ import java.util.Optional;
 import cre.data.type.abs.CRType;
 import cre.data.type.extern.CRType_ColumnView;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;

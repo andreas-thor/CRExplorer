@@ -1,6 +1,5 @@
 package cre.store.mm;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -16,8 +15,6 @@ import cre.data.type.abs.Statistics;
 import cre.data.type.abs.Statistics.IntRange;
 import cre.format.cre.Reader;
 import cre.ui.statusbar.StatusBar;
-import javafx.collections.FXCollections;
-import javafx.scene.control.TableColumn;
 
 public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 

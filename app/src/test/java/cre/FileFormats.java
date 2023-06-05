@@ -5,19 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.junit.Test;
 
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRType;
-import cre.data.type.abs.CRTable.TABLE_IMPL_TYPES;
 import cre.data.type.abs.Statistics;
 import cre.format.exporter.ExportFormat;
 import cre.format.exporter.Scopus;

@@ -7,7 +7,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -21,7 +20,6 @@ import cre.store.db.DB_Store.Queries;
 import cre.store.mm.CRType_MM;
 import cre.store.mm.PubType_MM;
 import cre.ui.statusbar.StatusBar;
-import javafx.scene.control.TableColumn;
 
 public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
