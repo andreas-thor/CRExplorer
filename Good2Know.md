@@ -11,6 +11,8 @@
 
 - Build wird aktiviert, wenn push in Repo und commit message beinhalt "[build]"
 
+- bei dev: vorher in GutHub tags/releases löschen
+
 
 ## Gradle commands
 
