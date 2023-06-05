@@ -22,14 +22,12 @@ import cre.data.CRStatsInfo;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRType;
 import cre.data.type.abs.Clustering;
-import cre.data.type.abs.ObservableCRList;
 import cre.data.type.abs.PubType;
 import cre.data.type.abs.Statistics.IntRange;
 import cre.format.cre.Writer;
 import cre.format.exporter.ExportFormat;
 import cre.format.importer.Crossref;
 import cre.format.importer.ImportFormat;
-import cre.store.db.OberservableCRList_DB;
 import cre.ui.UISettings.RangeType;
 import cre.ui.chart.CRChart;
 import cre.ui.chart.CRChart_HighCharts;
@@ -52,7 +50,6 @@ import cre.ui.dialog.Wait;
 import cre.ui.statusbar.StatusBar;
 import cre.ui.statusbar.StatusBarFX;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -268,24 +265,24 @@ public class MainController {
 
 
 
-			// save sort order ...
-			List<TableColumn<CRType<?>, ?>> oldSort = new ArrayList<TableColumn<CRType<?>, ?>>();
-			tableView.getSortOrder().forEach(it -> oldSort.add((TableColumn<CRType<?>, ?>) it));
+			// // save sort order ...
+			// List<TableColumn<CRType<?>, ?>> oldSort = new ArrayList<TableColumn<CRType<?>, ?>>();
+			// tableView.getSortOrder().forEach(it -> oldSort.add((TableColumn<CRType<?>, ?>) it));
 
-			// ... update rows ...
-			tableView.getItems().clear();
-			tableView.getSortOrder().clear();
-			// FIXME: filter (cr -> false). um zu verhindern, dass was angezeigt wird
+			// // ... update rows ...
+			// tableView.getItems().clear();
+			// tableView.getSortOrder().clear();
+			// // FIXME: filter (cr -> false). um zu verhindern, dass was angezeigt wird
 			
 			
 		
+			// ObservableList<? extends CRType<?>> a = crTable.getObservableCRList();
+			tableView.updateTableViewData();
 
-			tableView.setItems((ObservableList<CRType<?>>) crTable.getObservableCRList());
-
-			// ... reset old sort order
-			for (TableColumn<CRType<?>, ?> x : oldSort) {
-				tableView.getSortOrder().add(x);
-			}
+			// // ... reset old sort order
+			// for (TableColumn<CRType<?>, ?> x : oldSort) {
+			// 	tableView.getSortOrder().add(x);
+			// }
 
 			// set Domain Range for charts
 			if (!triggeredByChartZoom) {
@@ -920,19 +917,31 @@ public class MainController {
 	@FXML
 	public void OnMenuDataCopySelected() {
 
-		StringBuffer buf = new StringBuffer();
+		// StringBuffer buf = new StringBuffer();
 
-		tableView.getSelectionModel().getSelectedItems().stream().forEach((CRType<?> cr) -> {
-			tableView.getColumns().filtered(c -> c.isVisible()).forEach(c -> {
-				buf.append("\"");
-				// buf.append(c.getCellData(cr));
-				buf.append("\"\t");
-			});
-			buf.append("\n");
-		});
+
+		String s = tableView.getSelectionModel().getSelectedIndices().stream()
+			.map (index -> 
+				tableView.getColumns().filtered(c -> c.isVisible()).stream()
+					.map(col -> String.format("\"%s\"", col.getCellData(index)))
+					.collect(Collectors.joining("\t")))
+			.collect(Collectors.joining("\n"));
+
+	
+
+		// tableView.getSelectionModel().getSelectedItems().stream().forEach((CRType<?> cr) -> {
+		// 	tableView.getColumns().filtered(c -> c.isVisible()).forEach(c -> {
+		// 		buf.append("\"");
+
+
+		// 		// buf.append(c.getCellData(cr));
+		// 		buf.append("\"\t");
+		// 	});
+		// 	buf.append("\n");
+		// });
 
 		final ClipboardContent clipboardContent = new ClipboardContent();
-		clipboardContent.putString(buf.toString());
+		clipboardContent.putString(s /*buf.toString()*/);
 		Clipboard.getSystemClipboard().setContent(clipboardContent);
 	}
 

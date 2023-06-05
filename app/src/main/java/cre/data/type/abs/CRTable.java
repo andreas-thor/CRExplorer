@@ -62,9 +62,10 @@ public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> {
 	
 	public abstract Clustering<C,P> getClustering();
 	
-	public abstract ObservableList<C> getObservableCRList();
+	// public abstract ObservableList<? extends CRType<?>> getObservableCRList();
 
 	public abstract CRTableView<? extends CRType<?>> getTableView();
+
 
 	public CRChartData getChartData() {
 		if (chartData == null) {

@@ -3,26 +3,26 @@ package cre.ui;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import cre.data.type.abs.CRType;
-import cre.data.type.abs.ObservableCRList;
 import cre.data.type.extern.CRType_ColumnView;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.control.SortEvent;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 
-public abstract class CRTableView<C extends CRType<?>> extends TableView<C> {
+public abstract class CRTableView<C> extends TableView<C> {
 
 	private TableColumn<C, ?>[] columns;
 
 
 	abstract public int getFirstRowByYear(int year);
+
+	public abstract void updateTableViewData ();
 
 
 	@SuppressWarnings("unchecked")
@@ -142,6 +142,7 @@ public abstract class CRTableView<C extends CRType<?>> extends TableView<C> {
 		getSortOrder().setAll(
 			columns[CRType_ColumnView.CRColumn.RPY.ordinal()],
 			columns[CRType_ColumnView.CRColumn.N_CR.ordinal()]);
+		
 		sort();
 
 		/* go to first row of specified year */

@@ -7,23 +7,21 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cre.data.type.abs.CRTable;
-import cre.data.type.abs.CRType;
-import cre.data.type.abs.ObservableCRList;
 import cre.data.type.abs.Statistics;
 import cre.data.type.abs.Statistics.IntRange;
 import cre.format.cre.Reader;
 import cre.store.db.DB_Store.Queries;
 import cre.store.mm.CRType_MM;
 import cre.store.mm.PubType_MM;
-import cre.ui.CRTableView;
 import cre.ui.statusbar.StatusBar;
-import javafx.collections.ObservableList;
+import javafx.scene.control.TableColumn;
 
 public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
@@ -44,6 +42,8 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	private Reader_DB reader;
 
 	private OberservableCRList_DB observableCRList;
+
+	private CRTableView_DB tableView;
 	
 
 	public static CRTable_DB get() {
@@ -70,20 +70,26 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	}
 
 	@Override
-	public CRTableView<? extends CRType<?>> getTableView() {
-		return new CRTableView_DB(this);
+	public CRTableView_DB getTableView() {
+		tableView = new CRTableView_DB(this);
+		return this.tableView;
 	}
 
 
-	@Override
-	public ObservableList<CRType_DB> getObservableCRList() {
-		// I don't know why but we need to create an new instance here
-		observableCRList = new OberservableCRList_DB(dbCon, dbStore, statistics);
-		return observableCRList;
-	}
 
+
+	// @Override
+	// public OberservableCRList_DB getObservableCRList() {
+	// 	observableCRList = new OberservableCRList_DB(dbCon, dbStore, statistics);
+	// 	return observableCRList;
+	// }
+
+	public OberservableCRList_DB createNewObservableCRList_DB() {
+		this.observableCRList = new OberservableCRList_DB(dbCon, dbStore, statistics); 
+		return getObservableCRList_DB();
+	}
 	public OberservableCRList_DB getObservableCRList_DB() {
-		return observableCRList;
+		return this.observableCRList;
 	}
 
 
@@ -110,8 +116,10 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 			statistics = new Statistics_DB(dbCon);
 			clustering = new Clustering_DB(dbCon);
 			reader = new Reader_DB(dbCon);
-			observableCRList = new OberservableCRList_DB(dbCon, dbStore, statistics);
+			createNewObservableCRList_DB();
 			
+
+
 		} catch (ClassNotFoundException | SQLException | IOException | URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

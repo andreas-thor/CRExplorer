@@ -1,5 +1,7 @@
 package cre.store.db;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import cre.data.type.extern.CRType_ColumnView;
@@ -32,6 +34,27 @@ public class CRTableView_DB extends CRTableView<CRType_DB> {
 
 		});
 	}		
+
+
+	@Override
+	public void updateTableViewData () {
+		
+		// save sort order ...
+		List<TableColumn<CRType_DB, ?>> oldSort = new ArrayList<TableColumn<CRType_DB, ?>>(getSortOrder());
+
+		// ... update rows ...
+		getItems().clear();
+		getSortOrder().clear();
+			
+		
+		// I don't know why but we need to create an new instance here
+		setItems(crTable.createNewObservableCRList_DB());
+		// crTable.getObservableCRList_DB().invalidateCache();
+
+		// ... reset old sort order
+		getSortOrder().addAll(oldSort);
+	}
+
 
 
 	@Override

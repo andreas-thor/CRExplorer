@@ -14,7 +14,7 @@
 - Run: 
 - Run specific tests: 
     - ``./gradlew test --tests cre.FileFormats``
-    - ``./gradlew test --tests cre.StorageEngine``
+    - ``./gradlew test --tests cre.StorageEngineShort``
 
 
 
@@ -45,7 +45,6 @@ Sample App installed based on https://openjfx.io/openjfx-docs/#gradle
 
 ## Bugs / ToDO
 
-    - klick in Diagramm .. getItems().stream() geht nicht ... abstrahieren :-)
 
 
 ### DONE
@@ -60,3 +59,4 @@ Sample App installed based on https://openjfx.io/openjfx-docs/#gradle
     - db spaltenname ist nicht immer cr_[name] ... vielleicht in Column angeben?
 
 - clustering db und dann vol anklicken --> führt zu Eception
+    - klick in Diagramm .. getItems().stream() geht nicht ... abstrahieren :-)

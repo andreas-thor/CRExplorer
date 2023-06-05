@@ -1,5 +1,6 @@
 package cre.store.mm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -11,14 +12,12 @@ import java.util.stream.Stream;
 // import cre.data.CRSearch;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRType;
-import cre.data.type.abs.ObservableCRList;
 import cre.data.type.abs.Statistics;
 import cre.data.type.abs.Statistics.IntRange;
 import cre.format.cre.Reader;
-import cre.ui.CRTableView;
 import cre.ui.statusbar.StatusBar;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.scene.control.TableColumn;
 
 public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 
@@ -38,6 +37,8 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	private boolean showNull;
 	
 	private Clustering_MM crmatch;
+
+	private CRTableView_MM tableView;
 	
 	public static CRTable_MM get() {
 		if (crTab == null) {
@@ -63,15 +64,18 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	}
 
 	@Override
-	public CRTableView<? extends CRType<?>> getTableView() {
-		return new CRTableView_MM();
+	public CRTableView_MM getTableView() {
+		tableView = new CRTableView_MM(this);
+		return this.tableView;
 	}
 
-	@Override
-	public ObservableList<CRType_MM> getObservableCRList() {
-		// we return the entire CRTable as list for the TableView in the UI
-		return FXCollections.observableArrayList(getCR().filter(cr -> cr.getVI()).collect(Collectors.toList()));
-	}
+	
+
+	// @Override
+	// public ObservableList<CRType_MM> getObservableCRList() {
+	// 	// we return the entire CRTable as list for the TableView in the UI
+	// 	return FXCollections.observableArrayList(getCR().filter(cr -> cr.getVI()).collect(Collectors.toList()));
+	// }
 
 
 	
