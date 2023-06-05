@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import cre.data.type.abs.CRType;
+import cre.data.type.abs.ObservableCRList;
+import cre.data.type.extern.CRType_ColumnView;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SortEvent;
@@ -13,180 +16,95 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import cre.data.type.abs.CRTable;
-import cre.data.type.abs.CRType;
-import cre.data.type.extern.CRType_ColumnView;
 
-import cre.store.db.OberservableCRList_DB;
+public abstract class CRTableView<C extends CRType<?>> extends TableView<C> {
 
-public class CRTableView extends TableView<CRType<?>> {
+	private TableColumn<C, ?>[] columns;
 
-	private TableColumn<CRType<?>, ?>[] columns;
 
-	
+	abstract public int getFirstRowByYear(int year);
+
+
 	@SuppressWarnings("unchecked")
 	public CRTableView() {
-	
-		
-		
+
 		setMinHeight(100);
 		setMinWidth(100);
 		GridPane.setVgrow(this, Priority.ALWAYS);
 		GridPane.setHgrow(this, Priority.ALWAYS);
-		
-		
+
+
 		columns = Arrays.stream(CRType_ColumnView.CRColumn.values())
 			.map(col -> {
 				TableColumn<CRType<?>, ? extends Serializable> tabCol = null;
 				switch (col.type) {
-					case INT: 
-						tabCol = new TableColumn<CRType<?>, Number>(col.id); 
+					case INT:
+						tabCol = new TableColumn<CRType<?>, Number>(col.id);
 						((TableColumn<CRType<?>, Number>) tabCol).setCellValueFactory(cellData -> (ObservableValue<Number>) col.prop.apply (cellData.getValue()));
 					 	break;
-					case DOUBLE: 
-						tabCol = new TableColumn<CRType<?>, Number>(col.id); 
+					case DOUBLE:
+						tabCol = new TableColumn<CRType<?>, Number>(col.id);
 						((TableColumn<CRType<?>, Number>) tabCol).setCellValueFactory(cellData -> (ObservableValue<Number>) col.prop.apply (cellData.getValue()));
-						((TableColumn<CRType<?>, Number>) tabCol).setCellFactory(column -> 
+						((TableColumn<CRType<?>, Number>) tabCol).setCellFactory(column ->
 							new TableCell<CRType<?>, Number>() {
 								@Override
 								protected void updateItem(Number value , boolean empty) {
 									super.updateItem(value, empty);
 									setText (((value == null) || empty) ? null : UISettings.get().getFormat().format(value.doubleValue()));
 								}
-							} 
-						); 						
+							}
+						);
 					 	break;
-					case STRING: 
-						tabCol = new TableColumn<CRType<?>, String>(col.id); 
+					case STRING:
+						tabCol = new TableColumn<CRType<?>, String>(col.id);
 						((TableColumn<CRType<?>, String>) tabCol).setCellValueFactory(cellData -> (ObservableValue<String>) col.prop.apply (cellData.getValue()));
-						((TableColumn<CRType<?>, String>) tabCol).setComparator((o1, o2) -> { 
+						((TableColumn<CRType<?>, String>) tabCol).setComparator((o1, o2) -> {
 							if (o1==null) return 1;
 							if (o2==null) return -1;
-							return o1.compareToIgnoreCase(o2); 
+							return o1.compareToIgnoreCase(o2);
 						});
-					default: assert false; 
+					default: assert false;
 				}
 				tabCol.setUserData(col);
 				tabCol.visibleProperty().bindBidirectional(UISettings.get().getColumnVisibleProperty(col));
 				return tabCol;
 			}).toArray(TableColumn[]::new);
 
-/*			
-		CRType_ColumnView.CRColumn[] colInfo = CRType_ColumnView.CRColumn.values();
-		columns = new TableColumn[colInfo.length];
-		for (int i=0; i<colInfo.length; i++) {
-			
-			CRType_ColumnView.CRColumn col = colInfo[i];
-			switch (col.type) {
-				case INT:  
-					columns[i] = new TableColumn<CRType<?>, Number>(col.id); 
-					columns[i].setUserData(col);
-					((TableColumn<CRType<?>, Number>) columns[i]).setCellValueFactory(cellData -> (ObservableValue<Number>) col.prop.apply (cellData.getValue()));
-					break;
-				case DOUBLE: 
-					columns[i] = new TableColumn<CRType<?>, Number>(col.id); 
-					((TableColumn<CRType<?>, Number>) columns[i]).setCellValueFactory(cellData -> (ObservableValue<Number>) col.prop.apply (cellData.getValue()));
-					((TableColumn<CRType<?>, Number>) columns[i]).setCellFactory(column -> { 
-						return new TableCell<CRType<?>, Number>() {
-					        @Override
-					        protected void updateItem(Number value , boolean empty) {
-					            super.updateItem(value, empty);
-				            	setText (((value == null) || empty) ? null : UISettings.get().getFormat().format(value.doubleValue()));
-					        }
-						}; 
-					}); 
-					break;
-				case STRING: 
-					columns[i] = new TableColumn<CRType<?>, String>(col.id); 
-					((TableColumn<CRType<?>, String>) columns[i]).setCellValueFactory(cellData -> (ObservableValue<String>) col.prop.apply (cellData.getValue()));
-					((TableColumn<CRType<?>, String>) columns[i]).setComparator((o1, o2) -> { 
-						if (o1==null) return 1;
-						if (o2==null) return -1;
-						return o1.compareToIgnoreCase(o2); 
-					});
-					// break;
-//				case CRCLUSTER: 
-//					columns[i] = new TableColumn<CRType, CRCluster>(col.id); 
-//					((TableColumn<CRType, CRCluster>) columns[i]).setCellValueFactory(cellData -> (ObservableValue<CRCluster>) col.prop.apply (cellData.getValue()));
-//					break;
-				default: assert false;
-			}
-			
-			columns[i].visibleProperty().bindBidirectional(UISettings.get().getColumnVisibleProperty(i));
-			
-			if (i==0) {
-				((TableColumn<CRType<?>, Number>) columns[ 0]).setCellValueFactory(cellData -> (ObservableValue<Number>) col.prop.apply (cellData.getValue()));
-			}
 
 
-		}
-		
-*/	
-		
-//		setRowFactory(x -> {
-//			TableRow<CRType> row = new TableRow<CRType>() {
-//				
-//				@Override
-//			    public void updateItem(CRType cr, boolean empty){
-//					
-//					if (cr==null) return;
-//					if (cr.getCO()==0) {
-//						this.setStyle("-fx-background-color:lightcoral");
-//					} else {
-//						this.setStyle("-fx-background-color:lightgreen");
-//					}
-//				}
-//				
-//			};
-//			
-//			return row;
-//		});
-		
 		getColumns().addAll(columns);
 		setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 		getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-		// if we use the Database Storage Engine --> we perform the sorting in the db
-		if (CRTable.type == CRTable.TABLE_IMPL_TYPES.DB) {
-			addEventHandler(SortEvent.ANY, event -> {
-				System.out.println("HEY, Sorted???");
-				// System.out.println(event);
-				System.out.println (((CRTableView) event.getSource()).getSortOrder().size());
+/*
 
-				if (getItems() != null) {
-					((OberservableCRList_DB<?>) getItems()).setSortOrder (
-						((CRTableView) event.getSource()).getSortOrder().stream()
+
+		// if we use a Storage Engine with custom sorting (e.g., db) --> we forward the sort operation to it (otherwise, the TableView performs sorting)
+
+		
+		if  (((L) getItems()).hasCustomSorting()) {
+
+			addEventHandler(SortEvent.ANY, event -> {
+
+				System.out.println("HEY, Sorted???");
+				System.out.println (((CRTableView<C,L>) event.getSource()).getSortOrder().size());
+
+				((ObservableCRList<?>) getItems()).setSortOrder (
+					((CRTableView<C,L>) event.getSource()).getSortOrder().stream()
 						.map(o -> String.format("%s %s", ((CRType_ColumnView.CRColumn) o.getUserData()).sqlName,  o.getSortType() == TableColumn.SortType.DESCENDING ? " DESC" : ""))
 						.collect( Collectors.joining(", ") )
-					);
-				}
+				);
+
 				refresh();
 				event.consume();
 
 			});
 		}
+
+*/		
 	}
-	
-	
-	
 
 
-//	public TableColumn<CRType, ?> getColumnByName (String name) {
-//		
-//		int idx = 0;
-//		for (CRColumn e: CRColumn.values()) {
-//			if (name.equalsIgnoreCase(e.id)) return columns[idx];
-//			idx++;
-//		}
-//		
-//		return null;
-//	}
-	
-//	
-//	private void setRowFactory(Callback<TableView<CRType>, TableRow<CRType>> value) {
-//		// TODO Auto-generated method stub
-//		
-//	}
 
 
 
@@ -198,13 +116,13 @@ public class CRTableView extends TableView<CRType<?>> {
 				getSortOrder().remove(i);
 			}
 		}
-		
+
 		/* sort by search first; remains other (if existing) search criteria */
 		columns[CRType_ColumnView.CRColumn.SEARCH_SCORE.ordinal()].setSortType(TableColumn.SortType.DESCENDING);
 		getSortOrder().add(0, columns[CRType_ColumnView.CRColumn.SEARCH_SCORE.ordinal()]);
 		sort();
-		
-		Optional<CRType<?>> first = getItems().stream().findFirst();
+
+		Optional<C> first = getItems().stream().findFirst();
 		if (first.isPresent()) {
 			getSelectionModel().clearSelection();
 			getSelectionModel().select(first.get());
@@ -213,23 +131,27 @@ public class CRTableView extends TableView<CRType<?>> {
 	}
 
 
+
+
+
+
 	public void orderByYearAndSelect (int year) {
 		/* sort by year ASC, n_cr desc */
 		columns[CRType_ColumnView.CRColumn.RPY.ordinal()].setSortType(TableColumn.SortType.ASCENDING);
 		columns[CRType_ColumnView.CRColumn.N_CR.ordinal()].setSortType(TableColumn.SortType.DESCENDING);
-		// getSortOrder().clear();
 		getSortOrder().setAll(
-			columns[CRType_ColumnView.CRColumn.RPY.ordinal()], 
+			columns[CRType_ColumnView.CRColumn.RPY.ordinal()],
 			columns[CRType_ColumnView.CRColumn.N_CR.ordinal()]);
 		sort();
-		Optional<CRType<?>> first = getItems().stream().filter(cr -> (cr.getRPY()!=null) && (cr.getRPY().intValue() == year)).findFirst();
-		if (first.isPresent()) {
-			int rowIndex = getItems().indexOf(first.get());
+
+		/* go to first row of specified year */
+		int rowIndex = getFirstRowByYear (year);
+		if (rowIndex >= 0) {
 			scrollTo(rowIndex);
 			getSelectionModel().clearSelection();
 			getSelectionModel().select(rowIndex);
 			requestFocus();
 		}
 	}
-	
+
 }

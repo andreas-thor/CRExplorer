@@ -14,12 +14,14 @@ import java.util.stream.Stream;
 
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRType;
+import cre.data.type.abs.ObservableCRList;
 import cre.data.type.abs.Statistics;
 import cre.data.type.abs.Statistics.IntRange;
 import cre.format.cre.Reader;
 import cre.store.db.DB_Store.Queries;
 import cre.store.mm.CRType_MM;
 import cre.store.mm.PubType_MM;
+import cre.ui.CRTableView;
 import cre.ui.statusbar.StatusBar;
 import javafx.collections.ObservableList;
 
@@ -68,9 +70,19 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	}
 
 	@Override
-	public ObservableList<CRType<?>> getObservableCRList() {
+	public CRTableView<? extends CRType<?>> getTableView() {
+		return new CRTableView_DB(this);
+	}
+
+
+	@Override
+	public ObservableList<CRType_DB> getObservableCRList() {
 		// I don't know why but we need to create an new instance here
 		observableCRList = new OberservableCRList_DB(dbCon, dbStore, statistics);
+		return observableCRList;
+	}
+
+	public OberservableCRList_DB getObservableCRList_DB() {
 		return observableCRList;
 	}
 

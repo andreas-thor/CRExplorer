@@ -22,12 +22,14 @@ import cre.data.CRStatsInfo;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRType;
 import cre.data.type.abs.Clustering;
+import cre.data.type.abs.ObservableCRList;
 import cre.data.type.abs.PubType;
 import cre.data.type.abs.Statistics.IntRange;
 import cre.format.cre.Writer;
 import cre.format.exporter.ExportFormat;
 import cre.format.importer.Crossref;
 import cre.format.importer.ImportFormat;
+import cre.store.db.OberservableCRList_DB;
 import cre.ui.UISettings.RangeType;
 import cre.ui.chart.CRChart;
 import cre.ui.chart.CRChart_HighCharts;
@@ -51,6 +53,7 @@ import cre.ui.statusbar.StatusBar;
 import cre.ui.statusbar.StatusBarFX;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -91,7 +94,7 @@ public class MainController {
 	@FXML
 	GridPane statPane;
 
-	private CRTableView tableView;
+	private CRTableView<? extends CRType<?>> tableView;
 	private MatchPanel matchView;
 	private Thread t;
 	private File creFile;
@@ -124,7 +127,7 @@ public class MainController {
 			noOfVisibleCRs.setText(String.format("Show all Cited References (currently %d of %d)", CRTable.get().getStatistics().getNumberOfCRsByVisibility(true), CRTable.get().getStatistics().getNumberOfCRs()));
 		});
 
-		tableView = new CRTableView();
+		tableView = crTable.getTableView(); // new CRTableView<CRType<?>>();
 		tablePane.add(tableView, 0, 1);
 		tableView.setOnKeyPressed(e -> {
 			if (e.getCode() == KeyCode.DELETE) {
@@ -262,9 +265,12 @@ public class MainController {
 	private void updateTableCRList(boolean triggeredByChartZoom) {
 		Platform.runLater(() -> {
 
+
+
+
 			// save sort order ...
 			List<TableColumn<CRType<?>, ?>> oldSort = new ArrayList<TableColumn<CRType<?>, ?>>();
-			tableView.getSortOrder().forEach(it -> oldSort.add(it));
+			tableView.getSortOrder().forEach(it -> oldSort.add((TableColumn<CRType<?>, ?>) it));
 
 			// ... update rows ...
 			tableView.getItems().clear();
@@ -274,7 +280,7 @@ public class MainController {
 			
 		
 
-			tableView.setItems(crTable.getObservableCRList());
+			tableView.setItems((ObservableList<CRType<?>>) crTable.getObservableCRList());
 
 			// ... reset old sort order
 			for (TableColumn<CRType<?>, ?> x : oldSort) {
@@ -919,7 +925,7 @@ public class MainController {
 		tableView.getSelectionModel().getSelectedItems().stream().forEach((CRType<?> cr) -> {
 			tableView.getColumns().filtered(c -> c.isVisible()).forEach(c -> {
 				buf.append("\"");
-				buf.append(c.getCellData(cr));
+				// buf.append(c.getCellData(cr));
 				buf.append("\"\t");
 			});
 			buf.append("\n");

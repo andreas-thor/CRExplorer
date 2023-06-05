@@ -11,9 +11,11 @@ import java.util.stream.Stream;
 // import cre.data.CRSearch;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRType;
+import cre.data.type.abs.ObservableCRList;
 import cre.data.type.abs.Statistics;
 import cre.data.type.abs.Statistics.IntRange;
 import cre.format.cre.Reader;
+import cre.ui.CRTableView;
 import cre.ui.statusbar.StatusBar;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -60,9 +62,13 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 		return this.crmatch;
 	}
 
+	@Override
+	public CRTableView<? extends CRType<?>> getTableView() {
+		return new CRTableView_MM();
+	}
 
 	@Override
-	public ObservableList<CRType<?>> getObservableCRList() {
+	public ObservableList<CRType_MM> getObservableCRList() {
 		// we return the entire CRTable as list for the TableView in the UI
 		return FXCollections.observableArrayList(getCR().filter(cr -> cr.getVI()).collect(Collectors.toList()));
 	}

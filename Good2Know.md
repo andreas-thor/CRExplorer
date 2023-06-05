@@ -1,19 +1,6 @@
 
 
-## TODO
 
-- dbstore: n_cr aktualisieren via SQL --> Performanz!
-- pub auch eine id bei MM (um Äquivalenz bei Export der Stores sicherzustellen)
-- matching mit großén Daten testen 
-    - mit climate500t: MM in ~1min; DB > 10min!!!
-    - --> besser (ca. 4:30min bei DB)
-
-
-- sortieren bei db
-    - db spaltenname ist nicht immer cr_[name] ... vielleicht in Column angeben?
-    - klick in Diagramm .. getItems().stream() geht nicht ... abstrahieren :-)
-
-- clustering db und dann vol anklicken --> führt zu Eception
 
 ## Eine neue Version deployen
 
@@ -55,3 +42,21 @@ Sample App installed based on https://openjfx.io/openjfx-docs/#gradle
     * runtimeOnly "org.openjfx:javafx ... in [app/build.gradle](app/build.gradle)
 
 
+
+## Bugs / ToDO
+
+    - klick in Diagramm .. getItems().stream() geht nicht ... abstrahieren :-)
+
+
+### DONE
+
+- dbstore: n_cr aktualisieren via SQL --> Performanz!
+- pub auch eine id bei MM (um Äquivalenz bei Export der Stores sicherzustellen)
+- matching mit großén Daten testen 
+    - mit climate500t: MM in ~1min; DB > 10min!!!
+    - --> besser (ca. 4:30min bei DB)
+
+- sortieren bei db
+    - db spaltenname ist nicht immer cr_[name] ... vielleicht in Column angeben?
+
+- clustering db und dann vol anklicken --> führt zu Eception

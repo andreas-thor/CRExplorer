@@ -14,6 +14,7 @@ class CRType_DB extends CRType<PubType_DB> {
 	private int clusterSize;
 	
 	private String blockingkey;
+	private int sortOrder;
 	
 	/**
 	 * Add cr to the batch of pst that eventually inserts the cr into the database
@@ -82,6 +83,14 @@ class CRType_DB extends CRType<PubType_DB> {
 
 	void setBlockingkey(String blockingkey) {
 		this.blockingkey = blockingkey;
+	}
+
+	int getSortOrder() {
+		return sortOrder;
+	}
+
+	void setSortOrder(int sortOrder) {
+		this.sortOrder = sortOrder;
 	}
 	
 	void setN_CR (int N_CR) {

@@ -107,6 +107,7 @@ class CRType_ResultSet implements Iterator<CRType_DB> {
 			cr.setTYPE(readString("CR_TYPE",null));
 
 			cr.setBlockingkey(readString("CR_BLOCKINGKEY",null));
+			cr.setSortOrder(readInt("CR_SORT_ORDER", -1));
 
 			return cr;
 		} catch (Exception e) {

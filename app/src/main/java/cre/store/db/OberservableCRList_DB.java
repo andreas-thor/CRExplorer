@@ -7,12 +7,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import cre.data.type.abs.CRType;
+import javafx.collections.ObservableList;
 import javafx.beans.InvalidationListener;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 
-public class OberservableCRList_DB<E> implements ObservableList<CRType<?>> {
+public class OberservableCRList_DB implements ObservableList<CRType_DB> {
 
     private Connection dbCon;
     private DB_Store dbStore;
@@ -34,6 +33,8 @@ public class OberservableCRList_DB<E> implements ObservableList<CRType<?>> {
 	}
 
 
+
+
     public void setSortOrder (String sortOrder) {
         // default sort order is by Id
         if ((sortOrder==null) || (sortOrder.trim().length()==0)) {
@@ -42,6 +43,9 @@ public class OberservableCRList_DB<E> implements ObservableList<CRType<?>> {
         this.sortOrder = sortOrder;
         invalidateCache();
     }
+
+
+
 
     public void invalidateCache() {
         this.cache_Start = -1;
@@ -78,7 +82,7 @@ public class OberservableCRList_DB<E> implements ObservableList<CRType<?>> {
 
 
     @Override
-    public CRType<?> get(int index) {
+    public CRType_DB get(int index) {
         
         // System.out.println(String.format("get(%d)", index));
 
@@ -111,14 +115,18 @@ public class OberservableCRList_DB<E> implements ObservableList<CRType<?>> {
 
 
 
+
+
+
+
     @Override
-    public void addListener(ListChangeListener<? super CRType<?>> listener) {
+    public void addListener(ListChangeListener<? super CRType_DB> listener) {
         // TODO Funktion wird aufgerufen --> HIER MUSS WAS REIN???
         System.out.println("addListener");
     }
 
     @Override
-    public void removeListener(ListChangeListener<? super CRType<?>> listener) {
+    public void removeListener(ListChangeListener<? super CRType_DB> listener) {
         // TODO Funktion wird aufgerufen --> HIER MUSS WAS REIN???
     }
 
@@ -134,176 +142,144 @@ public class OberservableCRList_DB<E> implements ObservableList<CRType<?>> {
     }
 
 
+
+
     @Override
-    public boolean add(CRType<?> arg0) {
-        // TODO Auto-generated method stub
+    public boolean add(CRType_DB arg0) {
         throw new UnsupportedOperationException("Unimplemented method 'add'");
     }
 
     @Override
-    public void add(int arg0, CRType<?> arg1) {
-        // TODO Auto-generated method stub
+    public void add(int arg0, CRType_DB arg1) {
         throw new UnsupportedOperationException("Unimplemented method 'add'");
     }
 
     @Override
-    public boolean addAll(Collection<? extends CRType<?>> arg0) {
-        // TODO Auto-generated method stub
+    public boolean addAll(Collection<? extends CRType_DB> arg0) {
         throw new UnsupportedOperationException("Unimplemented method 'addAll'");
     }
 
     @Override
-    public boolean addAll(int arg0, Collection<? extends CRType<?>> arg1) {
-        // TODO Auto-generated method stub
+    public boolean addAll(int arg0, Collection<? extends CRType_DB> arg1) {
         throw new UnsupportedOperationException("Unimplemented method 'addAll'");
     }
-
-
 
     @Override
     public boolean contains(Object arg0) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'contains'");
     }
 
     @Override
     public boolean containsAll(Collection<?> arg0) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'containsAll'");
     }
 
- 
-
-
-
     @Override
     public boolean isEmpty() {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'isEmpty'");
     }
 
     @Override
-    public Iterator<CRType<?>> iterator() {
-        // TODO Auto-generated method stub
+    public Iterator<CRType_DB> iterator() {
         throw new UnsupportedOperationException("Unimplemented method 'iterator'");
     }
 
     @Override
     public int lastIndexOf(Object arg0) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'lastIndexOf'");
     }
 
     @Override
-    public ListIterator<CRType<?>> listIterator() {
-        // TODO Auto-generated method stub
+    public ListIterator<CRType_DB> listIterator() {
         throw new UnsupportedOperationException("Unimplemented method 'listIterator'");
     }
 
     @Override
-    public ListIterator<CRType<?>> listIterator(int arg0) {
-        // TODO Auto-generated method stub
+    public ListIterator<CRType_DB> listIterator(int arg0) {
         throw new UnsupportedOperationException("Unimplemented method 'listIterator'");
     }
 
     @Override
     public boolean remove(Object arg0) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'remove'");
     }
 
     @Override
-    public CRType<?> remove(int arg0) {
-        // TODO Auto-generated method stub
+    public CRType_DB remove(int arg0) {
         throw new UnsupportedOperationException("Unimplemented method 'remove'");
     }
 
     @Override
     public boolean removeAll(Collection<?> arg0) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'removeAll'");
     }
 
     @Override
     public boolean retainAll(Collection<?> arg0) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'retainAll'");
     }
 
     @Override
-    public CRType<?> set(int arg0, CRType<?> arg1) {
-        // TODO Auto-generated method stub
+    public CRType_DB set(int arg0, CRType_DB arg1) {
         throw new UnsupportedOperationException("Unimplemented method 'set'");
     }
 
-
-
     @Override
-    public List<CRType<?>> subList(int arg0, int arg1) {
-        // TODO Auto-generated method stub
+    public List<CRType_DB> subList(int arg0, int arg1) {
         throw new UnsupportedOperationException("Unimplemented method 'subList'");
     }
 
     @Override
     public Object[] toArray() {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'toArray'");
     }
 
     @Override
     public <T> T[] toArray(T[] arg0) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'toArray'");
     }
 
     @Override
     public void addListener(InvalidationListener listener) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'addListener'");
     }
 
     @Override
     public void removeListener(InvalidationListener listener) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'removeListener'");
     }
 
-
-
     @Override
-    public boolean addAll(CRType<?>... elements) {
-        // TODO Auto-generated method stub
+    public boolean addAll(CRType_DB... elements) {
         throw new UnsupportedOperationException("Unimplemented method 'addAll'");
     }
 
     @Override
-    public boolean setAll(CRType<?>... elements) {
-        // TODO Auto-generated method stub
+    public boolean setAll(CRType_DB... elements) {
         throw new UnsupportedOperationException("Unimplemented method 'setAll'");
     }
 
     @Override
-    public boolean setAll(Collection<? extends CRType<?>> col) {
-        // TODO Auto-generated method stub
+    public boolean setAll(Collection<? extends CRType_DB> col) {
         throw new UnsupportedOperationException("Unimplemented method 'setAll'");
     }
 
     @Override
-    public boolean removeAll(CRType<?>... elements) {
-        // TODO Auto-generated method stub
+    public boolean removeAll(CRType_DB... elements) {
         throw new UnsupportedOperationException("Unimplemented method 'removeAll'");
     }
 
     @Override
-    public boolean retainAll(CRType<?>... elements) {
-        // TODO Auto-generated method stub
+    public boolean retainAll(CRType_DB... elements) {
         throw new UnsupportedOperationException("Unimplemented method 'retainAll'");
     }
 
     @Override
     public void remove(int from, int to) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'remove'");
     }
+
+
+
     
 }

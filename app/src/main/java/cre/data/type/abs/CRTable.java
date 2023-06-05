@@ -10,6 +10,7 @@ import cre.format.cre.Reader;
 import cre.store.db.CRTable_DB;
 import cre.store.mm.CRTable_MM;
 import cre.store.mm.PubType_MM;
+import cre.ui.CRTableView;
 import javafx.collections.ObservableList;
 
 public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> {
@@ -61,7 +62,9 @@ public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> {
 	
 	public abstract Clustering<C,P> getClustering();
 	
-	public abstract ObservableList<CRType<?>> getObservableCRList();
+	public abstract ObservableList<C> getObservableCRList();
+
+	public abstract CRTableView<? extends CRType<?>> getTableView();
 
 	public CRChartData getChartData() {
 		if (chartData == null) {
