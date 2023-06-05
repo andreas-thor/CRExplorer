@@ -1,7 +1,9 @@
 package cre.store.db;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -25,8 +27,8 @@ class DB_Store {
 
 		static public String getQuery(String name) {
 	    	try {
-	    		return new String(Files.readAllBytes(Paths.get(Queries.class.getResource(SQL_FILE_PREFIX + name).toURI())));
-			} catch (IOException | URISyntaxException e) {
+				return new String(Queries.class.getResourceAsStream(SQL_FILE_PREFIX + name).readAllBytes(), StandardCharsets.UTF_8);
+			} catch (IOException e) {
 				return null;
 			}
 	    }
