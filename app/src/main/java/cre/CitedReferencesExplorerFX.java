@@ -37,7 +37,7 @@ public class CitedReferencesExplorerFX extends Application {
 			if (arg.toLowerCase().startsWith("-db")) {
 				CRTable.type = TABLE_IMPL_TYPES.DB;
 				String[] split = arg.split("=");
-				CRTable.name = (split.length==2) ? split[1] : "test";
+				CRTable.name = (split.length==2) ? split[1] : null;
 				title += String.format(" (DB=%s)", CRTable.name); 
 			}
 		}
