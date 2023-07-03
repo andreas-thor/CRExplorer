@@ -103,10 +103,14 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	private CRTable_DB () { 
 		
 		try {
-			Class.forName("org.h2.Driver" );
-			
-			dbCon = DriverManager.getConnection(String.format ("jdbc:h2:%s", name==null ? "~/test" : name), "sa", "");	// embedded (file)
+			// Class.forName("org.h2.Driver" );
+			// dbCon = DriverManager.getConnection(String.format ("jdbc:h2:%s;RETENTION_TIME=0", name==null ? "~/test" : name), "sa", "");	// embedded (file)
 //			dbCon = DriverManager.getConnection("jdbc:h2:mem:test", "sa", "");	// in-memory
+
+
+			Class.forName("org.postgresql.Driver" );
+			dbCon = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "dbs");	
+
 
 			dbStore = new DB_Store(dbCon);
 			dbStore.init();

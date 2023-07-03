@@ -20,7 +20,8 @@ public class StatusBarText implements StatusBarUI {
 
 		if ((percent>0) && (!this.showProgress)) return;
 		
-		StringBuffer out = new StringBuffer(String.format("%s: %s", d.toString(), label));
+		// we ignore the parameter Date d but show the current date (time) always
+		StringBuffer out = new StringBuffer(String.format("%s: %s", (new Date()).toString(), label));
 		if (percent > 0) {
 			 out.append(String.format(" [%d%%]", percent));
 		} 

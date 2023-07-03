@@ -53,13 +53,31 @@ public class OberservableCRList_DB implements ObservableList<CRType_DB> {
         this.size = -1;
 
         try {
+            // H2
+            // int i = dbCon.createStatement().executeUpdate(String.format("""
+            //     UPDATE CR SET CR_SORT_ORDER = NULL;
+            //     MERGE INTO CR (CR_ID, CR_SORT_ORDER)
+            //     SELECT CR_ID, (ROW_NUMBER() OVER (ORDER BY %s))-1
+            //     FROM CR
+            //     WHERE CR_VI;
+            //     """, this.sortOrder));
+            
+            // PostgreSQL
+            // TODO: Auslagern in SQL
             int i = dbCon.createStatement().executeUpdate(String.format("""
-                UPDATE CR SET CR_SORT_ORDER = NULL;
-                MERGE INTO CR (CR_ID, CR_SORT_ORDER)
-                SELECT CR_ID, (ROW_NUMBER() OVER (ORDER BY %s))-1
-                FROM CR
-                WHERE CR_VI;
+                WITH CRWITHROW AS (
+                    SELECT CR_ID, (ROW_NUMBER() OVER (ORDER BY %s))-1 AS R
+                    FROM CR
+                    WHERE CR_VI
+                )
+                UPDATE CR 
+                SET CR_SORT_ORDER = CRWITHROW.R
+                FROM CRWITHROW
+                WHERE CR.CR_ID = CRWITHROW.CR_ID
                 """, this.sortOrder));
+
+
+
             dbCon.commit();
 
             System.out.println(String.format("setSortOrder update: %d", i));

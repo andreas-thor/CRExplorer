@@ -23,10 +23,10 @@ CREATE TABLE CR (
 	CR_SORT_ORDER int, 
 	CR_Format varchar, 
 	
-	CR_PERC_YR double, 
-	CR_PERC_ALL double, 
+	CR_PERC_YR double precision, 
+	CR_PERC_ALL double precision, 
 	CR_N_PYEARS int,	
-	CR_PYEAR_PERC double,
+	CR_PYEAR_PERC double precision,
 	CR_N_PCT_P50 int,
 	CR_N_PCT_P75 int,
 	CR_N_PCT_P90 int,
@@ -122,7 +122,7 @@ DROP TABLE IF EXISTS CR_MATCH_AUTO;
 CREATE TABLE CR_MATCH_AUTO ( 
 	CR_ID1 	int, 
 	CR_ID2 	int, 
-	sim double, 
+	sim double precision, 
 	PRIMARY KEY (CR_ID1, CR_ID2)  
 );
 
@@ -132,7 +132,7 @@ DROP TABLE IF EXISTS CR_MATCH_MANU;
 CREATE TABLE CR_MATCH_MANU ( 
 	CR_ID1 	int, 
 	CR_ID2 	int, 
-	sim 	double, 
+	sim 	double precision, 
 	tstamp 	bigint, 
 	PRIMARY KEY (CR_ID1, CR_ID2)  
 );

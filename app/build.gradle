@@ -72,6 +72,7 @@ dependencies {
 	implementation group: 'org.jfree', name: 'jfreechart-fx', version: '1.0.1'
 	implementation group: 'commons-io', name: 'commons-io', version: '2.6'
 	implementation group: 'com.h2database', name: 'h2', version: '2.1.214'
+	implementation group: 'org.postgresql', name: 'postgresql', version: '42.6.0'
  
  	runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:win"
 	runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:linux"
