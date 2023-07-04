@@ -153,8 +153,8 @@ class DB_Store {
 			if (updateCRIndicators_Counter>0) {
 				updateCRIndicators_PrepStmt.executeBatch();
 				updateCRIndicators_Counter = 0;
-				dbCon.commit();
 			}
+			dbCon.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -68,7 +68,7 @@ public class StorageEngineShort {
 			$ -> {
 				CRTable.get().getClustering().generateInitialClustering();
 				CRTable.get().getClustering().updateClustering(Clustering.ClusteringType.REFRESH, null, 0.8, false, false, false);
-				// CRTable.get().merge();
+				CRTable.get().merge();
 			}
 		);
 

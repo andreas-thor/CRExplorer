@@ -29,8 +29,6 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 	
 	public Clustering_DB(Connection dbCon) {
 		this.dbCon = dbCon;
-		
-
 	}
 	
 	
@@ -82,10 +80,13 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 						timestamp, crIds)
 				);
 			}
+
+			dbCon.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
+		
 		
 		// changeCR = all CRs that are in the same cluster as selCR
 		return CRTable_DB.get().getDBStore().selectCR(String.format("WHERE (CR_ClusterId1, CR_ClusterId2) IN (SELECT CR_ClusterId1, CR_ClusterId2 FROM CR WHERE CR.CR_ID IN (%s))", crIds)).collect(Collectors.toSet());
@@ -164,6 +165,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 			if (insertMatchAuto_Counter.get()>0) {
 				insertMatchAuto_PrepStmt.executeBatch();
 			}
+			dbCon.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -185,6 +187,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 
 			// remove all manual matches of lates timestamp
 			dbCon.createStatement().execute(String.format("DELETE FROM CR_MATCH_MANU WHERE tstamp = %d", tstamp));
+			dbCon.commit();
 			return null;
 			
 		} catch (SQLException e) {
@@ -256,6 +259,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 			
 
 			dbCon.createStatement().execute(Queries.getQuery("clustering", "finish"));
+			dbCon.commit();
 			StatusBar.get().setValue("Clustering done");
 
 			
@@ -307,6 +311,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 		// sortById is ignored since we need to have ORDER BY in the SQL query anyway to get the groups
 		try {
 			ResultSet rs = dbCon.createStatement().executeQuery(String.format("SELECT CR_ID1, CR_ID2, sim FROM CR_MATCH_%s ORDER BY CR_ID1, CR_ID2", manual?"MANU":"AUTO")); 
+			dbCon.commit();
 			return StreamSupport.stream(new MatchPairGroup_Resultset(rs).getIterable().spliterator(), false);
 		} catch (Exception e) {
 			e.printStackTrace();

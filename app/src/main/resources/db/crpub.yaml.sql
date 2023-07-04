@@ -138,7 +138,7 @@ create_schema:
 
 merge_cr: 
 
-  -- merged_into = CR of the cluster with the highest number of citations
+  /* merged_into = CR of the cluster with the highest number of citations */
   WITH CRWITHMERGE AS (
     SELECT CR_ID, FIRST_VALUE(CR_ID) OVER (PARTITION BY CR_ClusterId1, CR_ClusterId2 ORDER BY CR_N_CR DESC, CR_ID) AS V
     FROM CR
@@ -148,7 +148,7 @@ merge_cr:
   FROM CRWITHMERGE
   WHERE CR.CR_ID = CRWITHMERGE.CR_ID;
 
-  -- add new pub_id/cr_id pairs
+  /* add new pub_id/cr_id pairs */
   INSERT INTO PUB_CR
   (PUB_ID, CR_ID)
   SELECT DISTINCT PUB_ID, CR_MERGED_INTO
@@ -157,17 +157,17 @@ merge_cr:
   SELECT PUB_ID, CR_ID
   FROM PUB_CR;
 
-  -- remove stale pub_id/cr_id pars
+  /* remove stale pub_id/cr_id pars */
   DELETE
   FROM PUB_CR
   WHERE CR_ID NOT IN (SELECT CR_MERGED_INTO FROM CR);
 
-  -- remove CRs that are merged into other CR
+  /* remove CRs that are merged into other CR */
   DELETE 
   FROM CR
   WHERE CR_ID != CR_MERGED_INTO;
 
-  -- update remainings CRs (sum of N_CR; re-init Clustering)
+  /* update remainings CRs (sum of N_CR; re-init Clustering) */
   WITH CRClusterInit AS (
     SELECT CR_ID, COUNT(*) AS N 
     FROM PUB_CR
@@ -183,9 +183,10 @@ merge_cr:
   FROM CRClusterInit
   WHERE CR.CR_ID = CRClusterInit.CR_ID;
 
-  -- remove match results
+  /* remove match results */
   TRUNCATE TABLE CR_MATCH_AUTO;
   TRUNCATE TABLE CR_MATCH_MANU;
+
 
 pst_insert_cr:
 

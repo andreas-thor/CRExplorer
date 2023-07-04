@@ -108,7 +108,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
 
 			Class.forName("org.postgresql.Driver" );
-			dbCon = DriverManager.getConnection("jdbc:postgresql://localhost:5455/postgres", "postgres", "cre");	
+			dbCon = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "dbs");	
 
 
 			dbStore = new DB_Store(dbCon);
@@ -206,10 +206,12 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 		try {
 			StatusBar.get().setValue("Merging ");
 			dbCon.createStatement().execute(Queries.getQuery("crpub", "merge_cr"));
+			dbCon.commit();
 			updateData();
 			StatusBar.get().setValue("Merging done");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			System.out.println(e);
 			e.printStackTrace();
 		}
 		

@@ -66,7 +66,7 @@ refresh:
     ); 
 
     INSERT INTO CR_Cluster (CR_ID, CR_ClusterId1, CR_ClusterId2, CR_VOL, CR_PAG, CR_DOI)
-    SELECT CR_ID, CR_ID AS CR_ClusterId1, CR_ID AS CR_ClusterId2, CR_VOL, CR_PAG, CR_DOI
+    SELECT CR_ID, CR_ClusterId1, CR_ClusterId2, CR_VOL, CR_PAG, CR_DOI
     FROM CR;
 
 
