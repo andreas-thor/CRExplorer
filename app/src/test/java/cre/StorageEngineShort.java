@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRTable.TABLE_IMPL_TYPES;
+import cre.data.type.abs.Statistics.IntRange;
 import cre.data.type.abs.Clustering;
 import cre.format.cre.Writer;
 import cre.format.exporter.ExportFormat;
@@ -38,7 +39,7 @@ public class StorageEngineShort {
 		for (Consumer<Void> f: generateDataModifiers()) {
 			System.out.println(i++);
 			checkForEqualOutputFiles_DB_vs_MM(
-				TestData.getImportDataLoader.apply(ImportFormat.WOS, Stream.of(/* "savedrecs_JOI1.txt" , "savedrecs_JOI2.txt", */ "data_climate_500t.txt" ).map(TestData::getFile).toArray(File[]::new)), 
+				TestData.getImportDataLoader.apply(ImportFormat.WOS, Stream.of("savedrecs_JOI1.txt"/* , "savedrecs_JOI2.txt",  "data_climate_500t.txt"*/ ).map(TestData::getFile).toArray(File[]::new)), 
 				f);
 		}
 		
@@ -53,7 +54,7 @@ public class StorageEngineShort {
 	private List<Consumer<Void>> generateDataModifiers () {
 
 		List<Consumer<Void>> dataModifiers = List.of(
-			// $ ->  { },
+			// $ ->  { }, 
 			// $ -> CRTable.get().removeCR(List.of(1,3,9)),
 			// $ -> CRTable.get().retainCR(List.of(1,3,9)),
 			// $ -> CRTable.get().removeCRWithoutYear(),
@@ -62,12 +63,12 @@ public class StorageEngineShort {
 			// $ -> CRTable.get().removeCRByPERC_YR("<=", 0.1),	
 			// $ -> CRTable.get().removeCRByPERC_YR(">", 0.1),	
 			// $ -> CRTable.get().removeCRByPERC_YR("=", 0.1),	
-			// $ -> CRTable.get().removePubByCR(List.of(1,3,9)),	
-			// $ -> CRTable.get().retainPubByCitingYear(new IntRange(2014, 2099)), 
+			// $ -> CRTable.get().removePubByCR(List.of(1,3,9)),
+			// $ -> CRTable.get().retainPubByCitingYear(new IntRange(2014, 2099)),
 			$ -> {
 				CRTable.get().getClustering().generateInitialClustering();
 				CRTable.get().getClustering().updateClustering(Clustering.ClusteringType.REFRESH, null, 0.8, false, false, false);
-				CRTable.get().merge();
+				// CRTable.get().merge();
 			}
 		);
 

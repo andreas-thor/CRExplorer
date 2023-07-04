@@ -51,7 +51,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 			if ((matchType==Clustering.ManualMatchType.SAME) || (matchType==Clustering.ManualMatchType.DIFFERENT)) {
 				double sim = (matchType==Clustering.ManualMatchType.SAME) ? 2d : -2d;
 			
-				PreparedStatement insertMatchManu_PrepStmt = dbCon.prepareStatement(DB_Store.Queries.getQuery("pst_insert_match_manu.sql"));
+				PreparedStatement insertMatchManu_PrepStmt = dbCon.prepareStatement(Queries.getQuery("clustering", "pst_insert_match_manu"));
 
 				for (Integer cr1Id: selCR) {
 					for (Integer cr2Id: selCR) {
@@ -123,7 +123,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 			// Matching: author lastname & journal name
 
 			this.dbCon.createStatement().execute("TRUNCATE TABLE CR_MATCH_AUTO");
-			PreparedStatement insertMatchAuto_PrepStmt = dbCon.prepareStatement(DB_Store.Queries.getQuery("pst_insert_match_auto.sql"));
+			PreparedStatement insertMatchAuto_PrepStmt = dbCon.prepareStatement(Queries.getQuery("clustering", "pst_insert_match_auto"));
 			AtomicInteger insertMatchAuto_Counter = new AtomicInteger(0);
 			
 			NewMatchingPair<CRType_DB> newMatchPair = (CRType_DB cr1, CRType_DB cr2, double sim) -> {
@@ -207,14 +207,14 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 			if (type == Clustering.ClusteringType.INIT) {	// consider manual (automatic?) matches only
 				// reset all clusters (each CR forms an individual clustering)
 				dbCon.createStatement().execute(
-					String.format(Locale.US, DB_Store.Queries.getQuery("clustering/init.sql"), 
+					String.format(Locale.US, Queries.getQuery("clustering", "init"), 
 						threshold));
 			}
 			
 			if (type == Clustering.ClusteringType.REFRESH) {
 				// reset clusterId2 only 
 				dbCon.createStatement().execute(
-					String.format(Locale.US, DB_Store.Queries.getQuery("clustering/refresh.sql"), 
+					String.format(Locale.US, Queries.getQuery("clustering", "refresh"), 
 						threshold, 
 						changeCRIds==null ? "" : String.format("WHERE CR_ID IN (%s)", changeCRIds)));
 			}
@@ -230,7 +230,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 			
 			// Locale.US makes sure that the threshold value has a point and no comma (-> would lead to SQL syntax error)
 			PreparedStatement updateclustering_PrepStmt = dbCon.prepareStatement(
-				String.format(Locale.US, DB_Store.Queries.getQuery("clustering/update.sql"), 
+				String.format(Locale.US, Queries.getQuery("clustering", "update"), 
 				and));
 
 
@@ -255,7 +255,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 			updateclustering_PrepStmt.close();
 			
 
-			dbCon.createStatement().execute(DB_Store.Queries.getQuery("clustering/finish.sql"));
+			dbCon.createStatement().execute(Queries.getQuery("clustering", "finish"));
 			StatusBar.get().setValue("Clustering done");
 
 			
@@ -271,9 +271,9 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 	@Override
 	public long getNumberOfMatches(boolean manual) {
 		try {
-			dbCon.setAutoCommit(true);
 			Statement stmt = dbCon.createStatement();
 			ResultSet rs = stmt.executeQuery(String.format("SELECT COUNT(*) FROM CR_MATCH_%s", manual ? "MANU" : "AUTO"));
+			dbCon.commit();
 			rs.next();
 			long res = rs.getLong(1);
 			stmt.close();
@@ -286,9 +286,9 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 	@Override
 	public long getNumberOfClusters() {
 		try {
-			dbCon.setAutoCommit(true);
 			Statement stmt = dbCon.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM ( SELECT  DISTINCT CR_ClusterId1, CR_ClusterId2  FROM CR ) AS T");
+			dbCon.commit();
 			rs.next();
 			long res = rs.getLong(1);
 			stmt.close();

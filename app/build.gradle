@@ -73,6 +73,7 @@ dependencies {
 	implementation group: 'commons-io', name: 'commons-io', version: '2.6'
 	implementation group: 'com.h2database', name: 'h2', version: '2.1.214'
 	implementation group: 'org.postgresql', name: 'postgresql', version: '42.6.0'
+	implementation group: 'org.yaml', name: 'snakeyaml', version: '1.24'
  
  	runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:win"
 	runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:linux"

@@ -1,5 +1,12 @@
 
 
+## PostgreSQL Datenbank bereitstellen
+
+
+
+``docker run --name CREPostgres -p 5455:5432 -e POSTGRES_PASSWORD=cre -d postgres:15.2``
+
+``docker rm CREPostgres``
 
 
 ## Eine neue Version deployen

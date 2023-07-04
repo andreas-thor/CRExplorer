@@ -7,7 +7,6 @@ import java.sql.Types;
 import java.util.List;
 
 import cre.format.cre.Reader;
-import cre.store.db.DB_Store.Queries;
 import cre.store.mm.CRType_MM;
 import cre.store.mm.PubType_MM;
 
@@ -35,19 +34,19 @@ public class Reader_DB extends Reader {
 	public Reader_DB(Connection dbCon) throws SQLException {
 		this.dbCon = dbCon;
 		
-		pst_OnNewCR = dbCon.prepareStatement(Queries.getQuery("reader/on_new_cr.sql"));
+		pst_OnNewCR = dbCon.prepareStatement(Queries.getQuery("reader", "on_new_cr"));
 		pst_OnNewCR_Counter = 0;
 		
-		pst_OnNewPub = dbCon.prepareStatement(Queries.getQuery("reader/on_new_pub.sql"));
+		pst_OnNewPub = dbCon.prepareStatement(Queries.getQuery("reader", "on_new_pub"));
 		pst_OnNewPub_Counter = 0;
 		
-		pst_OnNewPub_CR = dbCon.prepareStatement(Queries.getQuery("reader/on_new_pub_cr.sql"));
+		pst_OnNewPub_CR = dbCon.prepareStatement(Queries.getQuery("reader", "on_new_pub_cr"));
 		pst_OnNewPub_CR_Counter = 0;
 		
-		pst_OnNew_MatchPair_Manu = dbCon.prepareStatement(Queries.getQuery("reader/on_new_matchpair_manu.sql"));
+		pst_OnNew_MatchPair_Manu = dbCon.prepareStatement(Queries.getQuery("reader", "on_new_matchpair_manu"));
 		pst_OnNew_MatchPair_Manu_Counter = 0;
 		
-		pst_OnNew_MatchPair_Auto = dbCon.prepareStatement(Queries.getQuery("reader/on_new_matchpair_auto.sql"));
+		pst_OnNew_MatchPair_Auto = dbCon.prepareStatement(Queries.getQuery("reader", "on_new_matchpair_auto"));
 		pst_OnNew_MatchPair_Auto_Counter = 0;
 
 		
@@ -226,7 +225,7 @@ public class Reader_DB extends Reader {
 				pst_OnNew_MatchPair_Auto_Counter = 0;
 			}		
 			
-			this.dbCon.createStatement().execute(Queries.getQuery("reader/on_after_load.sql"));
+			this.dbCon.createStatement().execute(Queries.getQuery("reader", "on_after_load"));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

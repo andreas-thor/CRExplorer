@@ -1,11 +1,7 @@
 package cre.store.db;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,20 +16,6 @@ import cre.data.type.abs.PubType;
 
 class DB_Store { 
 
-	
-	public static class Queries {
-
-		private final static String SQL_FILE_PREFIX = "/store/db/sql/"; 
-
-		static public String getQuery(String name) {
-	    	try {
-				return new String(Queries.class.getResourceAsStream(SQL_FILE_PREFIX + name).readAllBytes(), StandardCharsets.UTF_8);
-			} catch (IOException e) {
-				return null;
-			}
-	    }
-	}	
-	
 	
 	private PreparedStatement insertCR_PrepStmt;
 	private int insertCR_Counter;
@@ -68,17 +50,17 @@ class DB_Store {
 		
 		/* create tables */
 		Statement stmt = dbCon.createStatement();
-		stmt.execute(Queries.getQuery("create_schema.sql"));
+		stmt.execute(Queries.getQuery("crpub", "create_schema"));
 		stmt.close();
 		
 		/* create prepared statements & sql scripts */
-		insertCR_PrepStmt = dbCon.prepareStatement(Queries.getQuery("pst_insert_cr.sql")); 
+		insertCR_PrepStmt = dbCon.prepareStatement(Queries.getQuery("crpub", "pst_insert_cr")); 
 		insertCR_Counter = 0;
-		insertPub_PrepStmt = dbCon.prepareStatement(Queries.getQuery("pst_insert_pub.sql"));
+		insertPub_PrepStmt = dbCon.prepareStatement(Queries.getQuery("crpub", "pst_insert_pub"));
 		insertPub_Counter = 0;
-		updateCRIndicators_PrepStmt = dbCon.prepareStatement(Queries.getQuery("pst_update_cr_indicators.sql"));
+		updateCRIndicators_PrepStmt = dbCon.prepareStatement(Queries.getQuery("crpub", "pst_update_cr_indicators"));
 		updateCRIndicators_Counter = 0;		
-		wrapup_insert_SQL = Queries.getQuery("wrapup_insert.sql");
+		wrapup_insert_SQL = Queries.getQuery("crpub", "wrapup_insert");
 		
 		dbCon.commit();
 	}
@@ -222,10 +204,10 @@ class DB_Store {
 	void removeCR (String predicate) {
 		try {
 			Statement stmt = dbCon.createStatement();
-			stmt.executeUpdate(String.format ("DELETE PUB_CR WHERE CR_ID IN (SELECT CR_ID FROM CR WHERE %s)",  predicate)); 
-			stmt.executeUpdate(String.format ("DELETE CR_MATCH_AUTO WHERE CR_ID1 IN (SELECT CR_ID FROM CR WHERE %1$s) OR CR_ID2 IN (SELECT CR_ID FROM CR WHERE %1$s)",  predicate)); 
-			stmt.executeUpdate(String.format ("DELETE CR_MATCH_MANU WHERE CR_ID1 IN (SELECT CR_ID FROM CR WHERE %1$s) OR CR_ID2 IN (SELECT CR_ID FROM CR WHERE %1$s)",  predicate)); 
-			stmt.executeUpdate(String.format ("DELETE CR WHERE %s",  predicate)); 
+			stmt.executeUpdate(String.format ("DELETE FROM PUB_CR WHERE CR_ID IN (SELECT CR_ID FROM CR WHERE %s)",  predicate)); 
+			stmt.executeUpdate(String.format ("DELETE FROM CR_MATCH_AUTO WHERE CR_ID1 IN (SELECT CR_ID FROM CR WHERE %1$s) OR CR_ID2 IN (SELECT CR_ID FROM CR WHERE %1$s)",  predicate)); 
+			stmt.executeUpdate(String.format ("DELETE FROM CR_MATCH_MANU WHERE CR_ID1 IN (SELECT CR_ID FROM CR WHERE %1$s) OR CR_ID2 IN (SELECT CR_ID FROM CR WHERE %1$s)",  predicate)); 
+			stmt.executeUpdate(String.format ("DELETE FROM CR WHERE %s",  predicate)); 
 			dbCon.commit();
 			CRTable_DB.get().updateData();
 		} catch (SQLException e) {
@@ -269,7 +251,7 @@ class DB_Store {
 			// 	""", crIds));
 
 			// delete pub-cr-relationship (must be after pubs because we need the pub_cr info to identify the pubs to be removed)
-			stmt.executeUpdate(String.format ("DELETE PUB_CR WHERE PUB_ID %s", predicate));
+			stmt.executeUpdate(String.format ("DELETE FROM PUB_CR WHERE PUB_ID %s", predicate));
 			
 			// update N_CR 
 			stmt.executeUpdate("""

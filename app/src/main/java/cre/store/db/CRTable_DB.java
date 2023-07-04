@@ -16,7 +16,6 @@ import cre.data.type.abs.CRTable;
 import cre.data.type.abs.Statistics;
 import cre.data.type.abs.Statistics.IntRange;
 import cre.format.cre.Reader;
-import cre.store.db.DB_Store.Queries;
 import cre.store.mm.CRType_MM;
 import cre.store.mm.PubType_MM;
 import cre.ui.statusbar.StatusBar;
@@ -109,7 +108,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
 
 			Class.forName("org.postgresql.Driver" );
-			dbCon = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "dbs");	
+			dbCon = DriverManager.getConnection("jdbc:postgresql://localhost:5455/postgres", "postgres", "cre");	
 
 
 			dbStore = new DB_Store(dbCon);
@@ -206,7 +205,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 		
 		try {
 			StatusBar.get().setValue("Merging ");
-			dbCon.createStatement().execute(Queries.getQuery("merge.sql"));
+			dbCon.createStatement().execute(Queries.getQuery("crpub", "merge_cr"));
 			updateData();
 			StatusBar.get().setValue("Merging done");
 		} catch (SQLException e) {
