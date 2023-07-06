@@ -5,16 +5,19 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.Test;
 
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRType;
 import cre.data.type.abs.Statistics;
+import cre.data.type.abs.CRTable.TABLE_IMPL_TYPES;
 import cre.format.exporter.ExportFormat;
 import cre.format.exporter.Scopus;
 import cre.format.importer.ImportFormat;
@@ -59,22 +62,22 @@ public class FileFormats {
     @Test
     public void checkFileFormatEquivalence() throws IOException {
 
-        System.out.println("HHHHH");
-        return;
+        // System.out.println("HHHHH");
+        // return;
         
-        // CRTable.type = TABLE_IMPL_TYPES.MM;
+        CRTable.type = TABLE_IMPL_TYPES.MM;
 
 
-        // Map<ExportFormat, ImportFormat> formats = Map.of(
-        //     // ExportFormat.WOS, ImportFormat.WOS,
-        //         ExportFormat.SCOPUS, ImportFormat.SCOPUS
-        //     );
+        Map<ExportFormat, ImportFormat> formats = Map.of(
+            // ExportFormat.WOS, ImportFormat.WOS,
+                ExportFormat.SCOPUS, ImportFormat.SCOPUS
+            );
 
 
-        // formats.forEach((exportFormat, importFormat) -> 
-        //     exportAndImportAgain (
-        //         TestData.getImportDataLoader.apply(ImportFormat.WOS, Stream.of("savedrecs_JOI1.txt" /*, "savedrecs_JOI2.txt"*/).map(TestData::getFile).toArray(File[]::new)),
-        //         exportFormat, importFormat));
+        formats.forEach((exportFormat, importFormat) -> 
+            exportAndImportAgain (
+                TestData.getImportDataLoader.apply(ImportFormat.WOS, Stream.of("savedrecs_JOI1.txt" /*, "savedrecs_JOI2.txt"*/).map(TestData::getFile).toArray(File[]::new)),
+                exportFormat, importFormat));
                 
 
     }

@@ -25,9 +25,10 @@ public class ScriptExecutionEngine {
 
 		for (String arg: args) {
 			if (arg.toLowerCase().startsWith("-db")) {
+
 				CRTable.type = TABLE_IMPL_TYPES.DB;
 				String[] split = arg.split("=");
-				CRTable.name = (split.length==2) ? split[1] : "test";
+				CRTable.name = (split.length==2) ? split[1] : null;
 				System.out.println(String.format("***DB MODE*** (%s)", CRTable.name)); 
 			}
 		}

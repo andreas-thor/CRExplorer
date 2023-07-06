@@ -108,7 +108,8 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
 
 			Class.forName("org.postgresql.Driver" );
-			dbCon = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "dbs");	
+			String url = CRTable.name==null ? "localhost:5455/postgres" : CRTable.name;
+			dbCon = DriverManager.getConnection("jdbc:postgresql://" + url, "postgres", "cre");	
 
 
 			dbStore = new DB_Store(dbCon);
