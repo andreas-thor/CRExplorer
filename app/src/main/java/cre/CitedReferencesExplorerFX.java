@@ -14,6 +14,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRTable.TABLE_IMPL_TYPES;
+import cre.store.db.CRTable_DB;
 
 
 public class CitedReferencesExplorerFX extends Application {
@@ -33,16 +34,26 @@ public class CitedReferencesExplorerFX extends Application {
 			loadOnOpen = args[1];
 		}
 
+		setDatabaseParams(args);
+		if (CRTable.type == TABLE_IMPL_TYPES.DB) {
+			title += String.format(" (DB=%s)", CRTable_DB.url); 
+		}
+
+		launch(args);
+	}
+
+
+	public static void setDatabaseParams (String[] args) {
 		for (String arg: args) {
 			if (arg.toLowerCase().startsWith("-db")) {
 				CRTable.type = TABLE_IMPL_TYPES.DB;
 				String[] split = arg.split("=");
-				CRTable.name = (split.length==2) ? split[1] : null;
-				title += String.format(" (DB=%s)", CRTable.name); 
+				if (split.length==2) CRTable_DB.url=split[1];
+			}
+			if (arg.equalsIgnoreCase("-nocreate")) {
+				CRTable_DB.createSchemaOnStartup = false;
 			}
 		}
-
-		launch(args);
 	}
 
 	public static void updateTitle () {

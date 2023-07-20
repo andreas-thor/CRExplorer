@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:15.2
+    container_name: CREPostgres
+    environment:
+      POSTGRES_USER: cre
+      POSTGRES_PASSWORD: cre
+      PGDATA: /var/lib/postgresql/data/pgdata      
+    ports:
+      - "5455:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  
+
+volumes:
+  pgdata:

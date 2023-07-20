@@ -11,19 +11,49 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.lang3.tuple.Triple;
 import org.simmetrics.StringMetric;
 import org.simmetrics.metrics.StringMetrics;
 
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.Clustering;
 import cre.data.type.abs.MatchPairGroup;
+import cre.store.mm.CRType_MM;
 import cre.ui.statusbar.StatusBar;
 
 public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
+
+	private class CRPair {
+		
+		int cr1;
+		int cr2;
+		Double s;
+
+		public CRPair(CRType_DB cr1, CRType_DB cr2, Double s) {
+			super();
+			
+			if (cr1.getID()<cr2.getID()) {
+				this.cr1 = cr1.getID();
+				this.cr2 = cr2.getID();
+			} else {
+				this.cr1 = cr2.getID();
+				this.cr2 = cr1.getID();
+			}
+			this.s = s;
+		}
+		
+
+		@Override
+		public String toString () {
+			return (this.cr1 + "/" + this.cr2 + "/" + this.s);
+		}
+		
+	}
 
 	private Connection dbCon;
 	
@@ -107,12 +137,26 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 				"CASE WHEN (cr_RPY is not null) AND  (cr_AU_L is not null) AND (length(cr_AU_L)>0) " + 
 				"THEN concat (cr_rpy, lower (substring(cr_AU_L,  1, 1))) ELSE NULL END ");
 
-			ResultSet rs = dbCon.createStatement().executeQuery ("SELECT COUNT (DISTINCT CR_BLOCKINGKEY) FROM CR WHERE NOT (CR_BLOCKINGKEY IS NULL)");
+			// ResultSet rs = dbCon.createStatement().executeQuery ("SELECT COUNT (DISTINCT CR_BLOCKINGKEY) FROM CR WHERE NOT (CR_BLOCKINGKEY IS NULL)");
+
+			ResultSet rs = dbCon.createStatement().executeQuery ("""
+				SELECT COUNT(K), SUM(N*(N-1)/2)	
+				FROM (
+					SELECT CR_BLOCKINGKEY AS K, COUNT(*) AS N
+					FROM CR
+					WHERE NOT (CR_BLOCKINGKEY IS NULL)
+					GROUP BY CR_BLOCKINGKEY
+				) AS T
+				""");
+
+
 			rs.next();
 			int noOfBlocks = rs.getInt(1);
+			long noOfComparisons = rs.getLong(2);
 			rs.close();
 			
-			StatusBar.get().initProgressbar(noOfBlocks, String.format("Matching %d objects in %d blocks", CRTable.get().getStatistics().getNumberOfCRs(), noOfBlocks));
+			StatusBar.get().initProgressbar(noOfComparisons, String.format("Matching %d objects in %d blocks (%d comparisons)", 
+				CRTable.get().getStatistics().getNumberOfCRs(), noOfBlocks, noOfComparisons));
 
 			StringMetric l = StringMetrics.levenshtein();
 			
@@ -124,6 +168,8 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 			// Matching: author lastname & journal name
 
 			this.dbCon.createStatement().execute("TRUNCATE TABLE CR_MATCH_AUTO");
+			this.dbCon.commit();
+
 			PreparedStatement insertMatchAuto_PrepStmt = dbCon.prepareStatement(Queries.getQuery("clustering", "pst_insert_match_auto"));
 			AtomicInteger insertMatchAuto_Counter = new AtomicInteger(0);
 			
@@ -137,19 +183,31 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 					if (insertMatchAuto_Counter.incrementAndGet()>=1000) {
 						insertMatchAuto_PrepStmt.executeBatch();
 						insertMatchAuto_Counter.set(0);
+						dbCon.commit();
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 				return;
 			};
+
+			// temp: for time measuring
+			AtomicLong lastTime = new AtomicLong(System.currentTimeMillis());
+			AtomicInteger lastBlockSize = new AtomicInteger(1);
 			
+			// Version 1: selectCR
+/*			
 			List<CRType_DB> crlist = new ArrayList<CRType_DB>();
 			StringBuffer lastBlockingKey = new StringBuffer();
-			
 			CRTable_DB.get().getDBStore().selectCR("WHERE NOT (CR_BLOCKINGKEY IS NULL) ORDER BY CR_BLOCKINGKEY").forEach( cr -> {
 			
 				if (!lastBlockingKey.toString().equals(cr.getBlockingkey())) {
+					long now = System.currentTimeMillis();
+					double normalizedTime = 1000.0*(1d*now-lastTime.get())/(lastBlockSize.get()*lastBlockSize.get());
+					System.out.println(String.format("Block Size %5d , Normalized Time = %5.2f ", lastBlockSize.get(), normalizedTime));
+					lastTime.set(now);
+					lastBlockSize.set(crlist.size());
+					// System.out.println("Block size is " + crlist.size());
 					StatusBar.get().incProgressbar();
 					crossCompareCR(crlist, l, newMatchPair);
 					crlist.clear();
@@ -160,12 +218,86 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 				crlist.add(cr);
 			});
 			
+			System.out.println("Block size is " + crlist.size());
 			crossCompareCR(crlist, l, newMatchPair);
 			
 			if (insertMatchAuto_Counter.get()>0) {
 				insertMatchAuto_PrepStmt.executeBatch();
 			}
 			dbCon.commit();
+*/
+			// Version 2: selectCR_Block
+
+			
+			AtomicLong c = new AtomicLong(0);
+			AtomicLong noOfProcessedComparisons = new AtomicLong(0);
+
+			CRTable_DB.get().getDBStore().selectCRBlock("CR_BLOCKINGKEY", "WHERE NOT (CR_BLOCKINGKEY IS NULL) ORDER BY CR_BLOCKINGKEY")//.parallel()
+				.forEach( crlist -> {
+				
+				
+					StatusBar.get().incProgressbar(crlist.size()*(crlist.size()-1)/2);
+
+					List<CRPair> result = new ArrayList<>();
+					crossCompareCR(crlist, l, (CRType_DB cr1, CRType_DB cr2, double sim) -> {
+						// result.add(new CRPair(cr1, cr2, sim));
+
+						try {
+							insertMatchAuto_PrepStmt.setInt(1, cr1.getID());
+							insertMatchAuto_PrepStmt.setInt(2, cr2.getID());
+							insertMatchAuto_PrepStmt.setDouble(3, sim);
+							insertMatchAuto_PrepStmt.addBatch();
+
+							if (insertMatchAuto_Counter.incrementAndGet()>=1000) {
+								
+								insertMatchAuto_PrepStmt.executeBatch();
+								insertMatchAuto_Counter.set(0);
+								dbCon.commit();
+								
+								if (c.incrementAndGet()==2000) {
+									System.out.println("Total memory (bytes): " + Runtime.getRuntime().totalMemory());
+									System.out.println("Free memory (bytes): " + Runtime.getRuntime().freeMemory());
+									c.set(0);
+								}
+							}
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}	
+						
+					});
+					
+	
+						
+				});
+				// .flatMap(it -> it.stream())
+				// .sequential()
+				// .forEach(crpairList -> {
+					// try {
+						// insertMatchAuto_PrepStmt.setInt(1, crpair.cr1.getID());
+						// insertMatchAuto_PrepStmt.setInt(2, crpair.cr2.getID());
+						// insertMatchAuto_PrepStmt.setDouble(3, crpair.s);
+						// insertMatchAuto_PrepStmt.addBatch();
+						
+						// if (insertMatchAuto_Counter.addAndGet(crpairList.size())>=1000000) {
+							// insertMatchAuto_PrepStmt.executeBatch();
+							// System.out.println("#Matches: " + insertMatchAuto_Counter.get());
+							// insertMatchAuto_Counter.set(0);
+
+							// System.out.println("Total memory (bytes): " + Runtime.getRuntime().totalMemory());
+							// System.out.println("Free memory (bytes): " + Runtime.getRuntime().freeMemory());
+							// dbCon.commit();
+						// }
+					// } catch (SQLException e) {
+					// 	e.printStackTrace();
+					// }
+				// });
+			
+			if (insertMatchAuto_Counter.get()>0) {
+				insertMatchAuto_PrepStmt.executeBatch();
+			}
+			dbCon.commit();	
+
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

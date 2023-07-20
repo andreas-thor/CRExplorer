@@ -28,7 +28,8 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
 	private Connection dbCon;
 	private DB_Store dbStore;
-	
+	public static String url = "localhost:5455/cre";	// default database url; can be overwritten by main program
+	public static boolean createSchemaOnStartup = true;
 	
 	private boolean showNull;
 
@@ -108,9 +109,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
 
 			Class.forName("org.postgresql.Driver" );
-			String url = CRTable.name==null ? "localhost:5455/cre" : CRTable.name;
-			dbCon = DriverManager.getConnection("jdbc:postgresql://" + url, "cre", "cre");	
-
+			dbCon = DriverManager.getConnection("jdbc:postgresql://" + CRTable_DB.url, "cre", "cre");	
 
 			dbStore = new DB_Store(dbCon);
 			dbStore.init();
@@ -226,7 +225,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 		try {
 			// we may have some insert statements in the batch to be executed after loading
 			dbStore.finishInsert();
-
+			
 			Statement stmt = dbCon.createStatement();
 
 			IntRange range_RPY  = statistics.getMaxRangeRPY();

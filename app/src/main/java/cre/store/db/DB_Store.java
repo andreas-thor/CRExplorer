@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -48,11 +49,14 @@ class DB_Store {
 
 		dbCon.setAutoCommit(false);
 		
+
 		/* create tables */
-		Statement stmt = dbCon.createStatement();
-		stmt.execute(Queries.getQuery("crpub", "create_schema"));
-		stmt.close();
-		
+		if (CRTable_DB.createSchemaOnStartup) {
+			Statement stmt = dbCon.createStatement();
+			stmt.execute(Queries.getQuery("crpub", "create_schema"));
+			stmt.close();
+		}
+				
 		/* create prepared statements & sql scripts */
 		insertCR_PrepStmt = dbCon.prepareStatement(Queries.getQuery("crpub", "pst_insert_cr")); 
 		insertCR_Counter = 0;
@@ -162,7 +166,6 @@ class DB_Store {
 
 	Stream<CRType_DB> selectCR(String where ) {
 		
-		// System.out.println("selectCR");
 		try {
 			return StreamSupport.stream(new CRType_ResultSet(dbCon.prepareStatement("SELECT * FROM CR " + where).executeQuery()).getIterable().spliterator(), false);
 		} catch (Exception e) {
@@ -170,8 +173,21 @@ class DB_Store {
 			Stream<CRType_DB> emptyStr = Stream.of();
 			return emptyStr;
 		}
-
 	}
+
+	Stream<List<CRType_DB>> selectCRBlock(String blockAttribute, String where) {
+		
+		try {
+			return StreamSupport.stream(new CRType_ResultSet_Block(blockAttribute, dbCon.prepareStatement("SELECT * FROM CR " + where).executeQuery()).getIterable().spliterator(), false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Stream<List<CRType_DB>> emptyStr = Stream.of();
+			return emptyStr;
+		}
+	}
+
+
+	
 	
 	Stream<PubType_DB> selectPub(String where) {
 		

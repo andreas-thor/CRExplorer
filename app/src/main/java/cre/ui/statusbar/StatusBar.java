@@ -95,7 +95,7 @@ public class StatusBar {
 	public void initProgressbar (long maxSize, String label) {
 		
 		this.maxSize = maxSize;
-		this.blockSize = maxSize/20;
+		this.blockSize = maxSize/100;
 		this.blockCount = 0;
 		this.date = new Date();
 		this.label = label;
