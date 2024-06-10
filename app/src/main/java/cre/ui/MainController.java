@@ -714,6 +714,11 @@ public class MainController {
 	}
 
 	@FXML
+	public void OnMenuFileImportCSV(ActionEvent event) throws IOException {
+		importFiles(ImportFormat.CSV);
+	}
+
+	@FXML
 	public void OnMenuFileSave() throws IOException {
 		saveFile(false);
 	}
