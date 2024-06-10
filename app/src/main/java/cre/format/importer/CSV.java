@@ -51,6 +51,7 @@ public class CSV extends ImportReader {
             entries = new PubType_MM[ncrMax];
             for (int i=0; i<ncrMax; i++) {
                 entries[i] = new PubType_MM();
+                entries[i].setPY(3000);
                 for (int k=0; k<crsNCR.length; k++) {
                     if (i<crsNCR[k]) {
                         entries[i].addCR(parseCR(header, data.get(k)), true);
