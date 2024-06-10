@@ -40,10 +40,10 @@ public class CSV extends ImportReader {
             }
 
             String[] header = data.remove(0);
-            final int idxNCR = Arrays.asList(header).indexOf("N_CR");
 
-            // crs = data.stream().map(line -> parseCR(header, line)).toArray(CRType_MM[]::new);
-            crsNCR = data.stream().map(line -> Integer.valueOf(line[idxNCR])).toArray(Integer[]::new);
+            // get Number of NC_R per cr (if not available in header --> set to 1)
+            final int idxNCR = Arrays.asList(header).indexOf("N_CR");
+            crsNCR = data.stream().map(line -> idxNCR<0 ? 1 : Integer.valueOf(line[idxNCR])).toArray(Integer[]::new);
           
             int ncrMax = Arrays.asList(crsNCR).stream().max(Integer::compare).get().intValue();
             // we create fake pubs and add all CRs to these pubs
