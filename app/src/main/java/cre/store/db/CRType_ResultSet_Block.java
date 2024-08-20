@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import cre.data.type.abs.CRType.FORMATTYPE;
-
 /**
  * Iterator to generate a stream of CRType_DB from SQL result set
  * @author Andreas
@@ -83,7 +81,7 @@ class CRType_ResultSet_Block implements Iterator<List<CRType_DB>> {
 		cr.setDOI(readString("CR_DOI",null));
 		cr.setCluster(readInt("CR_ClusterId1", null), readInt("CR_ClusterId2", null), readInt("CR_ClusterSize", null));
 		cr.setVI(readBoolean("CR_VI", true));
-		cr.setFormatType(FORMATTYPE.valueOf(readString("CR_Format",null)));
+		cr.setFormatType(readString("CR_Format",null));
 
 		cr.setPERC_YR(readDouble("CR_PERC_YR", 0d));
 		cr.setPERC_ALL(readDouble("CR_PERC_ALL", 0d));

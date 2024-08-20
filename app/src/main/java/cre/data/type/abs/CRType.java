@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 public abstract class CRType<P extends PubType<?>> implements Comparable<CRType<P>> {
 
 	public static enum FORMATTYPE { 
+		UNKNOWN, 
 		WOS, 	
 		SCOPUS 
 	};
@@ -59,7 +60,7 @@ public abstract class CRType<P extends PubType<?>> implements Comparable<CRType<
 	private String SEQUENCE;
 	private String TYPE;	
 	
-	private FORMATTYPE formatType = null;	
+	private FORMATTYPE formatType = FORMATTYPE.UNKNOWN;	
 	private boolean flag;
 	
 
@@ -320,6 +321,22 @@ public abstract class CRType<P extends PubType<?>> implements Comparable<CRType<
 	public void setFormatType(FORMATTYPE type) {
 		this.formatType = type;
 	}
+	public void setFormatType(int ordinal) {
+		try {	
+			// ordinal should be 1, 2, etc. (0 = UNKNOWN)
+			this.formatType = FORMATTYPE.values()[ordinal];
+		} catch (ArrayIndexOutOfBoundsException  e) {
+			this.formatType = FORMATTYPE.UNKNOWN;
+		}
+	}
+	public void setFormatType(String formatName) {
+		try {	
+			this.formatType = FORMATTYPE.valueOf(formatName);
+		} catch (IllegalArgumentException | NullPointerException e) {
+			this.formatType = FORMATTYPE.UNKNOWN;
+		}
+	}
+	
 	
 	
 	public int getN_PCT(PERCENTAGE perc) {

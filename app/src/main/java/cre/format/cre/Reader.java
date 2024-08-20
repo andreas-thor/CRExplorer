@@ -15,7 +15,6 @@ import cre.Exceptions.AbortedException;
 import cre.Exceptions.FileTooLargeException;
 import cre.Exceptions.UnsupportedFileFormatException;
 import cre.data.type.abs.CRTable;
-import cre.data.type.abs.CRType.FORMATTYPE;
 import cre.data.type.abs.Clustering;
 import cre.store.mm.CRType_MM;
 import cre.store.mm.PubType_MM;
@@ -149,7 +148,7 @@ public abstract class Reader {
 				case "CID_S": 	/*cr.setCID_S(parser.getInt()); */ break;
 				case "VI": 		cr.setVI(parser.getInt()==1); break;
 				case "CO": 		cr.setCO(parser.getInt()); break;
-				case "type": 	cr.setFormatType (FORMATTYPE.values()[parser.getInt()-1]); break;	// LEGACY: Type were enumerated 1,2,...
+				case "type": 	cr.setFormatType (parser.getInt()); break;	// LEGACY: Type were enumerated 1,2,...; 0 = Unknown
 				default: System.out.println("CRDATA.json >> Unknow Key with Number Value: " + key); 
 				}
 				break;

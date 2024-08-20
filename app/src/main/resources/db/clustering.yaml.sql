@@ -45,12 +45,18 @@ init:
     DROP TABLE IF EXISTS CR_Match;
 
     CREATE TEMPORARY TABLE CR_MATCH AS (
-        SELECT CR_ID1, CR_ID2 FROM CR_MATCH_AUTO WHERE sim >= %1$.2f
-        UNION 
-        SELECT CR_ID1, CR_ID2 FROM CR_MATCH_MANU WHERE sim = 2
-        EXCEPT 
-        SELECT CR_ID1, CR_ID2 FROM CR_MATCH_MANU WHERE sim = -2
+        SELECT CR_ID1, CR_ID2, sim 
+        FROM CR_MATCH_AUTO 
+        WHERE sim >= %1$.2f AND (CR_ID1, CR_ID2) NOT IN (
+            SELECT CR_ID1, CR_ID2 FROM CR_MATCH_MANU WHERE sim = -2
+        )
     );
+
+    MERGE INTO CR_MATCH 
+    USING (SELECT CR_ID1, CR_ID2, sim FROM CR_MATCH_MANU WHERE sim = +2) AS M
+    ON (CR_MATCH.CR_ID1 = M.CR_ID1 AND CR_MATCH.CR_ID2 = M.CR_ID2)
+    WHEN MATCHED THEN UPDATE SET Sim = 2
+    WHEN NOT MATCHED THEN INSERT (CR_ID1, CR_ID2, sim) VALUES (M.CR_ID1, M.CR_ID2, M.Sim);
 
 refresh:
     DROP TABLE IF EXISTS CR_Cluster;
@@ -76,12 +82,18 @@ refresh:
     DROP TABLE IF EXISTS CR_Match;
 
     CREATE TEMPORARY TABLE CR_MATCH AS (
-        SELECT CR_ID1, CR_ID2 FROM CR_MATCH_AUTO WHERE sim >= %1$.2f
-        UNION 
-        SELECT CR_ID1, CR_ID2 FROM CR_MATCH_MANU WHERE sim = 2
-        EXCEPT 
-        SELECT CR_ID1, CR_ID2 FROM CR_MATCH_MANU WHERE sim = -2
+        SELECT CR_ID1, CR_ID2, sim 
+        FROM CR_MATCH_AUTO 
+        WHERE sim >= %1$.2f AND (CR_ID1, CR_ID2) NOT IN (
+            SELECT CR_ID1, CR_ID2 FROM CR_MATCH_MANU WHERE sim = -2
+        )
     );
+
+    MERGE INTO CR_MATCH 
+    USING (SELECT CR_ID1, CR_ID2, sim FROM CR_MATCH_MANU WHERE sim = +2) AS M
+    ON (CR_MATCH.CR_ID1 = M.CR_ID1 AND CR_MATCH.CR_ID2 = M.CR_ID2)
+    WHEN MATCHED THEN UPDATE SET Sim = 2
+    WHEN NOT MATCHED THEN INSERT (CR_ID1, CR_ID2, sim) VALUES (M.CR_ID1, M.CR_ID2, M.Sim);
 
 update:
     WITH CRWithNewCluster AS (
@@ -96,7 +108,9 @@ update:
                 FROM CR_Cluster AS CR1 
                 JOIN CR_MATCH ON (CR1.CR_ID = CR_MATCH.CR_ID1)
                 JOIN CR_Cluster AS CR2 ON (CR2.CR_ID = CR_MATCH.CR_ID2)
-                WHERE ((CR1.CR_ClusterID1 != CR2.CR_ClusterId1) OR (CR1.CR_ClusterID2 != CR2.CR_ClusterId2)) %1$s
+                WHERE ((CR1.CR_ClusterID1 != CR2.CR_ClusterId1) OR (CR1.CR_ClusterID2 != CR2.CR_ClusterId2)) 
+                AND ( (CR_MATCH.Sim = 2) OR ( %1$s ))
+                %2$s
             ) AS X
         ) AS Y
         WHERE R = 1

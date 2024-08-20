@@ -71,7 +71,7 @@ public class Writer {
 			 						jgenCR.write("CID_S", cr.getClusterSize());
 									jgenCR.write("VI", cr.getVI()?1:0);
 									jgenCR.write("CO", cr.getCO());
-									jgenCR.write("type", cr.getFormatType().ordinal()+1);	// LEGACY: Types were encoded 1,2, ...			
+									jgenCR.write("type", cr.getFormatType().ordinal());	// LEGACY: Types were encoded 1,2, ... (0 = Unknown)
 			jgenCR.writeEnd();
 			
 			StatusBar.get().incProgressbar();

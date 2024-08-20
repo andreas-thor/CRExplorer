@@ -356,17 +356,18 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 		
 
 			
-			String and = "";
-			and += useVol ? "AND COALESCE(CR1.CR_VOL, 'A') = COALESCE(CR2.CR_VOL, 'B') " : "";
-			and += usePag ? "AND COALESCE(CR1.CR_PAG, 'A') = COALESCE(CR2.CR_PAG, 'B') " : "";
-			and += useDOI ? "AND COALESCE(CR1.CR_DOI, 'A') = COALESCE(CR2.CR_DOI, 'B') " : "";
-			and += (changeCRIds != null) ? String.format ("AND CR1.CR_ID IN (%s) ", changeCRIds) : "";
-			and += (changeCRIds != null) ? String.format ("AND CR2.CR_ID IN (%s) ", changeCRIds) : "";
+			String sqlVOLPAGDOI = "true ";
+			sqlVOLPAGDOI += useVol ? "AND COALESCE(CR1.CR_VOL, 'A') = COALESCE(CR2.CR_VOL, 'B') " : "";
+			sqlVOLPAGDOI += usePag ? "AND COALESCE(CR1.CR_PAG, 'A') = COALESCE(CR2.CR_PAG, 'B') " : "";
+			sqlVOLPAGDOI += useDOI ? "AND COALESCE(CR1.CR_DOI, 'A') = COALESCE(CR2.CR_DOI, 'B') " : "";
+
+			String sqlChangeCRIds = (changeCRIds != null) ? String.format ("AND CR1.CR_ID IN (%s) AND CR2.CR_ID IN (%s)", changeCRIds, changeCRIds) : "";
+			
 			
 			// Locale.US makes sure that the threshold value has a point and no comma (-> would lead to SQL syntax error)
 			PreparedStatement updateclustering_PrepStmt = dbCon.prepareStatement(
 				String.format(Locale.US, Queries.getQuery("clustering", "update"), 
-				and));
+				sqlVOLPAGDOI, sqlChangeCRIds));
 
 
 			int noOfUpdates = -1;

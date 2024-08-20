@@ -143,6 +143,7 @@ public class MainController {
 					t.interrupt();
 				t = new Thread(() -> {
 					crTable.getClustering().updateClustering(Clustering.ClusteringType.REFRESH, null, threshold, useVol, usePag, useDOI);
+					tableView.updateTableViewData();
 					refreshTableValues();
 				});
 				t.start();
@@ -159,6 +160,8 @@ public class MainController {
 						new ConfirmAlert("Error during clustering!", true, new String[] { "Too many Cited References selected (at most 5)!" }).showAndWait();
 					} else {
 						crTable.getClustering().addManuMatching(toMatch, type, threshold, useVol, usePag, useDOI);
+						
+						tableView.updateTableViewData();
 						refreshTableValues();
 					}
 				}
@@ -167,6 +170,7 @@ public class MainController {
 			@Override
 			public void onMatchUnDo(double threshold, boolean useVol, boolean usePag, boolean useDOI) {
 				crTable.getClustering().undoManuMatching(threshold, useVol, usePag, useDOI);
+				tableView.updateTableViewData();
 				refreshTableValues();
 			}
 
