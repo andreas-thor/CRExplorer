@@ -6,11 +6,11 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 
-import cre.format.cre.Reader;
+import cre.data.type.abs.Loader;
 import cre.store.mm.CRType_MM;
 import cre.store.mm.PubType_MM;
 
-public class Reader_DB extends Reader {
+public class Loader_DB implements Loader {
 
 
 	
@@ -31,7 +31,7 @@ public class Reader_DB extends Reader {
 	
 	private int numberOfPubs;
 	
-	public Reader_DB(Connection dbCon) throws SQLException {
+	public Loader_DB(Connection dbCon) throws SQLException {
 		this.dbCon = dbCon;
 		
 		pst_OnNewCR = dbCon.prepareStatement(Queries.getQuery("reader", "on_new_cr"));

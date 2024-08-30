@@ -2,6 +2,7 @@ package cre.store.db;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -64,7 +65,8 @@ public class OberservableCRList_DB implements ObservableList<CRType_DB> {
             
             // PostgreSQL
             // TODO: Auslagern in SQL
-            int i = dbCon.createStatement().executeUpdate(String.format("""
+            Statement stmt = dbCon.createStatement();
+            int i = stmt.executeUpdate(String.format("""
                 WITH CRWITHROW AS (
                     SELECT CR_ID, (ROW_NUMBER() OVER (ORDER BY %s))-1 AS R
                     FROM CR
@@ -76,9 +78,8 @@ public class OberservableCRList_DB implements ObservableList<CRType_DB> {
                 WHERE CR.CR_ID = CRWITHROW.CR_ID
                 """, this.sortOrder));
 
-
-
             dbCon.commit();
+            stmt.close();
 
             System.out.println(String.format("setSortOrder update: %d", i));
         } catch (SQLException e) {

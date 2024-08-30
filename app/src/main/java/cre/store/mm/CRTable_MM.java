@@ -11,9 +11,9 @@ import java.util.stream.Stream;
 // import cre.data.CRSearch;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRType;
+import cre.data.type.abs.Loader;
 import cre.data.type.abs.Statistics;
 import cre.data.type.abs.Statistics.IntRange;
-import cre.format.cre.Reader;
 import cre.ui.statusbar.StatusBar;
 
 public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
@@ -24,7 +24,7 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	private HashMap<CRType_MM, CRType_MM> allCRs; 	//  CR to get duplicates
 	private HashMap<PubType_MM, PubType_MM> allPubs; 
 	
-
+	private Loader_MM loader;
 
 	
 	
@@ -46,8 +46,8 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	
 	
 	@Override
-	public Reader getReader() {
-		return new Reader_MM();
+	public Loader getLoader() {
+		return this.loader;
 	}
 	
 	@Override
@@ -78,6 +78,7 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	
 	private CRTable_MM () { 
 		this.statistics = new Statistics_MM();
+		this.loader = new Loader_MM();
 		init();
 	}
 	

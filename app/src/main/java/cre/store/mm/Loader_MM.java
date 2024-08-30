@@ -4,17 +4,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cre.format.cre.Reader;
+import cre.data.type.abs.Loader;
 
-public class Reader_MM extends Reader {
+public class Loader_MM implements Loader {
 
 	private Map<Integer, CRType_MM> mapId2CR;
 	
-	public Reader_MM() {
-		
+
+	@Override
+	public void onBeforeLoad() {
 		this.mapId2CR = new HashMap<Integer, CRType_MM>();
 	}
-	
+
 	@Override
 	public void onNewCR(CRType_MM cr) {
 		this.mapId2CR.put(cr.getID(), cr);
@@ -44,10 +45,7 @@ public class Reader_MM extends Reader {
 		// nothing to do ...
 	}
 
-	@Override
-	public void onBeforeLoad() {
-		// nothing to do ...
-	}
+
 
 	
 }

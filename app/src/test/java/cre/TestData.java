@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.Statistics.IntRange;
+import cre.format.cre.CREReader;
 import cre.format.exporter.ExportFormat;
 import cre.format.importer.ImportFormat;
 import cre.ui.dialog.Sampling;
@@ -73,7 +74,7 @@ public class TestData {
     public static final Function<String, Consumer<Void>> getCREDataLoader = (file) -> 
         (empty) -> {
             try {
-                CRTable.get().getReader().load(getTestFile.apply(file));
+                CREReader.load(getTestFile.apply(file));
             } catch (OutOfMemoryError | Exception e) {
                 throw new RuntimeException(e);
             }

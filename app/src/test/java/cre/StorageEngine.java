@@ -20,7 +20,7 @@ import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRTable.TABLE_IMPL_TYPES;
 import cre.data.type.abs.Clustering;
 import cre.data.type.abs.Statistics.IntRange;
-import cre.format.cre.Writer;
+import cre.format.cre.CREWriter;
 import cre.format.exporter.ExportFormat;
 import cre.format.importer.ImportFormat;
 import cre.ui.UISettings;
@@ -132,7 +132,7 @@ public class StorageEngine {
 				outFormat.save(exportFile.apply(type, outFormat), UISettings.get().getIncludePubsWithoutCRs());
 			}
 
-			Writer.save(creFile.apply(type), UISettings.get().getIncludePubsWithoutCRs());
+			CREWriter.save(creFile.apply(type), UISettings.get().getIncludePubsWithoutCRs());
 		}
 
 		// we are checking if the export output files are byte-wise equivalent

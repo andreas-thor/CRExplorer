@@ -13,9 +13,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cre.data.type.abs.CRTable;
+import cre.data.type.abs.Loader;
 import cre.data.type.abs.Statistics;
 import cre.data.type.abs.Statistics.IntRange;
-import cre.format.cre.Reader;
+import cre.format.cre.CREReader;
 import cre.store.mm.CRType_MM;
 import cre.store.mm.PubType_MM;
 import cre.ui.statusbar.StatusBar;
@@ -37,7 +38,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	
 	private Statistics_DB statistics;
 	private Clustering_DB clustering;
-	private Reader_DB reader;
+	private Loader_DB loader;
 
 	private OberservableCRList_DB observableCRList;
 
@@ -53,8 +54,8 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	
 	
 	@Override
-	public Reader getReader() {
-		return this.reader;
+	public Loader getLoader() {
+		return this.loader;
 	}
 	
 	@Override
@@ -100,6 +101,13 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 		return this.dbStore;
 	}
 	
+
+	public Connection getDBCon () throws SQLException {
+		Connection c = DriverManager.getConnection("jdbc:sqlite:test.db");
+		c.setAutoCommit(false);
+		return c;
+	}
+
 	private CRTable_DB () { 
 		
 		try {
@@ -108,15 +116,20 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 //			dbCon = DriverManager.getConnection("jdbc:h2:mem:test", "sa", "");	// in-memory
 
 
-			Class.forName("org.postgresql.Driver" );
-			dbCon = DriverManager.getConnection("jdbc:postgresql://" + CRTable_DB.url, "cre", "cre");	
+			// Class.forName("org.postgresql.Driver" );
+			// dbCon = DriverManager.getConnection("jdbc:postgresql://" + CRTable_DB.url, "cre", "cre");	
+
+			Class.forName("org.sqlite.JDBC");
+			dbCon = null; // DriverManager.getConnection("jdbc:sqlite:test.db");
+
+
 
 			dbStore = new DB_Store(dbCon);
 			dbStore.init();
 			
 			statistics = new Statistics_DB(dbCon);
 			clustering = new Clustering_DB(dbCon);
-			reader = new Reader_DB(dbCon);
+			loader = new Loader_DB(dbCon);
 			createNewObservableCRList_DB();
 			
 

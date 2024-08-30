@@ -18,6 +18,8 @@ public class CSV extends ImportReader {
     // private CRType_MM[] crs;
     private Integer[] crsNCR;
     private PubType_MM[] entries;
+    private CSVReader csvReader;
+    private int idxNCR;
 
     @Override
 	public void init(InputStream is) throws IOException {
@@ -26,24 +28,29 @@ public class CSV extends ImportReader {
     }
 
     @Override
+    public void close() throws IOException {
+		csvReader.close();
+        super.close();
+	}
+    
+    @Override
     protected void computeNextEntry() throws IOException {
 
         if (countComputeNextEntryCall == 0) {
 
-            CSVReader csvReader = new CSVReader(br);
-            List<String[]> data = csvReader.readAll();
-            csvReader.close();
-
-            if (data.size()==0) {
+            csvReader = new CSVReader(br);
+            
+            String[] header = csvReader.readNext();
+            if ((header == null) || (header.length==0)) {
                 entry = null;
                 return;
             }
 
-            String[] header = data.remove(0);
+            // column index of N_CR
+            idxNCR = Arrays.asList(header).indexOf("N_CR");
 
-            // get Number of NC_R per cr (if not available in header --> set to 1)
-            final int idxNCR = Arrays.asList(header).indexOf("N_CR");
-            crsNCR = data.stream().map(line -> idxNCR<0 ? 1 : Integer.valueOf(line[idxNCR])).toArray(Integer[]::new);
+                        // get Number of NC_R per cr (if not available in header --> set to 1)
+            crsNCR = null; // data.stream().map(line -> idxNCR<0 ? 1 : Integer.valueOf(line[idxNCR])).toArray(Integer[]::new);
           
             int ncrMax = Arrays.asList(crsNCR).stream().max(Integer::compare).get().intValue();
             // we create fake pubs and add all CRs to these pubs
@@ -54,7 +61,7 @@ public class CSV extends ImportReader {
                 entries[i].setPY(3000);
                 for (int k=0; k<crsNCR.length; k++) {
                     if (i<crsNCR[k]) {
-                        entries[i].addCR(parseCR(header, data.get(k)), true);
+                        entries[i].addCR(parseCR(header, null /*data.get(k)*/), true);
                     }
                 }
             }

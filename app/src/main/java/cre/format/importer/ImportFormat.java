@@ -25,9 +25,9 @@ public enum ImportFormat {
 
 	SCOPUS("Scopus", "csv", new Scopus()),
 
-	CROSSREF ("Crossref", "crossref", new Crossref()),
+	CROSSREF ("Crossref", "crossref", new Crossref());
 	
-	CSV("CSV", "csv", new CSV());
+	// CSV("CSV", "csv", new CSV());
 	
 
 	

@@ -29,14 +29,14 @@ import cre.ui.statusbar.StatusBar;
  * Reader calls cal-back functions (see abstract methods)
  */
 
-public abstract class Reader {
+public class CREReader {
 
-	public abstract void onBeforeLoad();
-	public abstract void onAfterLoad();
+	// public abstract void onBeforeLoad();
+	// public abstract void onAfterLoad();
 
-	public abstract void onNewCR(CRType_MM cr);
-	public abstract void onNewPub(PubType_MM pub, List<Integer> crIds);
-	public abstract void onNewMatchPair(int crId1, int crId2, double sim, boolean isManual);
+	// public abstract void onNewCR(CRType_MM cr);
+	// public abstract void onNewPub(PubType_MM pub, List<Integer> crIds);
+	// public abstract void onNewMatchPair(int crId1, int crId2, double sim, boolean isManual);
 	
 	
 	/**
@@ -48,50 +48,54 @@ public abstract class Reader {
 	 * @throws OutOfMemoryError
 	 * @throws Exception 
 	 */
-	public void load (File file) throws OutOfMemoryError, Exception {
+	public static void load (File file) throws OutOfMemoryError, RuntimeException {
 		
-		CRTable.get().init();
+		try {
+			CRTable.get().init();
 
-		onBeforeLoad();
+			CRTable.get().getLoader().onBeforeLoad();
 
-		ZipEntry entry = null;
-		ZipFile zipFile = new ZipFile(file);
-		
-		entry = zipFile.getEntry("crdata.json");
-		if (entry != null) {
-			StatusBar.get().initProgressbar(entry.getSize(), "Loading CRE file crdata ...");
-			loadCRData(zipFile.getInputStream(entry));
-			StatusBar.get().setValue("Loading CRE file crdata done");
-		} else {
-			zipFile.close();
-			throw new Exception ("Could not find crdata.");
-		}
-		
-		
-		entry = zipFile.getEntry("pubdata.json");
-		if (entry != null) {
-			StatusBar.get().initProgressbar(entry.getSize(), "Loading CRE file pubdata ...");
-			loadPubData(zipFile.getInputStream(entry));
-			StatusBar.get().setValue("Loading CRE file pubdata done");
-		} else {
-			zipFile.close();
-			throw new Exception ("Could not find pubdata.");
-		}			
-		
-		// crmatch data is optional
-		entry = zipFile.getEntry("crmatch.json");
-		if (entry != null) {
-			StatusBar.get().initProgressbar(entry.getSize(), "Loading CRE file crmatch ...");
-			loadCRMatchData(zipFile.getInputStream(entry));
-			StatusBar.get().setValue("Loading CRE file crmatch done");
-		}
+			ZipEntry entry = null;
+			ZipFile zipFile = new ZipFile(file);
 			
-		zipFile.close();
+			entry = zipFile.getEntry("crdata.json");
+			if (entry != null) {
+				StatusBar.get().initProgressbar(entry.getSize(), "Loading CRE file crdata ...");
+				loadCRData(zipFile.getInputStream(entry));
+				StatusBar.get().setValue("Loading CRE file crdata done");
+			} else {
+				zipFile.close();
+				throw new Exception ("Could not find crdata.");
+			}
+			
+			
+			entry = zipFile.getEntry("pubdata.json");
+			if (entry != null) {
+				StatusBar.get().initProgressbar(entry.getSize(), "Loading CRE file pubdata ...");
+				loadPubData(zipFile.getInputStream(entry));
+				StatusBar.get().setValue("Loading CRE file pubdata done");
+			} else {
+				zipFile.close();
+				throw new Exception ("Could not find pubdata.");
+			}			
+			
+			// crmatch data is optional
+			entry = zipFile.getEntry("crmatch.json");
+			if (entry != null) {
+				StatusBar.get().initProgressbar(entry.getSize(), "Loading CRE file crmatch ...");
+				loadCRMatchData(zipFile.getInputStream(entry));
+				StatusBar.get().setValue("Loading CRE file crmatch done");
+			}
+				
+			zipFile.close();
 
-		onAfterLoad();
+			CRTable.get().getLoader().onAfterLoad();
 
-		CRTable.get().updateData();
-		CRTable.get().getClustering().updateClustering(Clustering.ClusteringType.INIT, null, Clustering.min_threshold, false, false, false);
+			CRTable.get().updateData();
+			CRTable.get().getClustering().updateClustering(Clustering.ClusteringType.INIT, null, Clustering.min_threshold, false, false, false);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 
 	}
 
@@ -108,7 +112,7 @@ public abstract class Reader {
 	 * @throws OutOfMemoryError
 	 * @throws IOException
 	 */
-	private void loadCRData (InputStream in) throws UnsupportedFileFormatException, FileTooLargeException, AbortedException, OutOfMemoryError, IOException {
+	private static void loadCRData (InputStream in) throws UnsupportedFileFormatException, FileTooLargeException, AbortedException, OutOfMemoryError, IOException {
 		
 		JsonParser parser = Json.createParser(in);
 		// System.out.println(parser.hasNext());
@@ -119,7 +123,7 @@ public abstract class Reader {
 			switch (parser.next()) {
 			case START_OBJECT: 	cr = new CRType_MM(); break; 
 			case END_OBJECT: 	
-				onNewCR(cr);
+				CRTable.get().getLoader().onNewCR(cr);
 				break;
 			case KEY_NAME:		key = parser.getString(); break;
 			case VALUE_STRING: 
@@ -162,7 +166,7 @@ public abstract class Reader {
 	
 	
 
-	private void loadPubData (InputStream in) {
+	private static void loadPubData (InputStream in) {
 		
 		JsonParser parser = Json.createParser(in);
 		PubType_MM pub = null;
@@ -180,7 +184,7 @@ public abstract class Reader {
 				crIds = new ArrayList<Integer>();
 				break; 
 			case END_OBJECT: 	
-				onNewPub (pub, crIds);
+				CRTable.get().getLoader().onNewPub (pub, crIds);
 				break;
 			case KEY_NAME:		
 				key = parser.getString(); 
@@ -265,7 +269,7 @@ public abstract class Reader {
 
 
 
-	private void loadCRMatchData (InputStream in) {
+	private static void loadCRMatchData (InputStream in) {
 
 		JsonParser parser = Json.createParser(in);
 		
@@ -286,7 +290,7 @@ public abstract class Reader {
 				}
 				break;
 			case VALUE_NUMBER:
-				onNewMatchPair (id1, id2, parser.getBigDecimal().doubleValue(), isManual);
+				CRTable.get().getLoader().onNewMatchPair (id1, id2, parser.getBigDecimal().doubleValue(), isManual);
 				break;
 			default:break;  
 			}

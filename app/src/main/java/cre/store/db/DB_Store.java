@@ -47,26 +47,28 @@ class DB_Store {
 	
 	void init () throws SQLException, URISyntaxException, IOException {
 
-		dbCon.setAutoCommit(false);
-		
+		// dbCon.setAutoCommit(false);
+
 
 		/* create tables */
 		if (CRTable_DB.createSchemaOnStartup) {
-			Statement stmt = dbCon.createStatement();
-			stmt.execute(Queries.getQuery("crpub", "create_schema"));
+			Connection c = CRTable_DB.get().getDBCon();
+			Statement stmt = c.createStatement();
+			stmt.executeUpdate(Queries.getQuery("crpub", "create_schema"));
+			c.commit();
 			stmt.close();
+			c.close();
 		}
 				
 		/* create prepared statements & sql scripts */
-		insertCR_PrepStmt = dbCon.prepareStatement(Queries.getQuery("crpub", "pst_insert_cr")); 
-		insertCR_Counter = 0;
-		insertPub_PrepStmt = dbCon.prepareStatement(Queries.getQuery("crpub", "pst_insert_pub"));
-		insertPub_Counter = 0;
-		updateCRIndicators_PrepStmt = dbCon.prepareStatement(Queries.getQuery("crpub", "pst_update_cr_indicators"));
-		updateCRIndicators_Counter = 0;		
-		wrapup_insert_SQL = Queries.getQuery("crpub", "wrapup_insert");
+		// insertCR_PrepStmt = dbCon.prepareStatement(Queries.getQuery("crpub", "pst_insert_cr")); 
+		// insertCR_Counter = 0;
+		// insertPub_PrepStmt = dbCon.prepareStatement(Queries.getQuery("crpub", "pst_insert_pub"));
+		// insertPub_Counter = 0;
+		// updateCRIndicators_PrepStmt = dbCon.prepareStatement(Queries.getQuery("crpub", "pst_update_cr_indicators"));
+		// updateCRIndicators_Counter = 0;		
+		// wrapup_insert_SQL = Queries.getQuery("crpub", "wrapup_insert");
 		
-		dbCon.commit();
 	}
 	
 	void insertCR (CRType<?> cr, int pubId) throws SQLException {

@@ -14,7 +14,7 @@ import cre.data.type.abs.CRTable;
 import cre.ui.statusbar.StatusBar;
 
 
-public class Writer {
+public class CREWriter {
 
 	/**
 	 * 

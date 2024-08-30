@@ -10,6 +10,7 @@ import cre.data.type.abs.CRTable.CRTypes;
 import cre.data.type.abs.CRTable.TABLE_IMPL_TYPES;
 import cre.data.type.abs.CRTable.ZValueSymbol;
 import cre.data.type.abs.CRType.PERCENTAGE;
+import cre.format.cre.CREReader;
 
 public class IndicatorsExample {
 
@@ -30,7 +31,7 @@ public class IndicatorsExample {
 			CRTable.type = type;
 
 			CRTable.get().setNpctRange(0);
-			CRTable.get().getReader().load(new File(getClass().getResource(DATAFOLDER + "/CREDAT_Typen.cre").getFile()));
+			CREReader.load(new File(getClass().getResource(DATAFOLDER + "/CREDAT_Typen.cre").getFile()));
 
 			Assertions.assertArrayEquals(CRTable.get().getCR(true).mapToInt(it -> it.getN_CR()).toArray(),
 					new int[] { 73, 50, 81, 76 });

@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,7 +25,9 @@ import cre.data.type.abs.CRType;
 import cre.data.type.abs.Clustering;
 import cre.data.type.abs.PubType;
 import cre.data.type.abs.Statistics.IntRange;
-import cre.format.cre.Writer;
+import cre.format.cre.CREReader;
+import cre.format.cre.CREWriter;
+import cre.format.csv.CSVReader;
 import cre.format.exporter.ExportFormat;
 import cre.format.importer.Crossref;
 import cre.format.importer.ImportFormat;
@@ -245,7 +249,7 @@ public class MainController {
 		});
 
 		if (CitedReferencesExplorerFX.loadOnOpen != null) {
-			openFile(new File (CitedReferencesExplorerFX.loadOnOpen));
+			openFile(new File (CitedReferencesExplorerFX.loadOnOpen), CREReader::load);
 		}
 
 	}
@@ -453,17 +457,28 @@ public class MainController {
 		});
 	}
 
-	private void openFile() throws OutOfMemoryError, Exception {
+	private void openCREFile() throws OutOfMemoryError, Exception {
 
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Open CRE file");
 		fileChooser.setInitialDirectory(UISettings.get().getLastFileDir());
 		fileChooser.getExtensionFilters().add(new ExtensionFilter("CRE", Arrays.asList(new String[] { "*.cre"})));
 		fileChooser.getExtensionFilters().add(new ExtensionFilter("All Files", Arrays.asList(new String[] { "*.*" })));
-		openFile (fileChooser.showOpenDialog(CitedReferencesExplorerFX.stage));
+		openFile (fileChooser.showOpenDialog(CitedReferencesExplorerFX.stage), CREReader::load);
+	}
+
+	private void openCSVFile() throws OutOfMemoryError, Exception {
+
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Open CSV file");
+		fileChooser.setInitialDirectory(UISettings.get().getLastFileDir());
+		fileChooser.getExtensionFilters().add(new ExtensionFilter("CSV", Arrays.asList(new String[] { "*.csv"})));
+		fileChooser.getExtensionFilters().add(new ExtensionFilter("All Files", Arrays.asList(new String[] { "*.*" })));
+		openFile (fileChooser.showOpenDialog(CitedReferencesExplorerFX.stage), CSVReader::load);
 	}
 	
-	private void openFile(File file) throws OutOfMemoryError, Exception {
+	
+	private void openFile(File file, Consumer<File> reader) throws OutOfMemoryError, Exception {
 
 		if (file == null) return;
 		if (!file.exists()) return;
@@ -482,7 +497,8 @@ public class MainController {
 
 						tableView.getItems().clear(); // free space (references to CR instances)
 						creFile = file;
-						CRTable.get().getReader().load(file);
+						reader.accept(file);
+						// CREReader.load(file);
 						
 						// show match panel if applicable
 						matchView.setVisible((crTable.getClustering().getNumberOfMatches(true) + crTable.getClustering().getNumberOfMatches(false)) > 0);
@@ -667,7 +683,7 @@ public class MainController {
 				return new Task<Void>() {
 					@Override
 					protected Void call() throws Exception {
-						Writer.save(selFile, UISettings.get().getIncludePubsWithoutCRs());
+						CREWriter.save(selFile, UISettings.get().getIncludePubsWithoutCRs());
 						creFile = selFile;
 						return null;
 					}
@@ -694,7 +710,7 @@ public class MainController {
 
 	@FXML
 	public void OnMenuFileOpen() throws OutOfMemoryError, Exception {
-		openFile();
+		openCREFile();
 	}
 
 	@FXML
@@ -718,8 +734,9 @@ public class MainController {
 	}
 
 	@FXML
-	public void OnMenuFileImportCSV(ActionEvent event) throws IOException {
-		importFiles(ImportFormat.CSV);
+	public void OnMenuFileImportCSV(ActionEvent event) throws OutOfMemoryError, Exception {
+		// importFiles(ImportFormat.CSV);
+		openCSVFile();
 	}
 
 	@FXML

@@ -37,7 +37,7 @@ public class CSV {
 
 		CRTable.get().getCR().filter(filter).sorted(comp).forEach(cr -> {
 			StatusBar.get().incProgressbar();
-			csv.writeNext(Arrays.stream(CRType_ColumnView.CRColumn.values()).map(col -> col.prop.apply(cr)).map(val -> val == null ? "" : String.valueOf(val.getValue())).toArray(String[]::new)); 
+			csv.writeNext(Arrays.stream(CRType_ColumnView.CRColumn.values()).map(col -> col.prop.apply(cr)).map(val -> val.getValue() == null ? "" : String.valueOf(val.getValue())).toArray(String[]::new)); 
 		});
 		
 		csv.close();
@@ -61,7 +61,7 @@ public class CSV {
 		
 		CRTable.get().getPub(includePubsWithoutCRs).sorted().forEach(pub -> {
 			StatusBar.get().incProgressbar();
-			csv.writeNext(Arrays.stream(PubType_ColumnView.PubColumn.values()).map(col -> col.prop.apply(pub)).map(val -> val==null ? "" : String.valueOf(val.getValue())).toArray(String[]::new)); 
+			csv.writeNext(Arrays.stream(PubType_ColumnView.PubColumn.values()).map(col -> col.prop.apply(pub)).map(val -> val.getValue()==null ? "" : String.valueOf(val.getValue())).toArray(String[]::new)); 
 		});
 		
 		csv.close();
@@ -84,8 +84,8 @@ public class CSV {
 			
 			pub.getCR().filter(filter).sorted(comp).forEach(cr -> {
 				csv.writeNext (Stream.concat (
-					Arrays.stream(PubType_ColumnView.PubColumn.values()).map(col -> col.prop.apply(pub)).map(val -> val==null ? "" : String.valueOf(val.getValue())), 
-					Arrays.stream(CRType_ColumnView.CRColumn.values()).map(col -> col.prop.apply(cr)).map(val -> val==null ? "" : String.valueOf(val.getValue())) 
+					Arrays.stream(PubType_ColumnView.PubColumn.values()).map(col -> col.prop.apply(pub)).map(val -> val.getValue()==null ? "" : String.valueOf(val.getValue())), 
+					Arrays.stream(CRType_ColumnView.CRColumn.values()).map(col -> col.prop.apply(cr)).map(val -> val.getValue()==null ? "" : String.valueOf(val.getValue())) 
 				).toArray(String[]::new)); 
 			});
 		});
