@@ -30,4 +30,3 @@ Enable database mode
 * stop container: ``docker stop CREPostgres``
 * re-start container (when stopped): ``docker start CREPostgres``
 * remove container: ``docker rm CREPostgres``
-
