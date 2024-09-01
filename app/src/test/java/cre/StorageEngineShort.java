@@ -67,7 +67,7 @@ public class StorageEngineShort {
 			// $ -> CRTable.get().retainPubByCitingYear(new IntRange(2014, 2099)),
 			$ -> {
 				CRTable.get().getClustering().generateInitialClustering();
-				CRTable.get().getClustering().updateClustering(Clustering.ClusteringType.REFRESH, null, 0.8, false, false, false);
+				CRTable.get().getClustering().updateClustering(Clustering.ClusteringType.REFRESH, null, 0.8, false, false, false, false);
 				CRTable.get().merge();
 			}
 		);

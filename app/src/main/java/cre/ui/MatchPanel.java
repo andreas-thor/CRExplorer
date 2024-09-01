@@ -12,13 +12,13 @@ public abstract class MatchPanel extends TitledPane {
 
 	Button[] matchManual = new Button[3];	// buttons "same", "different", and "extract"
 	Button matchUndo;						// UnDo button
-	CheckBox[] volPagDOI;					// checkboxes to use VOL, PAG, and DOI for clustering
+	private CheckBox[] volPagDOI;					// checkboxes to use VOL, PAG, and DOI for clustering
 	Slider threshold = new Slider(50,  100,  75);	// Slider for similariy threshold
 	
 	
-	public abstract void onUpdateClustering(double threshold, boolean useClustering, boolean useVol, boolean usePag, boolean useDOI); 
-	public abstract void onMatchManual(Clustering.ManualMatchType type, double threshold, boolean useVol, boolean usePag, boolean useDOI); 
-	public abstract void onMatchUnDo (double threshold, boolean useVol, boolean usePag, boolean useDOI); 
+	public abstract void onUpdateClustering(double threshold, boolean useClustering, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull); 
+	public abstract void onMatchManual(Clustering.ManualMatchType type, double threshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull); 
+	public abstract void onMatchUnDo (double threshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull); 
 	
 	
 	public MatchPanel() {
@@ -44,7 +44,7 @@ public abstract class MatchPanel extends TitledPane {
 
 		
 		// Volume CheckBoxes
-		volPagDOI = new CheckBox[] { new CheckBox("Volume"), new CheckBox("Page"), new CheckBox("DOI") };
+		volPagDOI = new CheckBox[] { new CheckBox("Volume"), new CheckBox("Page"), new CheckBox("DOI"), new CheckBox("NULL=NULL?") };
 		GridPane g = new GridPane();
 		g.setPrefWidth(100);
 		for (int i=0; i<volPagDOI.length; i++) {
@@ -59,14 +59,14 @@ public abstract class MatchPanel extends TitledPane {
 			Clustering.ManualMatchType type = Clustering.ManualMatchType.values()[i];
 			matchManual[i] = new Button (type.toString().substring(0, 1) + type.toString().substring(1).toLowerCase());	// "SAME" --> "Same"
 			matchManual[i].setPrefSize(100, 25);
-			matchManual[i].setOnAction(e -> { onMatchManual(type, 0.01d*threshold.getValue(), volPagDOI[0].isSelected(), volPagDOI[1].isSelected(), volPagDOI[2].isSelected()); });
+			matchManual[i].setOnAction(e -> { onMatchManual(type, 0.01d*threshold.getValue(), volPagDOI[0].isSelected(), volPagDOI[1].isSelected(), volPagDOI[2].isSelected(), volPagDOI[3].isSelected()); });
 			grid.add (matchManual[i], i+2, 0);
 			GridPane.setMargin(matchManual[i], new Insets(0, 0 , 0, (i==0)?30:10));
 		}
 		
 		matchUndo = new Button("Undo");
 		matchUndo.setPrefSize(100, 25);
-		matchUndo.setOnAction(e -> { onMatchUnDo(0.01d*threshold.getValue(), volPagDOI[0].isSelected(), volPagDOI[1].isSelected(), volPagDOI[2].isSelected()); });
+		matchUndo.setOnAction(e -> { onMatchUnDo(0.01d*threshold.getValue(), volPagDOI[0].isSelected(), volPagDOI[1].isSelected(), volPagDOI[2].isSelected(), volPagDOI[3].isSelected()); });
 		grid.add (matchUndo, 5, 0);
 		GridPane.setMargin(matchUndo, new Insets(0, 0 , 0, 30));
 		
@@ -76,7 +76,7 @@ public abstract class MatchPanel extends TitledPane {
 
 
 	public void updateClustering() {
-		onUpdateClustering(0.01d*threshold.getValue(), true, volPagDOI[0].isSelected(), volPagDOI[1].isSelected(), volPagDOI[2].isSelected());
+		onUpdateClustering(0.01d*threshold.getValue(), true, volPagDOI[0].isSelected(), volPagDOI[1].isSelected(), volPagDOI[2].isSelected(), volPagDOI[3].isSelected());
 	}
 	
 

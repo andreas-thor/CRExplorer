@@ -108,7 +108,7 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 		Long stop2 = System.currentTimeMillis();
 		System.out.println(String.format("generateInitialClustering > generateAutoMatching > Time is %.1f seconds", (stop2-stop1)/1000.0));
 
-		updateClustering(Clustering.ClusteringType.INIT, null, min_threshold, false, false, false);
+		updateClustering(Clustering.ClusteringType.INIT, null, min_threshold, false, false, false, false);
 
 		Long stop3 = System.currentTimeMillis();
 		System.out.println(String.format("generateInitialClustering > updateClustering > Time is %.1f seconds", (stop3-stop2)/1000.0));
@@ -121,19 +121,19 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 	public abstract Set<C> addManuMatching (List<Integer> selCR, ManualMatchType matchType);
 
 	
-	public void addManuMatching (List<Integer> selCR, Clustering.ManualMatchType matchType, double matchThreshold, boolean useVol, boolean usePag, boolean useDOI) {
-		updateClustering(Clustering.ClusteringType.REFRESH, addManuMatching(selCR, matchType), matchThreshold, useVol, usePag, useDOI);
+	public void addManuMatching (List<Integer> selCR, Clustering.ManualMatchType matchType, double matchThreshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull) {
+		updateClustering(Clustering.ClusteringType.REFRESH, addManuMatching(selCR, matchType), matchThreshold, useVol, usePag, useDOI, nullEqualsNull);
 	}
 	
 	
 	public abstract Set<C> undoManuMatching ();
 	
 	
-	public void undoManuMatching (double threshold, boolean useVol, boolean usePag, boolean useDOI) {
-		updateClustering(Clustering.ClusteringType.REFRESH, undoManuMatching(), threshold, useVol, usePag, useDOI);
+	public void undoManuMatching (double threshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull) {
+		updateClustering(Clustering.ClusteringType.REFRESH, undoManuMatching(), threshold, useVol, usePag, useDOI, nullEqualsNull);
 	}
 
-	public abstract void updateClustering (ClusteringType type, Set<C> changeCR, double threshold, boolean useVol, boolean usePag, boolean useDOI);
+	public abstract void updateClustering (ClusteringType type, Set<C> changeCR, double threshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull);
 
 	public abstract long getNumberOfMatches (boolean manual);
 	

@@ -142,11 +142,11 @@ public class MainController {
 		matchView = new MatchPanel() {
 
 			@Override
-			public void onUpdateClustering(double threshold, boolean useClustering, boolean useVol, boolean usePag, boolean useDOI) {
+			public void onUpdateClustering(double threshold, boolean useClustering, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull) {
 				if (t != null)
 					t.interrupt();
 				t = new Thread(() -> {
-					crTable.getClustering().updateClustering(Clustering.ClusteringType.REFRESH, null, threshold, useVol, usePag, useDOI);
+					crTable.getClustering().updateClustering(Clustering.ClusteringType.REFRESH, null, threshold, useVol, usePag, useDOI, nullEqualsNull);
 					tableView.updateTableViewData();
 					refreshTableValues();
 				});
@@ -154,7 +154,7 @@ public class MainController {
 			}
 
 			@Override
-			public void onMatchManual(Clustering.ManualMatchType type, double threshold, boolean useVol, boolean usePag, boolean useDOI) {
+			public void onMatchManual(Clustering.ManualMatchType type, double threshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull) {
 
 				List<Integer> toMatch = getSelectedCRs();
 				if ((toMatch.size() == 0) || ((toMatch.size() == 1) && (type != Clustering.ManualMatchType.EXTRACT))) {
@@ -163,7 +163,7 @@ public class MainController {
 					if ((toMatch.size() > 5) && (type != Clustering.ManualMatchType.EXTRACT)) {
 						new ConfirmAlert("Error during clustering!", true, new String[] { "Too many Cited References selected (at most 5)!" }).showAndWait();
 					} else {
-						crTable.getClustering().addManuMatching(toMatch, type, threshold, useVol, usePag, useDOI);
+						crTable.getClustering().addManuMatching(toMatch, type, threshold, useVol, usePag, useDOI, nullEqualsNull);
 						
 						tableView.updateTableViewData();
 						refreshTableValues();
@@ -172,8 +172,8 @@ public class MainController {
 			}
 
 			@Override
-			public void onMatchUnDo(double threshold, boolean useVol, boolean usePag, boolean useDOI) {
-				crTable.getClustering().undoManuMatching(threshold, useVol, usePag, useDOI);
+			public void onMatchUnDo(double threshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull) {
+				crTable.getClustering().undoManuMatching(threshold, useVol, usePag, useDOI, nullEqualsNull);
 				tableView.updateTableViewData();
 				refreshTableValues();
 			}

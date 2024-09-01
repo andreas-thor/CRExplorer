@@ -1,0 +1,37 @@
+
+services:
+
+  jupyter:
+    image: dbsfdit/jupyter:2023.ss
+    container_name: dbsfdit-jupyter
+    ports:
+      - "5678:8888"    
+    volumes:
+      - .:/home/jovyan/work
+
+  db:
+    image: dbsfdit/db:2023.ss
+    container_name: dbsfdit-db
+    environment:
+      POSTGRES_PASSWORD: dbs
+    ports:
+      - "5432:5432"
+  
+
+  pgadmin:
+    image: dbsfdit/pgadmin:2023.ss
+    container_name: dbsfdit-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5555:80"
+    depends_on:
+      - db
+
+
+  sqlinjectionwebapp:
+    image: dbsfdit/sqlinjectionwebapp:20210127
+    container_name: dbsfdit-sqlinjectionwebapp
+    ports:
+      - "8093:8080" 

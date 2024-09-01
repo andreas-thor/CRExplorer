@@ -74,7 +74,8 @@ dependencies {
 	implementation group: 'com.h2database', name: 'h2', version: '2.1.214'
 	implementation group: 'org.postgresql', name: 'postgresql', version: '42.6.0'
 	implementation group: 'org.yaml', name: 'snakeyaml', version: '1.24'
- 
+	implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.45.3.0'
+	
  	runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:win"
 	runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:linux"
 	runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:mac"

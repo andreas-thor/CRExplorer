@@ -176,7 +176,7 @@ public class Clustering_MM extends Clustering<CRType_MM, PubType_MM> {
 	
 	
 	@Override
-	public void updateClustering (Clustering.ClusteringType type, Set<CRType_MM> changeCR, double threshold, boolean useVol, boolean usePag, boolean useDOI) {
+	public void updateClustering (Clustering.ClusteringType type, Set<CRType_MM> changeCR, double threshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull) {
 		
 
 		int pbSize = matchResult.get(false).size()+matchResult.get(true).size();
@@ -203,10 +203,18 @@ public class Clustering_MM extends Clustering<CRType_MM, PubType_MM> {
 				boolean manualDifferent = (matchResult.get(true).get(cr1) != null) && (matchResult.get(true).get(cr1).get(cr2) != null) && (matchResult.get(true).get(cr1).get(cr2) == -2d);
 				
 				if (changed && (cr1.getCluster() != cr2.getCluster()) && (sim >= threshold) && !manualDifferent) {
+
+					boolean vol = !useVol;
+					vol = vol || ((cr1.getVOL()!=null) && (cr2.getVOL()!=null) && (cr1.getVOL().equals (cr2.getVOL())));
+					vol = vol || (nullEqualsNull && (cr1.getVOL()==null) && (cr2.getVOL()==null));
+
+					boolean pag = !usePag;
+					pag = pag || ((cr1.getPAG()!=null) && (cr2.getPAG()!=null) && (cr1.getPAG().equals (cr2.getPAG()))); 
+					pag = pag || (nullEqualsNull && (cr1.getPAG()==null) && (cr2.getPAG()==null));
 					
-					boolean vol = (!useVol) || ((cr1.getVOL()!=null) && (cr2.getVOL()!=null) && (cr1.getVOL().equals (cr2.getVOL()))); // || (cr1.VOL.equals("")) || (cr2.VOL.equals(""))
-					boolean pag = (!usePag) || ((cr1.getPAG()!=null) && (cr2.getPAG()!=null) && (cr1.getPAG().equals (cr2.getPAG()))); // || (cr1.PAG.equals("")) || (cr2.PAG.equals(""))
-					boolean doi = (!useDOI) || ((cr1.getDOI()!=null) && (cr2.getDOI()!=null) && (cr1.getDOI().equalsIgnoreCase (cr2.getDOI()))); // || (cr1.DOI.equals("")) || (cr2.DOI.equals(""))
+					boolean doi = !useDOI;
+					doi = doi || ((cr1.getDOI()!=null) && (cr2.getDOI()!=null) && (cr1.getDOI().equalsIgnoreCase (cr2.getDOI())));
+					doi = doi || (nullEqualsNull && (cr1.getDOI()==null) && (cr2.getDOI()==null));
 					
 					if (vol && pag && doi) {
 						cr1.getCluster().merge(cr2.getCluster());

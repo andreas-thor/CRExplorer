@@ -329,7 +329,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 	}
 
 	@Override
-	public void updateClustering(ClusteringType type, Set<CRType_DB> changeCR, double threshold, boolean useVol, boolean usePag, boolean useDOI) {
+	public void updateClustering(ClusteringType type, Set<CRType_DB> changeCR, double threshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull) {
 		
 
 		StatusBar.get().initProgressbar(1, String.format("Clustering %d objects (%s) with threshold %.2f", CRTable.get().getStatistics().getNumberOfCRs(), type.toString(), threshold));
@@ -357,9 +357,10 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 
 			
 			String sqlVOLPAGDOI = "true ";
-			sqlVOLPAGDOI += useVol ? "AND COALESCE(CR1.CR_VOL, 'A') = COALESCE(CR2.CR_VOL, 'B') " : "";
-			sqlVOLPAGDOI += usePag ? "AND COALESCE(CR1.CR_PAG, 'A') = COALESCE(CR2.CR_PAG, 'B') " : "";
-			sqlVOLPAGDOI += useDOI ? "AND COALESCE(CR1.CR_DOI, 'A') = COALESCE(CR2.CR_DOI, 'B') " : "";
+			String colalesceValue = nullEqualsNull ? "A" : "B";
+			sqlVOLPAGDOI += useVol ? "AND COALESCE(CR1.CR_VOL, 'A') = COALESCE(CR2.CR_VOL, '" + colalesceValue + "') " : "";
+			sqlVOLPAGDOI += usePag ? "AND COALESCE(CR1.CR_PAG, 'A') = COALESCE(CR2.CR_PAG, '" + colalesceValue + "') " : "";
+			sqlVOLPAGDOI += useDOI ? "AND COALESCE(CR1.CR_DOI, 'A') = COALESCE(CR2.CR_DOI, '" + colalesceValue + "') " : "";
 
 			String sqlChangeCRIds = (changeCRIds != null) ? String.format ("AND CR1.CR_ID IN (%s) AND CR2.CR_ID IN (%s)", changeCRIds, changeCRIds) : "";
 			
