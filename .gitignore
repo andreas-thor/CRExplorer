@@ -10,3 +10,7 @@
 /data
 /crs
 /app/src/test/resources/testdata
+
+# DB-Files
+/*.db 
+/*.db-journal
