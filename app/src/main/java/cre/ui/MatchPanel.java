@@ -44,30 +44,35 @@ public abstract class MatchPanel extends TitledPane {
 
 		
 		// Volume CheckBoxes
-		volPagDOI = new CheckBox[] { new CheckBox("Volume"), new CheckBox("Page"), new CheckBox("DOI"), new CheckBox("NULL=NULL?") };
+		volPagDOI = new CheckBox[] { new CheckBox("Volume"), new CheckBox("Page"), new CheckBox("DOI"), new CheckBox("Treat missing values as equal") };	// was: NULL=NULL?
 		GridPane g = new GridPane();
-		g.setPrefWidth(100);
+		g.setPrefWidth(200);
 		for (int i=0; i<volPagDOI.length; i++) {
-			g.add(volPagDOI[i], 0, i);
 			volPagDOI[i].selectedProperty().addListener( (observable, oldValue, newValue) -> { updateClustering(); });
+			// volPagDOI[i].setPrefWidth(300);
+			g.add(volPagDOI[i], 0, i);
 		}
 		grid.add (g, 1, 0);
 		GridPane.setMargin(g, new Insets(0, 0, 0, 30));
 	
 		// Match Buttons
+		g = new GridPane();
+		g.setPrefWidth(100);
 		for (int i=0; i<Clustering.ManualMatchType.values().length; i++) {
 			Clustering.ManualMatchType type = Clustering.ManualMatchType.values()[i];
 			matchManual[i] = new Button (type.toString().substring(0, 1) + type.toString().substring(1).toLowerCase());	// "SAME" --> "Same"
 			matchManual[i].setPrefSize(100, 25);
 			matchManual[i].setOnAction(e -> { onMatchManual(type, 0.01d*threshold.getValue(), volPagDOI[0].isSelected(), volPagDOI[1].isSelected(), volPagDOI[2].isSelected(), volPagDOI[3].isSelected()); });
-			grid.add (matchManual[i], i+2, 0);
-			GridPane.setMargin(matchManual[i], new Insets(0, 0 , 0, (i==0)?30:10));
+			g.add(matchManual[i], 0, i);
+
 		}
-		
+		grid.add (g, 2, 0);
+		GridPane.setMargin(g, new Insets(0, 0 , 0, 30));
+
 		matchUndo = new Button("Undo");
 		matchUndo.setPrefSize(100, 25);
 		matchUndo.setOnAction(e -> { onMatchUnDo(0.01d*threshold.getValue(), volPagDOI[0].isSelected(), volPagDOI[1].isSelected(), volPagDOI[2].isSelected(), volPagDOI[3].isSelected()); });
-		grid.add (matchUndo, 5, 0);
+		grid.add (matchUndo, 3, 0);
 		GridPane.setMargin(matchUndo, new Insets(0, 0 , 0, 30));
 		
 		setContent(grid);

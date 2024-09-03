@@ -227,7 +227,7 @@ public class DSL extends Script {
 		boolean useVol = (boolean) params.getOrDefault ("VOLUME", false);
 		boolean usePag = (boolean) params.getOrDefault ("PAGE", false);
 		boolean useDOI = (boolean) params.getOrDefault ("DOI", false);
-		boolean nullEqualsNull = (boolean) params.getOrDefault ("NULLEQUALSNULL", false);
+		boolean nullEqualsNull = (boolean) params.getOrDefault ("MISSING_EQUAL", false);
 
 		CRTable.get().getClustering().generateInitialClustering();
 		CRTable.get().getClustering().updateClustering(ClusteringType.REFRESH, null, threshold, useVol, usePag, useDOI, nullEqualsNull);	
