@@ -102,27 +102,25 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	}
 	
 
-	public Connection getDBCon () throws SQLException {
-		Connection c = DriverManager.getConnection("jdbc:sqlite:test.db");
-		c.setAutoCommit(false);
-		return c;
-	}
+	// public Connection getDBCon () throws SQLException {
+	// 	Connection c = DriverManager.getConnection("jdbc:sqlite:test.db");
+	// 	c.setAutoCommit(false);
+	// 	return c;
+	// }
 
 	private CRTable_DB () { 
 		
 		try {
-			// Class.forName("org.h2.Driver" );
-			// dbCon = DriverManager.getConnection(String.format ("jdbc:h2:%s;RETENTION_TIME=0", name==null ? "~/test" : name), "sa", "");	// embedded (file)
-//			dbCon = DriverManager.getConnection("jdbc:h2:mem:test", "sa", "");	// in-memory
-
-
-			// Class.forName("org.postgresql.Driver" );
-			// dbCon = DriverManager.getConnection("jdbc:postgresql://" + CRTable_DB.url, "cre", "cre");	
-
-			Class.forName("org.sqlite.JDBC");
-			dbCon = null; // DriverManager.getConnection("jdbc:sqlite:test.db");
-
-
+			// load specific database driver and create connection
+			if (CRTable_DB.url.toLowerCase().startsWith("jdbc:postgresql")) {
+				Class.forName("org.postgresql.Driver" );
+				Queries.sqlDialect = "postgres";
+			}
+			if (CRTable_DB.url.toLowerCase().startsWith("jdbc:sqlite")) {
+				Class.forName("org.postgresql.Driver" );
+				Queries.sqlDialect = "sqlite";
+			}
+			dbCon = DriverManager.getConnection(CRTable_DB.url);
 
 			dbStore = new DB_Store(dbCon);
 			dbStore.init();
@@ -218,7 +216,11 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 		
 		try {
 			StatusBar.get().setValue("Merging ");
-			dbCon.createStatement().execute(Queries.getQuery("crpub", "merge_cr"));
+			Statement stmt = dbCon.createStatement();
+			for (String s: Queries.getQuery("crpub", "merge_cr")) {
+				System.out.println(s);
+				stmt.execute(s);
+			}
 			dbCon.commit();
 			updateData();
 			StatusBar.get().setValue("Merging done");

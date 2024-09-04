@@ -92,7 +92,7 @@ public class PubType_MM extends PubType<CRType_MM> {
 			}
 			
 			if (toBeRemoved) {
-				System.out.println("DEBUG: tobeRemoved");
+				// System.out.println("DEBUG: tobeRemoved");
 			}
 			
 			return toBeRemoved;	

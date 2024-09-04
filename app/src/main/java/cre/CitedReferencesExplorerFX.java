@@ -45,10 +45,9 @@ public class CitedReferencesExplorerFX extends Application {
 
 	public static void setDatabaseParams (String[] args) {
 		for (String arg: args) {
-			if (arg.toLowerCase().startsWith("-db")) {
+			if (arg.toLowerCase().startsWith("-db=")) {
 				CRTable.type = TABLE_IMPL_TYPES.DB;
-				String[] split = arg.split("=");
-				if (split.length==2) CRTable_DB.url=split[1];
+				CRTable_DB.url=arg.substring(4);
 			}
 			if (arg.equalsIgnoreCase("-nocreate")) {
 				CRTable_DB.createSchemaOnStartup = false;

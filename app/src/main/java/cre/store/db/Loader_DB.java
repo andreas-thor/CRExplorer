@@ -34,19 +34,19 @@ public class Loader_DB implements Loader {
 	public Loader_DB(Connection dbCon) throws SQLException {
 		this.dbCon = dbCon;
 		
-		pst_OnNewCR = dbCon.prepareStatement(Queries.getQuery("reader", "on_new_cr"));
+		pst_OnNewCR = dbCon.prepareStatement(Queries.getQuery("reader", "on_new_cr").get(0));
 		pst_OnNewCR_Counter = 0;
 		
-		pst_OnNewPub = dbCon.prepareStatement(Queries.getQuery("reader", "on_new_pub"));
+		pst_OnNewPub = dbCon.prepareStatement(Queries.getQuery("reader", "on_new_pub").get(0));
 		pst_OnNewPub_Counter = 0;
 		
-		pst_OnNewPub_CR = dbCon.prepareStatement(Queries.getQuery("reader", "on_new_pub_cr"));
+		pst_OnNewPub_CR = dbCon.prepareStatement(Queries.getQuery("reader", "on_new_pub_cr").get(0));
 		pst_OnNewPub_CR_Counter = 0;
 		
-		pst_OnNew_MatchPair_Manu = dbCon.prepareStatement(Queries.getQuery("reader", "on_new_matchpair_manu"));
+		pst_OnNew_MatchPair_Manu = dbCon.prepareStatement(Queries.getQuery("reader", "on_new_matchpair_manu").get(0));
 		pst_OnNew_MatchPair_Manu_Counter = 0;
 		
-		pst_OnNew_MatchPair_Auto = dbCon.prepareStatement(Queries.getQuery("reader", "on_new_matchpair_auto"));
+		pst_OnNew_MatchPair_Auto = dbCon.prepareStatement(Queries.getQuery("reader", "on_new_matchpair_auto").get(0));
 		pst_OnNew_MatchPair_Auto_Counter = 0;
 
 		
@@ -225,7 +225,7 @@ public class Loader_DB implements Loader {
 				pst_OnNew_MatchPair_Auto_Counter = 0;
 			}		
 			
-			this.dbCon.createStatement().execute(Queries.getQuery("reader", "on_after_load"));
+			this.dbCon.createStatement().execute(Queries.getQuery("reader", "on_after_load").get(0));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

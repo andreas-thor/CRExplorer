@@ -79,7 +79,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 			if ((matchType==Clustering.ManualMatchType.SAME) || (matchType==Clustering.ManualMatchType.DIFFERENT)) {
 				double sim = (matchType==Clustering.ManualMatchType.SAME) ? 2d : -2d;
 			
-				PreparedStatement insertMatchManu_PrepStmt = dbCon.prepareStatement(Queries.getQuery("clustering", "pst_insert_match_manu"));
+				PreparedStatement insertMatchManu_PrepStmt = dbCon.prepareStatement(Queries.getQuery("clustering", "pst_insert_match_manu").get(0));
 
 				for (Integer cr1Id: selCR) {
 					for (Integer cr2Id: selCR) {
@@ -167,10 +167,10 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 			
 			// Matching: author lastname & journal name
 
-			this.dbCon.createStatement().execute("TRUNCATE TABLE CR_MATCH_AUTO");
+			this.dbCon.createStatement().execute(Queries.getQuery("clustering", "del_match_auto").get(0));
 			this.dbCon.commit();
 
-			PreparedStatement insertMatchAuto_PrepStmt = dbCon.prepareStatement(Queries.getQuery("clustering", "pst_insert_match_auto"));
+			PreparedStatement insertMatchAuto_PrepStmt = dbCon.prepareStatement(Queries.getQuery("clustering", "pst_insert_match_auto").get(0));
 			AtomicInteger insertMatchAuto_Counter = new AtomicInteger(0);
 			
 			NewMatchingPair<CRType_DB> newMatchPair = (CRType_DB cr1, CRType_DB cr2, double sim) -> {
@@ -341,17 +341,19 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 
 			if (type == Clustering.ClusteringType.INIT) {	// consider manual (automatic?) matches only
 				// reset all clusters (each CR forms an individual clustering)
-				dbCon.createStatement().execute(
-					String.format(Locale.US, Queries.getQuery("clustering", "init"), 
-						threshold));
+				Statement stmt = dbCon.createStatement();
+				for (String s: Queries.getQuery("clustering", "init")) {
+					stmt.execute(String.format(Locale.US, s, threshold));
+				}
 			}
 			
 			if (type == Clustering.ClusteringType.REFRESH) {
 				// reset clusterId2 only 
-				dbCon.createStatement().execute(
-					String.format(Locale.US, Queries.getQuery("clustering", "refresh"), 
-						threshold, 
-						changeCRIds==null ? "" : String.format("WHERE CR_ID IN (%s)", changeCRIds)));
+				Statement stmt = dbCon.createStatement();
+				for (String s: Queries.getQuery("clustering", "refresh")) {
+					System.out.println(s);
+					stmt.execute(String.format(Locale.US, s, threshold, changeCRIds==null ? "" : String.format("WHERE CR_ID IN (%s)", changeCRIds)));
+				}
 			}
 		
 
@@ -367,8 +369,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 			
 			// Locale.US makes sure that the threshold value has a point and no comma (-> would lead to SQL syntax error)
 			PreparedStatement updateclustering_PrepStmt = dbCon.prepareStatement(
-				String.format(Locale.US, Queries.getQuery("clustering", "update"), 
-				sqlVOLPAGDOI, sqlChangeCRIds));
+				String.format(Locale.US, Queries.getQuery("clustering", "update").get(0), sqlVOLPAGDOI, sqlChangeCRIds));
 
 
 			int noOfUpdates = -1;
@@ -392,7 +393,10 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 			updateclustering_PrepStmt.close();
 			
 
-			dbCon.createStatement().execute(Queries.getQuery("clustering", "finish"));
+			Statement stmt = dbCon.createStatement();
+			for (String s: Queries.getQuery("clustering", "finish")) {
+				stmt.execute(s);
+			}			
 			dbCon.commit();
 			StatusBar.get().setValue("Clustering done");
 

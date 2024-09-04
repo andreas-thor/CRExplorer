@@ -35,11 +35,12 @@ class DB_Store {
 	
 	private Connection dbCon;
 
-	private String wrapup_insert_SQL;
+	private List<String> wrapup_insert_SQL;
 	
 	
 	DB_Store(Connection dbCon) throws SQLException, URISyntaxException, IOException {
 		this.dbCon = dbCon;
+		this.dbCon.setAutoCommit(false);
 	}
 	
 
@@ -47,27 +48,32 @@ class DB_Store {
 	
 	void init () throws SQLException, URISyntaxException, IOException {
 
-		// dbCon.setAutoCommit(false);
-
+		
+		dbCon.setAutoCommit(false);
 
 		/* create tables */
 		if (CRTable_DB.createSchemaOnStartup) {
-			Connection c = CRTable_DB.get().getDBCon();
-			Statement stmt = c.createStatement();
-			stmt.executeUpdate(Queries.getQuery("crpub", "create_schema"));
-			c.commit();
+			Statement stmt = dbCon.createStatement();
+			for (String s: Queries.getQuery("crpub", "create_schema")) {
+				stmt.execute(s);
+			}
+
+
 			stmt.close();
-			c.close();
+			dbCon.commit();
+			
+
 		}
 				
 		/* create prepared statements & sql scripts */
-		// insertCR_PrepStmt = dbCon.prepareStatement(Queries.getQuery("crpub", "pst_insert_cr")); 
-		// insertCR_Counter = 0;
-		// insertPub_PrepStmt = dbCon.prepareStatement(Queries.getQuery("crpub", "pst_insert_pub"));
-		// insertPub_Counter = 0;
-		// updateCRIndicators_PrepStmt = dbCon.prepareStatement(Queries.getQuery("crpub", "pst_update_cr_indicators"));
-		// updateCRIndicators_Counter = 0;		
-		// wrapup_insert_SQL = Queries.getQuery("crpub", "wrapup_insert");
+		insertCR_PrepStmt = dbCon.prepareStatement(Queries.getQuery("crpub", "pst_insert_cr").get(0)); 
+		insertCR_Counter = 0;
+		insertPub_PrepStmt = dbCon.prepareStatement(Queries.getQuery("crpub", "pst_insert_pub").get(0));
+		insertPub_Counter = 0;
+		updateCRIndicators_PrepStmt = dbCon.prepareStatement(Queries.getQuery("crpub", "pst_update_cr_indicators").get(0));
+		updateCRIndicators_Counter = 0;		
+		wrapup_insert_SQL = Queries.getQuery("crpub", "wrapup_insert");
+		dbCon.commit();
 		
 	}
 	
@@ -108,7 +114,9 @@ class DB_Store {
 		
 		// System.out.println("Executing " + wrapup_insert_SQL);
 		Statement stmt = dbCon.createStatement();
-		stmt.execute(wrapup_insert_SQL);
+		for (String s: wrapup_insert_SQL) {
+			stmt.execute(s);
+		}
 		stmt.close();
 		dbCon.commit();
 		

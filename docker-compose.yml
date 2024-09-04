@@ -5,13 +5,12 @@ services:
     image: postgres:15.2
     container_name: CREPostgres
     environment:
-      POSTGRES_USER: cre
-      POSTGRES_PASSWORD: cre
-      PGDATA: /var/lib/postgresql/data/pgdata      
+      POSTGRES_PASSWORD: dbs
+      # PGDATA: /var/lib/postgresql/data/pgdata      
     ports:
-      - "5455:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+      - "5432:5432"
+    # volumes:
+      # - pgdata:/var/lib/postgresql/data
   
   pgadmin:
     image: dbsfdit/pgadmin:2023.ss
@@ -24,5 +23,5 @@ services:
     depends_on:
       - db
       
-volumes:
-  pgdata:
+# volumes:
+  # pgdata:

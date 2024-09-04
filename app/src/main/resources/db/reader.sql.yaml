@@ -1,5 +1,5 @@
 on_new_cr:
-    INSERT INTO CR  ( 
+  - INSERT INTO CR  ( 
         CR_ID, 
         CR_CR, 
         CR_RPY, 
@@ -19,10 +19,10 @@ on_new_cr:
     ) 
     VALUES (
         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-    );
+    )
 
 on_new_pub:
-    INSERT INTO Pub  ( 
+  - INSERT INTO Pub  ( 
         PUB_ID, 
         PUB_PT, 
         PUB_AU, 
@@ -50,39 +50,39 @@ on_new_pub:
     ) 
     VALUES (
         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-    );
+    )
 
 on_new_pub_cr:
-    INSERT INTO PUB_CR  ( 
+  - INSERT INTO PUB_CR  ( 
         PUB_ID, 
         CR_ID
     ) 
     VALUES ( 
         ?, ? 
-    );
+    )
 
 on_new_matchpair_manu:
-    INSERT INTO CR_MATCH_MANU (
+  - INSERT INTO CR_MATCH_MANU (
         CR_ID1, 
         CR_ID2, 
         sim
     )
     VALUES (
         ?, ?, ?
-    );
+    )
 
 on_new_matchpair_auto:
-    INSERT INTO CR_MATCH_AUTO (
+  - INSERT INTO CR_MATCH_AUTO (
         CR_ID1, 
         CR_ID2, 
         sim
     )
     VALUES (
         ?, ?, ?
-    );
+    )
 
 on_after_load:
-    WITH CRPUBCOUNT AS (
+  - WITH CRPUBCOUNT AS (
         SELECT CR_ID, COUNT(*) AS PUBCOUNT
         FROM PUB_CR
         GROUP BY CR_ID
@@ -93,4 +93,4 @@ on_after_load:
         CR_ClusterId1 = 1, 
         CR_ClusterId2 = 1
     FROM CRPUBCOUNT
-    WHERE CR.CR_ID = CRPUBCOUNT.CR_ID;
+    WHERE CR.CR_ID = CRPUBCOUNT.CR_ID

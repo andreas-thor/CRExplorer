@@ -1,33 +1,36 @@
+del_match_auto:
+    - postgres: TRUNCATE TABLE CR_MATCH_AUTO
+    - sqlite: DELETE FROM CR_MATCH_AUTO
+
 pst_insert_match_manu:
-    INSERT INTO CR_MATCH_MANU  ( 
+    - INSERT INTO CR_MATCH_MANU  ( 
         CR_ID1, 
         CR_ID2, 
         sim,
         tstamp
-    ) 
-    VALUES (
+      ) 
+      VALUES (
         ?, ?, ?, ?
-    )
-    ON CONFLICT (CR_ID1, CR_ID2) 
-    DO UPDATE SET 
-        sim = EXCLUDED.sim, 
-        tstamp = EXCLUDED.tstamp;
-
+      )
+      ON CONFLICT (CR_ID1, CR_ID2) 
+      DO UPDATE SET 
+      sim = EXCLUDED.sim, 
+      tstamp = EXCLUDED.tstamp
 
 pst_insert_match_auto:
-    INSERT INTO CR_MATCH_AUTO  ( 
+  - INSERT INTO CR_MATCH_AUTO  ( 
         CR_ID1, 
         CR_ID2, 
         sim
     ) 
     VALUES (
         ?, ?, ?
-    );
+    )
 
 init:
-    DROP TABLE IF EXISTS CR_Cluster;
+  - DROP TABLE IF EXISTS CR_Cluster
 
-    CREATE TEMPORARY TABLE CR_Cluster (
+  - CREATE TEMP TABLE CR_Cluster (
         CR_ID INT,
         CR_ClusterId1 INT, 
         CR_ClusterId2 INT,
@@ -35,68 +38,63 @@ init:
         CR_PAG 	varchar, 
         CR_DOI 	varchar,     
         PRIMARY KEY (CR_ID)  
-    ); 
+    )
 
-    INSERT INTO CR_Cluster (CR_ID, CR_ClusterId1, CR_ClusterId2, CR_VOL, CR_PAG, CR_DOI)
+  - INSERT INTO CR_Cluster (CR_ID, CR_ClusterId1, CR_ClusterId2, CR_VOL, CR_PAG, CR_DOI)
     SELECT CR_ID, CR_ID AS CR_ClusterId1, CR_ID AS CR_ClusterId2, CR_VOL, CR_PAG, CR_DOI
-    FROM CR;
+    FROM CR
 
+  - DROP TABLE IF EXISTS CR_Match
 
-    DROP TABLE IF EXISTS CR_Match;
-
-    CREATE TEMPORARY TABLE CR_MATCH AS (
+  - CREATE TEMP TABLE CR_MATCH AS 
         SELECT CR_ID1, CR_ID2, sim 
         FROM CR_MATCH_AUTO 
         WHERE sim >= %1$.2f AND (CR_ID1, CR_ID2) NOT IN (
             SELECT CR_ID1, CR_ID2 FROM CR_MATCH_MANU WHERE sim = -2
         )
-    );
 
-    MERGE INTO CR_MATCH 
-    USING (SELECT CR_ID1, CR_ID2, sim FROM CR_MATCH_MANU WHERE sim = +2) AS M
-    ON (CR_MATCH.CR_ID1 = M.CR_ID1 AND CR_MATCH.CR_ID2 = M.CR_ID2)
-    WHEN MATCHED THEN UPDATE SET Sim = 2
-    WHEN NOT MATCHED THEN INSERT (CR_ID1, CR_ID2, sim) VALUES (M.CR_ID1, M.CR_ID2, M.Sim);
+  - postgres: "MERGE INTO CR_MATCH 
+        USING (SELECT CR_ID1, CR_ID2, sim FROM CR_MATCH_MANU WHERE sim = +2) AS M
+        ON (CR_MATCH.CR_ID1 = M.CR_ID1 AND CR_MATCH.CR_ID2 = M.CR_ID2)
+        WHEN MATCHED THEN UPDATE SET Sim = 2
+        WHEN NOT MATCHED THEN INSERT (CR_ID1, CR_ID2, sim) VALUES (M.CR_ID1, M.CR_ID2, M.Sim)"
+  - sqllite: "INSERT INTO CR_MATCH 
+        SELECT CR_ID1, CR_ID2, sim FROM CR_MATCH_MANU WHERE sim = +2
+        ON CONFLICT (CR_ID1, CR_ID2)
+        DO UPDATE SET Sim = 2"
 
 refresh:
-    DROP TABLE IF EXISTS CR_Cluster;
+  - postgres: TRUNCATE TABLE CR_Cluster
+  - sqlite: DELETE FROM CR_Cluster
 
-    CREATE TEMPORARY TABLE CR_Cluster (
-        CR_ID INT,
-        CR_ClusterId1 INT, 
-        CR_ClusterId2 INT,
-        CR_VOL 	varchar, 
-        CR_PAG 	varchar, 
-        CR_DOI 	varchar,     
-        PRIMARY KEY (CR_ID)  
-    ); 
-
-    INSERT INTO CR_Cluster (CR_ID, CR_ClusterId1, CR_ClusterId2, CR_VOL, CR_PAG, CR_DOI)
+  - INSERT INTO CR_Cluster (CR_ID, CR_ClusterId1, CR_ClusterId2, CR_VOL, CR_PAG, CR_DOI)
     SELECT CR_ID, CR_ClusterId1, CR_ClusterId2, CR_VOL, CR_PAG, CR_DOI
-    FROM CR;
+    FROM CR
 
+  - UPDATE CR_Cluster SET CR_ClusterId2 = CR_ID %2$s
 
-    UPDATE CR_Cluster
-    SET CR_ClusterId2 = CR_ID %2$s;
+  - postgres: TRUNCATE TABLE CR_Match
+  - sqlite: DELETE FROM CR_Match
 
-    DROP TABLE IF EXISTS CR_Match;
-
-    CREATE TEMPORARY TABLE CR_MATCH AS (
+  - INSERT INTO CR_Match (CR_ID1, CR_ID2, Sim)
         SELECT CR_ID1, CR_ID2, sim 
         FROM CR_MATCH_AUTO 
         WHERE sim >= %1$.2f AND (CR_ID1, CR_ID2) NOT IN (
             SELECT CR_ID1, CR_ID2 FROM CR_MATCH_MANU WHERE sim = -2
         )
-    );
 
-    MERGE INTO CR_MATCH 
-    USING (SELECT CR_ID1, CR_ID2, sim FROM CR_MATCH_MANU WHERE sim = +2) AS M
-    ON (CR_MATCH.CR_ID1 = M.CR_ID1 AND CR_MATCH.CR_ID2 = M.CR_ID2)
-    WHEN MATCHED THEN UPDATE SET Sim = 2
-    WHEN NOT MATCHED THEN INSERT (CR_ID1, CR_ID2, sim) VALUES (M.CR_ID1, M.CR_ID2, M.Sim);
-
+  - postgres: "MERGE INTO CR_MATCH 
+        USING (SELECT CR_ID1, CR_ID2, sim FROM CR_MATCH_MANU WHERE sim = +2) AS M
+        ON (CR_MATCH.CR_ID1 = M.CR_ID1 AND CR_MATCH.CR_ID2 = M.CR_ID2)
+        WHEN MATCHED THEN UPDATE SET Sim = 2
+        WHEN NOT MATCHED THEN INSERT (CR_ID1, CR_ID2, sim) VALUES (M.CR_ID1, M.CR_ID2, M.Sim)"
+  - sqllite: "INSERT INTO CR_MATCH 
+        SELECT CR_ID1, CR_ID2, sim FROM CR_MATCH_MANU WHERE sim = +2
+        ON CONFLICT (CR_ID1, CR_ID2)
+        DO UPDATE SET Sim = 2"
+        
 update:
-    WITH CRWithNewCluster AS (
+  - WITH CRWithNewCluster AS (
         SELECT CR_ID, Clus1, Clus2 
         FROM ( 
             SELECT ROW_NUMBER() OVER (PARTITION BY CR_ID ORDER BY Clus1, Clus2) AS R, CR_ID, Clus1, Clus2
@@ -118,12 +116,12 @@ update:
     UPDATE CR_Cluster
     SET CR_ClusterId1 = CRWithNewCluster.Clus1, CR_ClusterId2 = CRWithNewCluster.Clus2
     FROM CRWithNewCluster
-    WHERE CR_Cluster.CR_ID = CRWithNewCluster.CR_ID;
+    WHERE CR_Cluster.CR_ID = CRWithNewCluster.CR_ID
 
 finish:
-    CREATE INDEX cr_cluster_index ON cr_cluster(cr_clusterid1);
+#   - CREATE INDEX cr_cluster_index ON cr_cluster(cr_clusterid1)
 
-    WITH ClusterInfo AS (
+  - WITH ClusterInfo AS (
         select c.cr_id, c.cr_clusterid1, c.cr_clusterid2, t.size
         from cr_cluster c
         join (
@@ -138,5 +136,5 @@ finish:
         cr_clusterid2 = ClusterInfo.cr_clusterid2, 
         cr_clustersize = size
     FROM ClusterInfo
-    WHERE CR.CR_ID = ClusterInfo.CR_ID;
+    WHERE CR.CR_ID = ClusterInfo.CR_ID
 
