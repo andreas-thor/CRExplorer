@@ -343,6 +343,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 				// reset all clusters (each CR forms an individual clustering)
 				Statement stmt = dbCon.createStatement();
 				for (String s: Queries.getQuery("clustering", "init")) {
+					System.out.println(s);
 					stmt.execute(String.format(Locale.US, s, threshold));
 				}
 			}

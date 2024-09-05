@@ -47,21 +47,23 @@ init:
   - DROP TABLE IF EXISTS CR_Match
 
   - CREATE TEMP TABLE CR_MATCH AS 
-        SELECT CR_ID1, CR_ID2, sim 
-        FROM CR_MATCH_AUTO 
-        WHERE sim >= %1$.2f AND (CR_ID1, CR_ID2) NOT IN (
-            SELECT CR_ID1, CR_ID2 FROM CR_MATCH_MANU WHERE sim = -2
-        )
+        
+        SELECT CR_ID1, CR_ID2, MAX(sim) AS sim
+        FROM (
+            SELECT CR_ID1, CR_ID2, sim
+            FROM CR_MATCH_AUTO 
+            WHERE sim >= %1$.2f 
+            AND (CR_ID1, CR_ID2) NOT IN (
+                SELECT CR_ID1, CR_ID2 FROM CR_MATCH_MANU WHERE sim = -2
+            )
 
-  - postgres: "MERGE INTO CR_MATCH 
-        USING (SELECT CR_ID1, CR_ID2, sim FROM CR_MATCH_MANU WHERE sim = +2) AS M
-        ON (CR_MATCH.CR_ID1 = M.CR_ID1 AND CR_MATCH.CR_ID2 = M.CR_ID2)
-        WHEN MATCHED THEN UPDATE SET Sim = 2
-        WHEN NOT MATCHED THEN INSERT (CR_ID1, CR_ID2, sim) VALUES (M.CR_ID1, M.CR_ID2, M.Sim)"
-  - sqllite: "INSERT INTO CR_MATCH 
-        SELECT CR_ID1, CR_ID2, sim FROM CR_MATCH_MANU WHERE sim = +2
-        ON CONFLICT (CR_ID1, CR_ID2)
-        DO UPDATE SET Sim = 2"
+            UNION 
+
+            SELECT CR_ID1, CR_ID2, sim 
+            FROM CR_MATCH_MANU 
+            WHERE sim = +2
+        ) AS T 
+        GROUP BY CR_ID1, CR_ID2
 
 refresh:
   - postgres: TRUNCATE TABLE CR_Cluster
@@ -77,22 +79,25 @@ refresh:
   - sqlite: DELETE FROM CR_Match
 
   - INSERT INTO CR_Match (CR_ID1, CR_ID2, Sim)
-        SELECT CR_ID1, CR_ID2, sim 
-        FROM CR_MATCH_AUTO 
-        WHERE sim >= %1$.2f AND (CR_ID1, CR_ID2) NOT IN (
-            SELECT CR_ID1, CR_ID2 FROM CR_MATCH_MANU WHERE sim = -2
-        )
-
-  - postgres: "MERGE INTO CR_MATCH 
-        USING (SELECT CR_ID1, CR_ID2, sim FROM CR_MATCH_MANU WHERE sim = +2) AS M
-        ON (CR_MATCH.CR_ID1 = M.CR_ID1 AND CR_MATCH.CR_ID2 = M.CR_ID2)
-        WHEN MATCHED THEN UPDATE SET Sim = 2
-        WHEN NOT MATCHED THEN INSERT (CR_ID1, CR_ID2, sim) VALUES (M.CR_ID1, M.CR_ID2, M.Sim)"
-  - sqllite: "INSERT INTO CR_MATCH 
-        SELECT CR_ID1, CR_ID2, sim FROM CR_MATCH_MANU WHERE sim = +2
-        ON CONFLICT (CR_ID1, CR_ID2)
-        DO UPDATE SET Sim = 2"
         
+        SELECT CR_ID1, CR_ID2, MAX(sim) AS sim
+        FROM (
+            SELECT CR_ID1, CR_ID2, sim
+            FROM CR_MATCH_AUTO 
+            WHERE sim >= %1$.2f 
+            AND (CR_ID1, CR_ID2) NOT IN (
+                SELECT CR_ID1, CR_ID2 FROM CR_MATCH_MANU WHERE sim = -2
+            )
+
+            UNION 
+
+            SELECT CR_ID1, CR_ID2, sim 
+            FROM CR_MATCH_MANU 
+            WHERE sim = +2
+        ) AS T 
+        GROUP BY CR_ID1, CR_ID2
+
+       
 update:
   - WITH CRWithNewCluster AS (
         SELECT CR_ID, Clus1, Clus2 
