@@ -16,7 +16,6 @@ import cre.data.type.abs.CRTable;
 import cre.data.type.abs.Loader;
 import cre.data.type.abs.Statistics;
 import cre.data.type.abs.Statistics.IntRange;
-import cre.format.cre.CREReader;
 import cre.store.mm.CRType_MM;
 import cre.store.mm.PubType_MM;
 import cre.ui.statusbar.StatusBar;

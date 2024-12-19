@@ -15,8 +15,7 @@ import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRType;
 import cre.data.type.abs.Clustering.ClusteringType;
 import cre.data.type.abs.Statistics.IntRange;
-import cre.format.cre.CREReader;
-import cre.format.cre.CREWriter;
+import cre.format.exporter.ExportFormat;
 import cre.format.importer.ImportFormat;
 import cre.ui.statusbar.StatusBar;
 import cre.ui.statusbar.StatusBarText;
@@ -59,7 +58,7 @@ public class DSL extends Script {
 		if (files.size() != 1) {
 			throw new Exception (String.format("openFile: requires one file (%d specified)", files.size()));
 		}
-		CREReader.load(files.get(0));
+		cre.format.importer.CRE.load(files.get(0));
 		
 	}
 
@@ -119,7 +118,7 @@ public class DSL extends Script {
 		}
 		File file = new File ((String) params.get("FILE"));
 
-		CREWriter.save(file, true);
+		ExportFormat.CRE.save(file, true);
 		
 	}
 

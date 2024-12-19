@@ -6,26 +6,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-// import com.sun.deploy.uitoolkit.impl.fx.HostServicesFactory;
 
 import cre.CitedReferencesExplorerFX;
 import cre.Exceptions.AbortedException;
 import cre.Exceptions.BadResponseCodeException;
 import cre.Exceptions.FileTooLargeException;
 import cre.Exceptions.UnsupportedFileFormatException;
-// import cre.data.CRSearch;
 import cre.data.CRStatsInfo;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRType;
 import cre.data.type.abs.Clustering;
 import cre.data.type.abs.PubType;
 import cre.data.type.abs.Statistics.IntRange;
-import cre.format.cre.CREReader;
-import cre.format.cre.CREWriter;
 import cre.format.exporter.ExportFormat;
 import cre.format.importer.Crossref;
 import cre.format.importer.ImportFormat;
@@ -231,7 +225,7 @@ public class MainController {
 
 				if (button == ButtonType.YES) {
 					try {
-						if (!saveFile(false))
+						if (!exportFile(ExportFormat.CRE, false))
 							return;
 					} catch (Exception e) {
 						Platform.runLater(() -> {
@@ -247,7 +241,8 @@ public class MainController {
 		});
 
 		if (CitedReferencesExplorerFX.loadOnOpen != null) {
-			openFile(new File (CitedReferencesExplorerFX.loadOnOpen), CREReader::load);
+			importFiles(ImportFormat.CRE, Arrays.asList(new File (CitedReferencesExplorerFX.loadOnOpen)));
+			// openFile(new File (CitedReferencesExplorerFX.loadOnOpen), CREReader::load);
 		}
 
 	}
@@ -461,84 +456,6 @@ public class MainController {
 		});
 	}
 
-	private void openCREFile() throws OutOfMemoryError, Exception {
-
-		FileChooser fileChooser = new FileChooser();
-		fileChooser.setTitle("Open CRE file");
-		fileChooser.setInitialDirectory(UISettings.get().getLastFileDir());
-		fileChooser.getExtensionFilters().add(new ExtensionFilter("CRE", Arrays.asList(new String[] { "*.cre"})));
-		fileChooser.getExtensionFilters().add(new ExtensionFilter("All Files", Arrays.asList(new String[] { "*.*" })));
-		openFile (fileChooser.showOpenDialog(CitedReferencesExplorerFX.stage), CREReader::load);
-	}
-
-	// private void openCSVFile() throws OutOfMemoryError, Exception {
-
-	// 	FileChooser fileChooser = new FileChooser();
-	// 	fileChooser.setTitle("Open CSV files");
-	// 	fileChooser.setInitialDirectory(UISettings.get().getLastFileDir());
-	// 	fileChooser.getExtensionFilters().add(new ExtensionFilter("CSV", Arrays.asList(new String[] { "*.csv"})));
-	// 	fileChooser.getExtensionFilters().add(new ExtensionFilter("All Files", Arrays.asList(new String[] { "*.*" })));
-	// 	openFile (fileChooser.showOpenDialog(CitedReferencesExplorerFX.stage), CSVReader::load);
-	// }
-	
-	
-	private void openFile(File file, Consumer<File> reader) throws OutOfMemoryError, Exception {
-
-		if (file == null) return;
-		if (!file.exists()) return;
-
-		UISettings.get().setLastFileDir(file.getParentFile()); // save last directory to be uses as initial directory
-		
-		Wait wait = new Wait();
-		Service<Void> serv = new Service<Void>() {
-
-			@Override
-			protected Task<Void> createTask() {
-				return new Task<Void>() {
-
-					@Override
-					protected Void call() throws Exception {
-
-						tableView.getItems().clear(); // free space (references to CR instances)
-						creFile = file;
-						reader.accept(file);
-						// CREReader.load(file);
-						
-						// show match panel if applicable
-						matchView.setVisible((crTable.getClustering().getNumberOfMatches(true) + crTable.getClustering().getNumberOfMatches(false)) > 0);
-						matchView.updateClustering();
-
-						return null;
-					}
-				};
-			}
-		};
-
-		serv.setOnSucceeded((WorkerStateEvent t) -> {
-			OnMenuViewInfo();
-			updateTableCRList();
-			wait.close();
-		});
-
-		serv.setOnFailed((WorkerStateEvent t) -> {
-			Throwable e = t.getSource().getException();
-			if (e instanceof OutOfMemoryError) {
-				crTable.init();
-				new ConfirmAlert("Error during file import!", true, new String[] { "Out of Memory Error." }).showAndWait();
-			} else {
-				new ExceptionStacktrace("Error during file import!", e).showAndWait();
-			}
-			wait.close();
-		});
-
-		serv.start();
-
-		wait.showAndWait().ifPresent(cancel -> {
-			crTable.setAborted(cancel);
-		});		
-	}
-
-	
 	private void importFiles(ImportFormat source) throws IOException {
 
 		FileChooser fileChooser = new FileChooser();
@@ -626,14 +543,19 @@ public class MainController {
 	}
 
 	
-	private boolean exportFile(ExportFormat source) throws IOException {
+	private boolean exportFile(ExportFormat source, boolean saveAs) throws IOException {
 
-		FileChooser fileChooser = new FileChooser();
-		fileChooser.setTitle(String.format("Export %s", source.getLabel()));
-		fileChooser.setInitialDirectory(UISettings.get().getLastFileDir());
-		fileChooser.getExtensionFilters().add(new ExtensionFilter(source.getLabel(), Arrays.asList(new String[] { "*." + source.getFileExtension()})));
-		fileChooser.getExtensionFilters().add(new ExtensionFilter("All Files", Arrays.asList(new String[] { "*.*" })));
-		File selFile = fileChooser.showSaveDialog(CitedReferencesExplorerFX.stage);
+		File selFile;
+		if ((source == ExportFormat.CRE) && (creFile != null) && (!saveAs)) {
+			selFile = creFile;
+		} else {
+			FileChooser fileChooser = new FileChooser();
+			fileChooser.setTitle(String.format("Export %s", source.getLabel()));
+			fileChooser.setInitialDirectory(UISettings.get().getLastFileDir());
+			fileChooser.getExtensionFilters().add(new ExtensionFilter(source.getLabel(), Arrays.asList(new String[] { "*." + source.getFileExtension()})));
+			fileChooser.getExtensionFilters().add(new ExtensionFilter("All Files", Arrays.asList(new String[] { "*.*" })));
+			selFile = fileChooser.showSaveDialog(CitedReferencesExplorerFX.stage);
+		}
 
 		if (selFile == null) return false;
 
@@ -646,11 +568,16 @@ public class MainController {
 					@Override
 					protected Void call() throws Exception {
 						source.save(selFile, UISettings.get().getIncludePubsWithoutCRs());
+						if (source == ExportFormat.CRE) creFile = selFile;
 						return null;
 					}
 				};
 			}
 		};
+
+		serv.setOnSucceeded((WorkerStateEvent t) -> {
+			updateTitle();
+		});
 
 		serv.setOnFailed((WorkerStateEvent t) -> {
 			new ExceptionStacktrace("Error during file export!", t.getSource().getException()).showAndWait();
@@ -661,63 +588,12 @@ public class MainController {
 	}
 
 	
-
-	private boolean saveFile(boolean saveAs) throws IOException {
-
-		File selFile;
-		if ((creFile != null) && (!saveAs)) {
-			selFile = creFile;
-		} else {
-			FileChooser fileChooser = new FileChooser();
-			fileChooser.setTitle("Save CRE file");
-			fileChooser.setInitialDirectory(UISettings.get().getLastFileDir());
-			fileChooser.getExtensionFilters().add(new ExtensionFilter("CRE", Arrays.asList(new String[] { "*.cre"})));
-			fileChooser.getExtensionFilters().add(new ExtensionFilter("All Files", Arrays.asList(new String[] { "*.*" })));
-			selFile = fileChooser.showSaveDialog(CitedReferencesExplorerFX.stage);
-		}
-
-		if (selFile == null) return false;
-
-		
-
-		
-		// save last directory to be uses as initial directory
-		UISettings.get().setLastFileDir(selFile.getParentFile());
-
-		Service<Void> serv = new Service<Void>() {
-			@Override
-			protected Task<Void> createTask() {
-				return new Task<Void>() {
-					@Override
-					protected Void call() throws Exception {
-						CREWriter.save(selFile, UISettings.get().getIncludePubsWithoutCRs());
-						creFile = selFile;
-						return null;
-					}
-				};
-			}
-		};
-
-		// serv.setOnSucceeded((WorkerStateEvent t) -> {
-
-		// });
-
-		serv.setOnFailed((WorkerStateEvent t) -> {
-			Throwable e = t.getSource().getException();
-			new ExceptionStacktrace("Error during file import!", e).showAndWait();
-		});
-
-		serv.start();
-		return true;
-	}
-
 	/*
 	 * FILE Menu
 	 */
 
 	@FXML
 	public void OnMenuFileOpen() throws OutOfMemoryError, Exception {
-		// openCREFile();
 		importFiles(ImportFormat.CRE);
 
 	}
@@ -745,47 +621,48 @@ public class MainController {
 	@FXML
 	public void OnMenuFileImportCSV(ActionEvent event) throws OutOfMemoryError, Exception {
 		importFiles(ImportFormat.CSV);
-		// openCSVFile();
 	}
 
 	@FXML
 	public void OnMenuFileSave() throws IOException {
-		saveFile(false);
+		exportFile(ExportFormat.CRE, false);
+		// saveFile(false);
 	}
 
 	@FXML
 	public void OnMenuFileSaveAs() throws IOException {
-		saveFile(true);
+		exportFile(ExportFormat.CRE, true);
+		// saveFile(true);
 	}
 
 	@FXML
 	public void OnMenuFileExportWoS() throws IOException {
-		exportFile(ExportFormat.WOS);
+		exportFile(ExportFormat.WOS, true);
 	}
 
 	@FXML
 	public void OnMenuFileExportScopus() throws IOException {
-		exportFile(ExportFormat.SCOPUS);
+		exportFile(ExportFormat.SCOPUS, true);
 	}
 
 	@FXML
 	public void OnMenuFileExportCSVGraph() throws IOException {
-		exportFile(ExportFormat.CSV_GRAPH);
+		exportFile(ExportFormat.CSV_GRAPH, true);
 	}
 
 	@FXML
 	public void OnMenuFileExportCSVCR() throws IOException {
-		exportFile(ExportFormat.CSV_CR);
+		exportFile(ExportFormat.CSV_CR, true);
 	}
 
 	@FXML
 	public void OnMenuFileExportCSVPub() throws IOException {
-		exportFile(ExportFormat.CSV_PUB);
+		exportFile(ExportFormat.CSV_PUB, true);
 	}
 
 	@FXML
 	public void OnMenuFileExportCSVAll() throws IOException {
-		exportFile(ExportFormat.CSV_CR_PUB);
+		exportFile(ExportFormat.CSV_CR_PUB, true);
 	}
 
 	@FXML

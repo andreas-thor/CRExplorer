@@ -13,6 +13,7 @@ import cre.ui.statusbar.StatusBar;
 
 public enum ExportFormat {
 
+	CRE("CRE", "cre", cre.format.exporter.CRE::save),
 	
 	WOS("Web of Science", "txt", WoS::save),
 
@@ -24,7 +25,7 @@ public enum ExportFormat {
 
 	CSV_CR_PUB("Cited References + Citing Publications", "csv", CSV::saveCRPub), 
 
-	CSV_GRAPH("CRE Graph", "csv", CSV::saveGraph);  
+	CSV_GRAPH("CRE Graph", "csv", CSV::saveGraph);
 	
 	
 	

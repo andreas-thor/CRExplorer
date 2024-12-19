@@ -1,9 +1,10 @@
-package cre.format.cre;
+package cre.format.exporter;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.Comparator;
+import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -11,10 +12,11 @@ import javax.json.Json;
 import javax.json.stream.JsonGenerator;
 
 import cre.data.type.abs.CRTable;
+import cre.data.type.abs.CRType;
 import cre.ui.statusbar.StatusBar;
 
 
-public class CREWriter {
+public class CRE {
 
 	/**
 	 * 
@@ -22,12 +24,13 @@ public class CREWriter {
 	 * @param includePubsWithoutCRs
 	 * @throws IOException
 	 */
-	public static void save (File file, boolean includePubsWithoutCRs) throws IOException {
-		 
+	
+	public static void save (OutputStream out, boolean includePubsWithoutCRs, Predicate<CRType> filter, Comparator<CRType> comp) throws IOException {
+		
 		/* TODO: filter is not supported yet */
 		
 		StatusBar.get().initProgressbar(CRTable.get().getStatistics().getNumberOfCRs() + CRTable.get().getStatistics().getNumberOfPubs() + CRTable.get().getClustering().getNumberOfMatches(true) + CRTable.get().getClustering().getNumberOfMatches(false));
-		ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(file), Charset.forName("UTF-8"));
+		ZipOutputStream zip = new ZipOutputStream(out, Charset.forName("UTF-8"));
 		
 		zip.putNextEntry(new ZipEntry("crdata.json"));
 		saveCRData(Json.createGenerator(zip));

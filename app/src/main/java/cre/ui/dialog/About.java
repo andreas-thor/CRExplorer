@@ -29,13 +29,15 @@ public class About extends Alert {
 		grid.setPadding(new Insets(20, 20, 20, 20));
 
 		grid.add(new Label("Software Development:"), 0, 0);
-		grid.add(new Label("Andreas Thor <thor@hft-leipzig.de>"), 1, 0);
+		grid.add(new Label("Andreas Thor <andreas.thor@htwk-leipzig.de>"), 1, 0);
 		grid.add(new Label("Content Development:"), 0, 1);
 		grid.add(new Label("Lutz Bornmann and Werner Marx"), 1, 1);
 		grid.add(new Label("with further support of:"), 0, 2);
 		grid.add(new Label("Robin Haunschild, Loet Leydesdorff, and Rüdiger Mutz "), 1, 2);
+		
 		Hyperlink hp = new Hyperlink("Project website: crexplorer.net");
 		hp.setOnAction(e -> {
+			
 		// TODO set hyperlink
 			// 	HostServicesFactory.getInstance(CitedReferencesExplorer.app).showDocument(CitedReferencesExplorer.url);
 		});

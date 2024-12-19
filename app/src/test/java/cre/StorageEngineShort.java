@@ -16,9 +16,7 @@ import org.junit.Test;
 
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRTable.TABLE_IMPL_TYPES;
-import cre.data.type.abs.Statistics.IntRange;
 import cre.data.type.abs.Clustering;
-import cre.format.cre.CREWriter;
 import cre.format.exporter.ExportFormat;
 import cre.format.importer.ImportFormat;
 import cre.ui.UISettings;
@@ -136,7 +134,7 @@ public class StorageEngineShort {
 			CRTable.type = type;
 			dataLoader.accept(null);
 			dataModifier.accept(null);
-			CREWriter.save(creFile.apply(type, "cre"), UISettings.get().getIncludePubsWithoutCRs());
+			ExportFormat.CRE.save(creFile.apply(type, "cre"), UISettings.get().getIncludePubsWithoutCRs());
 			ExportFormat.CSV_CR.save(creFile.apply(type, "csv"), UISettings.get().getIncludePubsWithoutCRs());
 		}
 
