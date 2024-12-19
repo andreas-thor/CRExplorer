@@ -1,0 +1,13 @@
+{
+    "Servers": {
+        "Postgres": {
+            "Name": "CRExplorer",
+            "Port": 5432,
+            "Group": "Servers",
+            "SSLMode": "prefer",
+            "Username": "cre",
+            "Host": "db",
+            "MaintenanceDB": "postgres"
+        }
+    }
+}

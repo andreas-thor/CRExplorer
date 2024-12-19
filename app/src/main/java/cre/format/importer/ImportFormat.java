@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 
 import cre.Exceptions.AbortedException;
@@ -21,30 +22,51 @@ import cre.ui.statusbar.StatusBar;
 public enum ImportFormat {
 
 	
-	WOS("Web of Science", "txt", new WoS_txt()),
+	WOS("Web of Science", "txt", true, new WoS_txt(), null),
 
-	SCOPUS("Scopus", "csv", new Scopus()),
+	SCOPUS("Scopus", "csv", true, new Scopus(), null),
 
-	CROSSREF ("Crossref", "crossref", new Crossref());
+	CROSSREF ("Crossref", "crossref", true, new Crossref(), null),
 	
-	// CSV("CSV", "csv", new CSV());
-	
+	CSV("CSV", "csv", true, null, cre.format.importer.CSV::load),
+
+	CRE("CRE", "cre", false, null, cre.format.importer.CRE::load);
+
 
 	
 	private final String label;
 	private final String fileExtension;
+	private final boolean multipleFiles;
 	private final ImportReader importReader;
+	private final Consumer<List<File>> dataLoader;
 
 	
-	private ImportFormat(String label, String fileExtension, ImportReader importReader) {
+	private ImportFormat(String label, String fileExtension, boolean multipleFiles, ImportReader importReader, Consumer<List<File>> dataLoader) {
 		this.label = label;
 		this.fileExtension = fileExtension;
+		this.multipleFiles = multipleFiles;
 		this.importReader = importReader;
+		this.dataLoader = dataLoader;
 	}
 
 	
+	public boolean isDataLoader() {
+		return this.importReader == null;
+	}
+
+	public boolean isCREFormat() {
+		return this == ImportFormat.CRE;
+	}
+
+	public boolean isMultipleFiles() {
+		return this.multipleFiles;
+	}
+
 	public CRStatsInfo analyze(List<File> files) throws OutOfMemoryError, UnsupportedFileFormatException, FileTooLargeException, AbortedException, IOException {
 		
+		if (isDataLoader()) return null;		// Wo don't do a analysis for a data loader
+
+
 		CRTable<?,?> crTab = CRTable.get(); 
 		crTab.init();
 		
@@ -75,6 +97,10 @@ public enum ImportFormat {
 
 	public void load(List<File> files, IntRange rpyRange, boolean importCRsWithoutYear, IntRange pyRange, boolean importPubsWithoutYear, long noMaxCRs, Sampling sampling) throws OutOfMemoryError, Exception {
 
+		if (isDataLoader()) {
+			this.dataLoader.accept(files);	
+			return;
+		}
 		
 		long ts1 = System.currentTimeMillis();
 		long ms1 = Runtime.getRuntime().totalMemory();

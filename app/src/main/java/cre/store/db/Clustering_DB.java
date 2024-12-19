@@ -343,7 +343,6 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 				// reset all clusters (each CR forms an individual clustering)
 				Statement stmt = dbCon.createStatement();
 				for (String s: Queries.getQuery("clustering", "init")) {
-					System.out.println(s);
 					stmt.execute(String.format(Locale.US, s, threshold));
 				}
 			}
@@ -351,8 +350,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 			if (type == Clustering.ClusteringType.REFRESH) {
 				// reset clusterId2 only 
 				Statement stmt = dbCon.createStatement();
-				for (String s: Queries.getQuery("clustering", "refresh")) {
-					System.out.println(s);
+				for (String s: Queries.getQuery("clustering", "init")) {		// we execute the same script as for init!!!
 					stmt.execute(String.format(Locale.US, s, threshold, changeCRIds==null ? "" : String.format("WHERE CR_ID IN (%s)", changeCRIds)));
 				}
 			}

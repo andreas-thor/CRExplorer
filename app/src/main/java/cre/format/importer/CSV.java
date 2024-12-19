@@ -1,82 +1,100 @@
 package cre.format.importer;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
-import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.RFC4180Parser;
+import com.opencsv.RFC4180ParserBuilder;
 
+import cre.data.type.abs.CRTable;
+import cre.data.type.abs.Clustering;
 import cre.store.mm.CRType_MM;
 import cre.store.mm.PubType_MM;
+import cre.ui.statusbar.StatusBar;
 
-public class CSV extends ImportReader {
 
-    private int countComputeNextEntryCall;
-    // private CRType_MM[] crs;
-    private Integer[] crsNCR;
-    private PubType_MM[] entries;
-    private CSVReader csvReader;
-    private int idxNCR;
+public class CSV {
 
-    @Override
-	public void init(InputStream is) throws IOException {
-        this.countComputeNextEntryCall = 0;
-        super.init(is);
-    }
+	static ArrayList<ArrayList<Integer>> pubs;
+	static int currentCRID;
 
-    @Override
-    public void close() throws IOException {
-		csvReader.close();
-        super.close();
+	public static void load (List<File> files) throws OutOfMemoryError, RuntimeException {
+		try {
+			CRTable.get().init();
+			CRTable.get().getLoader().onBeforeLoad();
+			StatusBar.get().initProgressbar(files.stream().mapToLong(f -> f.length()).sum(), "Loading CSV files ...");
+
+			pubs = new ArrayList<>();
+			currentCRID = 0;
+			for (File f: files) load(f);
+
+			for (ArrayList<Integer> crIds: pubs) {
+				PubType_MM p = new PubType_MM();
+				p.setPY(3000);
+				CRTable.get().getLoader().onNewPub(p, crIds);
+			}
+
+			CRTable.get().getLoader().onAfterLoad();
+			CRTable.get().updateData();
+			CRTable.get().getClustering().updateClustering(Clustering.ClusteringType.INIT, null, Clustering.min_threshold, false, false, false, false);
+	
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
 	}
-    
-    @Override
-    protected void computeNextEntry() throws IOException {
 
-        if (countComputeNextEntryCall == 0) {
 
-            csvReader = new CSVReader(br);
-            
-            String[] header = csvReader.readNext();
-            if ((header == null) || (header.length==0)) {
-                entry = null;
-                return;
-            }
+	private static void load (File file) throws Exception {
 
-            // column index of N_CR
-            idxNCR = Arrays.asList(header).indexOf("N_CR");
 
-                        // get Number of NC_R per cr (if not available in header --> set to 1)
-            crsNCR = null; // data.stream().map(line -> idxNCR<0 ? 1 : Integer.valueOf(line[idxNCR])).toArray(Integer[]::new);
-          
-            int ncrMax = Arrays.asList(crsNCR).stream().max(Integer::compare).get().intValue();
-            // we create fake pubs and add all CRs to these pubs
-            // first pub will have all crs; second pub will have all crs with n_cr>=2 etc.
-            entries = new PubType_MM[ncrMax];
-            for (int i=0; i<ncrMax; i++) {
-                entries[i] = new PubType_MM();
-                entries[i].setPY(3000);
-                for (int k=0; k<crsNCR.length; k++) {
-                    if (i<crsNCR[k]) {
-                        entries[i].addCR(parseCR(header, null /*data.get(k)*/), true);
-                    }
-                }
-            }
-        }
+		// see https://geekprompt.github.io/Properly-handling-backshlash-while-using-openCSV/
+		// CSVReader and CSVWriter use different default escape characters ... so we have to adjust the reading part
+		RFC4180Parser rfc4180Parser = new RFC4180ParserBuilder().build();
+		CSVReaderBuilder csvReaderBuilder = new CSVReaderBuilder(new FileReader(file)).withCSVParser(rfc4180Parser);
+		com.opencsv.CSVReader csv = csvReaderBuilder.build();
 
-        entry = (countComputeNextEntryCall < entries.length) ? entries[countComputeNextEntryCall] : null;
-        countComputeNextEntryCall++;
+		String[] header = csv.readNext();
+		if ((header != null) && (header.length>0)) {
 
-    }
-    
+			// column index of N_CR
+			int idxNCR = Arrays.asList(header).indexOf("N_CR");
+
+			String[] line;
+			while ((line = csv.readNext()) != null) {
+				StatusBar.get().incProgressbar(Arrays.stream(line).mapToInt(s -> s.length()).sum());
+				CRType_MM cr = parseCR(header, line);
+				CRTable.get().getLoader().onNewCR(cr);
+
+				try { 
+					int ncr = Integer.parseInt(line[idxNCR]); 
+
+					for (int i=pubs.size(); i<ncr; i++) {
+						pubs.add(new ArrayList<Integer>());
+					}
+					for (int i=0; i<ncr; i++) {
+						pubs.get(i).add(cr.getID());
+					}
+				} catch (NumberFormatException e) { }
+			}
+
+
+
+		}
+
+		csv.close();
+
+	}
+
+
     public static CRType_MM parseCR (String[] header, String[] line) {
 
-
         CRType_MM cr = new CRType_MM();
-
+		cr.setID(++currentCRID);	// we ignore the ID in the file and provide new ids
         for (int i=0; i<header.length; i++) {
             if (header[i].equalsIgnoreCase("CR"))          cr.setCR(line[i]);
             if (header[i].equalsIgnoreCase("RPY"))   try { cr.setRPY(Integer.parseInt(line[i])); } catch (NumberFormatException e) { }
@@ -93,9 +111,8 @@ public class CSV extends ImportReader {
             if (header[i].equalsIgnoreCase("DOI"))         cr.setDOI(line[i]);
 
         }
-
-        
-
         return cr;
     }
+
+
 }
