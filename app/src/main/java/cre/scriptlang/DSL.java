@@ -52,6 +52,14 @@ public class DSL extends Script {
 		s.close();
 	}
 
+
+	public static Map<String, Object> getCRById (Map<String, Object> map) throws Exception {
+		Map<String, Object> params = DSL_Helper.makeParamsUpperCase(map);
+		int id = Integer.valueOf(params.get("ID").toString()).intValue();
+		return CRTable.get().getCRById(id).toMap();
+	}
+
+
 	public static void openFile(Map<String, Object> map) throws Exception {
 		
 		List<File> files = DSL_Helper.getFiles (DSL_Helper.makeParamsUpperCase(map));

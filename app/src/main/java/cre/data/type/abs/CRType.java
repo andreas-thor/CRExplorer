@@ -1,7 +1,18 @@
 package cre.data.type.abs;
 
+import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.github.javaparser.ast.observer.Observable;
+
+import cre.data.type.extern.CRType_ColumnView;
+import javafx.beans.value.ObservableValue;
 
 public abstract class CRType<P extends PubType<?>> implements Comparable<CRType<P>> {
 
@@ -406,6 +417,12 @@ public abstract class CRType<P extends PubType<?>> implements Comparable<CRType<
 	}
 	
 	
+	public Map<String, Object> toMap() {
+		return Arrays.stream(CRType_ColumnView.CRColumn.values()).collect(Collectors.toMap(
+			col -> col.id, 
+			col -> { ObservableValue<?> val = col.prop.apply(this); return (val.getValue() == null) ? "" : val.getValue(); })); 
+	}
+
 	@Override
 	public String toString() {
 		
