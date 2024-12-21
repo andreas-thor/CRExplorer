@@ -2,6 +2,7 @@ package cre.scriptlang;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.Scanner;
 import java.util.function.Predicate;
 
 import javax.naming.OperationNotSupportedException;
+
 
 import cre.data.CRStatsInfo;
 import cre.data.type.abs.CRTable;
@@ -33,6 +35,15 @@ public class DSL extends Script {
 		StatusBar.get().setUI(status);
 	}
 
+	public static void init (String type) {
+		if (type != null) {
+			if (type.equalsIgnoreCase("MM")) CRTable.type = CRTable.TABLE_IMPL_TYPES.MM;
+			if (type.equalsIgnoreCase("DB")) CRTable.type = CRTable.TABLE_IMPL_TYPES.DB;
+		}
+		CRTable.get().init();
+	}
+
+
 	public static void progress(boolean b) {
 		status.setShowProgress(b);
 	}
@@ -53,10 +64,12 @@ public class DSL extends Script {
 	}
 
 
-	public static Map<String, Object> getCRById (Map<String, Object> map) throws Exception {
+	public static List<Map<String, Object>> getCRById (Map<String, Object> map) throws Exception {
 		Map<String, Object> params = DSL_Helper.makeParamsUpperCase(map);
-		int id = Integer.valueOf(params.get("ID").toString()).intValue();
-		return CRTable.get().getCRById(id).toMap();
+		Integer[] ids = DSL_Helper.getIds(params);
+		return Arrays.stream(ids).map(id -> CRTable.get().getCRById(id).toMap()).toList();
+		// int id = Integer.valueOf(params.get("ID").toString()).intValue();
+		// return CRTable.get().getCRById(id).toMap();
 	}
 
 
@@ -206,8 +219,8 @@ public class DSL extends Script {
 			return;
 		}
 
-
-		throw new Exception ("removeCR: Missing parameter (must have N_CR or RPY)");
+		return;
+		// throw new Exception ("removeCR: Missing parameter (must have N_CR or RPY)");
 		
 	}
 

@@ -2,6 +2,8 @@ package cre.scriptlang;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
@@ -29,9 +31,7 @@ public class ScriptExecutionEngine {
 			System.out.println(String.format("***DB MODE*** (%s)", CRTable_DB.url)); 
 		}
 		
-		//shell.run (new File (this.args[0]));
-		shell.evaluate(new File (args[0]));
-
+		shell.evaluate (new File (args[0]));
 	}
 
 }

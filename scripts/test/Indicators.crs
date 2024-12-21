@@ -1,14 +1,20 @@
+/*
+This script checks if the indicators are computed correctly.
+Test results are based on the following paper:
+* Thor, A.; Bornmann L.; Marx, W.; Mutz, R.: Identifying single influential publications in a research field: new analysis opportunities of the CRExplorer. Scientometrics 116(1), 2018
+* https://dbs.uni-leipzig.de/file/Thor2018_Article_IdentifyingSingleInfluentialPu.pdf
+*/
+
 
 // get script directory to get relative paths to file
 def scriptDir = new File(getClass().protectionDomain.codeSource.location.path).parent
 
 // CRExplorer Script
 set (n_pct_range: 1)
-openFile (file: scriptDir + "/CREDAT_Typen.cre")
-exportFile (file: scriptDir + "/CREDAT_Typen.csv", type: "CSV_CR")
+openFile (file: scriptDir + "/../data/CREDAT_Typen.cre")
 
 // check result
-crlist = [1, 2, 3, 4].collect {getCRById(id: it)}
-assert crlist.collect {it["N_CR"]} == ["73", "50", "81", "76"] : "N_CR falsch"
-assert crlist.collect {it["N_PYEARS"]} == ["5", "6", "5", "6"] : "N_PYEARS falsch"
+crlist = getCRById(id: [1,2,3,4])
+assert crlist.collect {it["N_CR"]} == [73, 50, 81, 76] : "N_CR falsch"
+assert crlist.collect {it["N_PYEARS"]} == [5, 6, 5, 6] : "N_PYEARS falsch"
 assert crlist.collect {it["SEQUENCE"]} == ["---0++", "000000", "++-0--", "--++0-"] : "SEQUENCE falsch"

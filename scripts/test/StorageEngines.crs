@@ -1,0 +1,29 @@
+/*
+This script checks if the storage engines "MM" (main memory) and "DB" (database) are equivalent. 
+To this end, several files are imported, some data manipulation is done (remove CRs, clustering, merging) 
+and the resulting export files are checked if they are byte-wise equivalent.
+*/
+
+import org.apache.commons.io.FileUtils
+
+// get script directory to get relative paths to file
+def scriptDir = new File(getClass().protectionDomain.codeSource.location.path).parent
+
+// CRExplorer Script
+set (n_pct_range: 1)
+
+
+for (removeRPY in [ [10,2013], null ]) {
+    for (removeNCR in [ [0, 10], null ]) {
+        for (engine in ["MM", "DB"]) {
+
+            init (engine)
+            importFile (type: "WOS", files: [scriptDir + "/../data/savedrecs_JOI1.txt", scriptDir + "/../data/savedrecs_JOI2.txt"])
+            removeCR (RPY: removeRPY)
+            removeCR (N_CR: removeNCR)
+            exportFile (type: "CSV_CR_PUB", file: scriptDir + "/"+ engine + ".csv")
+        }
+
+        assert FileUtils.contentEquals(new File (scriptDir + "/MM.csv"), new File (scriptDir + "/DB.csv"))
+    }
+}

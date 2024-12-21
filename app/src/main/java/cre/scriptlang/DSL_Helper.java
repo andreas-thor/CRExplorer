@@ -17,7 +17,7 @@ public class DSL_Helper {
 
 	
 	public static Map<String, Object> makeParamsUpperCase  (Map<String, Object> map) {
-		return map.entrySet().stream().collect(Collectors.toMap(p -> p.getKey().toUpperCase(), p -> p.getValue()));
+		return map.entrySet().stream().filter(p -> p.getValue() != null).collect(Collectors.toMap(p -> p.getKey().toUpperCase(), p -> p.getValue()));
 	}
 	
 	
@@ -88,7 +88,7 @@ public class DSL_Helper {
 		}
 	}
 	
-	
+
 	public static String[] getDOI (Map<String, Object> params) { 
 		
 		if (params.get("DOI") == null) return new String[] {};
@@ -96,6 +96,16 @@ public class DSL_Helper {
 		if (params.get("DOI") instanceof String) return new String[] { params.get("DOI").toString() };
 
 		return ((List<?>) params.get("DOI")).stream().map(d -> d.toString()).toArray(String[]::new);
+	}
+	
+
+	// int id = Integer.valueOf(params.get("ID").toString()).intValue();
+
+	public static Integer[] getIds (Map<String, Object> params) { 
+		
+		if (params.get("ID") == null) return new Integer[] {};
+		if (params.get("ID") instanceof Integer) return new Integer[] { (Integer) params.get("ID") };
+		return ((List<?>) params.get("ID")).stream().map(d -> (Integer) d ).toArray(Integer[]::new);
 	}
 	
 
