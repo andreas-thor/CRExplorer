@@ -11,6 +11,7 @@ import java.util.zip.ZipFile;
 import javax.json.Json;
 import javax.json.stream.JsonParser;
 
+import cre.CRELogger;
 import cre.Exceptions.AbortedException;
 import cre.Exceptions.FileTooLargeException;
 import cre.Exceptions.UnsupportedFileFormatException;
@@ -146,7 +147,7 @@ public class CRE {
 				case "VOL": 	cr.setVOL(parser.getString()); break;
 				case "DOI": 	cr.setDOI(parser.getString()); break;
 				case "CID2": 	/* cr.setCID2(parser.getString()); */ break; 
-				default: System.out.println("CRDATA.json >> Unknow Key with String Value: " + key); 
+				default: CRELogger.get().logInfo("CRDATA.json >> Unknow Key with String Value: " + key); 
 				}
 				break;
 			case VALUE_NUMBER:
@@ -158,7 +159,7 @@ public class CRE {
 				case "VI": 		cr.setVI(parser.getInt()==1); break;
 				case "CO": 		cr.setCO(parser.getInt()); break;
 				case "type": 	cr.setFormatType (parser.getInt()); break;	// LEGACY: Type were enumerated 1,2,...; 0 = Unknown
-				default: System.out.println("CRDATA.json >> Unknow Key with Number Value: " + key); 
+				default: CRELogger.get().logInfo("CRDATA.json >> Unknow Key with Number Value: " + key); 
 				}
 				break;
 			default:break;  
@@ -230,7 +231,7 @@ public class CRE {
 					case "DT": 	pub.setDT(parser.getString()); break;
 					case "FS": 	pub.setFS(parser.getString()); break;
 					case "UT": 	pub.setUT(parser.getString()); break;
-					default: System.out.println("PUBDATA.json >> Unknow Key with String Value: " + key); 
+					default: CRELogger.get().logInfo("PUBDATA.json >> Unknow Key with String Value: " + key); 
 					}
 					break;
 					
@@ -240,7 +241,7 @@ public class CRE {
 					case "AF":	pub.addAF(parser.getString()); break;
 					case "EM":	pub.addEM(parser.getString()); break;
 					case "AA":	pub.addAA(parser.getString()); break;
-					default: System.out.println("PUBDATA.json >> Unknow Key with String Value: " + key); 
+					default: CRELogger.get().logInfo("PUBDATA.json >> Unknow Key with String Value: " + key); 
 					}
 					break;
 				case 3: 
@@ -257,11 +258,11 @@ public class CRE {
 				case "CRLISTID":	
 					crIds.add(parser.getInt());	
 					break;
-				default: System.out.println("PUBDATA.json >> Unknow Key with Number Value: " + key); 
+				default: CRELogger.get().logInfo("PUBDATA.json >> Unknow Key with Number Value: " + key); 
 				}
 				break;
 			default:
-				System.out.println("DEFAULT");
+				CRELogger.get().logInfo("DEFAULT");
 
 				break;
 			}

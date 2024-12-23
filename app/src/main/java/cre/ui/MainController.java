@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cre.CRELogger;
 import cre.CitedReferencesExplorerFX;
 import cre.Exceptions.AbortedException;
 import cre.Exceptions.BadResponseCodeException;
@@ -299,7 +300,7 @@ public class MainController {
 
 	private void refreshTableValues() {
 		Platform.runLater(() -> {
-			System.out.println("SortOrderSize = " + tableView.getSortOrder().size());
+			CRELogger.get().logInfo("SortOrderSize = " + tableView.getSortOrder().size());
 
 			if (tableView.getSortOrder().size() > 0) {
 				tableView.sort();

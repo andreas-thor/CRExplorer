@@ -242,8 +242,6 @@ public class DSL extends Script {
 	
 		Map<String, Object> params = DSL_Helper.makeParamsUpperCase(map);
 
-		System.out.println(params.getOrDefault ("THRESHOLD", 0.8));
-
 		double threshold = Double.valueOf(params.getOrDefault ("THRESHOLD", 0.8).toString()).doubleValue();
 		boolean useVol = (boolean) params.getOrDefault ("VOLUME", false);
 		boolean usePag = (boolean) params.getOrDefault ("PAGE", false);

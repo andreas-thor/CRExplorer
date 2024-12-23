@@ -20,6 +20,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.simmetrics.StringMetric;
 import org.simmetrics.metrics.StringMetrics;
 
+import cre.CRELogger;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.Clustering;
 import cre.data.type.abs.MatchPairGroup;
@@ -255,8 +256,8 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 								dbCon.commit();
 								
 								if (c.incrementAndGet()==2000) {
-									System.out.println("Total memory (bytes): " + Runtime.getRuntime().totalMemory());
-									System.out.println("Free memory (bytes): " + Runtime.getRuntime().freeMemory());
+									CRELogger.get().logInfo("Total memory (bytes): " + Runtime.getRuntime().totalMemory());
+									CRELogger.get().logInfo("Free memory (bytes): " + Runtime.getRuntime().freeMemory());
 									c.set(0);
 								}
 							}
@@ -372,7 +373,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 
 
 			int noOfUpdates = -1;
-			System.out.println(String.format("updateClustering Start"));
+			CRELogger.get().logInfo(String.format("updateClustering Start"));
 			Long stop1 = System.currentTimeMillis();
 			int statusBarSize = -1;
 			while ((noOfUpdates = updateclustering_PrepStmt.executeUpdate()) > 0) { 
@@ -386,7 +387,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 				StatusBar.get().incProgressbar();
 				
 				Long stop2 = System.currentTimeMillis();
-				System.out.println(String.format("updateClustering NoOfUpdates = %d, time = %.1f", noOfUpdates, (stop2-stop1)/1000.0));
+				CRELogger.get().logInfo(String.format("updateClustering NoOfUpdates = %d, time = %.1f", noOfUpdates, (stop2-stop1)/1000.0));
 				stop1 = System.currentTimeMillis();				
 			}
 			updateclustering_PrepStmt.close();

@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 
+import cre.CRELogger;
 import cre.Exceptions.AbortedException;
 import cre.Exceptions.FileTooLargeException;
 import cre.Exceptions.UnsupportedFileFormatException;
@@ -219,16 +220,16 @@ public enum ImportFormat {
 		long ts2 = System.currentTimeMillis();
 		long ms2 = Runtime.getRuntime().totalMemory();
 
-		System.out.println("Load time is " + ((ts2-ts1)/1000d) + " seconds");
-		System.out.println("Load Memory usage " + ((ms2-ms1)/1024d/1024d) + " MBytes");
+		CRELogger.get().logInfo("Load time is " + ((ts2-ts1)/1000d) + " seconds");
+		CRELogger.get().logInfo("Load Memory usage " + ((ms2-ms1)/1024d/1024d) + " MBytes");
 		
 		crTab.updateData();
 
 		long ts3 = System.currentTimeMillis();
 		long ms3 = Runtime.getRuntime().totalMemory();
 
-		System.out.println("Update time is " + ((ts3-ts2)/1000d) + " seconds");
-		System.out.println("Update Memory usage " + ((ms3-ms2)/1024d/1024d) + " MBytes");
+		CRELogger.get().logInfo("Update time is " + ((ts3-ts2)/1000d) + " seconds");
+		CRELogger.get().logInfo("Update Memory usage " + ((ms3-ms2)/1024d/1024d) + " MBytes");
 
 		
 		StatusBar.get().setValue(String.format("Loading %1$s file%2$s done", this.getLabel(), files.size()>1 ? "s" : ""));

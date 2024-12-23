@@ -26,6 +26,7 @@ import javax.json.JsonReader;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
+import cre.CRELogger;
 import cre.Exceptions.BadResponseCodeException;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRType;
@@ -237,7 +238,7 @@ public class Crossref extends ImportReader {
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}		
-		System.out.println("Cache path is " + cachePath.toString());
+		CRELogger.get().logInfo("Cache path is " + cachePath.toString());
 
 		StatusBar.get().setValue(String.format ("Downloading CrossRef data to %s ...", cachePath.toString()));
 		
@@ -266,7 +267,7 @@ public class Crossref extends ImportReader {
 				url.append("&filter=" + filter.stream().collect(Collectors.joining( "," )));
 			}
 			query.forEach(it -> url.append ("&" + it));
-			System.out.println(url.toString());
+			CRELogger.get().logInfo(url.toString());
 			
 			String filename = String.format("%s.crossref", DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss_SSS").format(LocalDateTime.now()));  
 			File file = cachePath.resolve(filename).toFile();

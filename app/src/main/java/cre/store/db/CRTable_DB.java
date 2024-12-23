@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cre.CRELogger;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.Loader;
 import cre.data.type.abs.Statistics;
@@ -217,7 +218,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 			StatusBar.get().setValue("Merging ");
 			Statement stmt = dbCon.createStatement();
 			for (String s: Queries.getQuery("crpub", "merge_cr")) {
-				System.out.println(s);
+				CRELogger.get().logInfo(s);
 				stmt.execute(s);
 			}
 			dbCon.commit();
@@ -225,7 +226,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 			StatusBar.get().setValue("Merging done");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			System.out.println(e);
+			CRELogger.get().logError(e.toString());
 			e.printStackTrace();
 		}
 		

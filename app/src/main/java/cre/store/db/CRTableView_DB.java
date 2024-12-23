@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import cre.CRELogger;
 import cre.data.type.extern.CRType_ColumnView;
 import cre.ui.CRTableView;
 import javafx.scene.control.SortEvent;
@@ -20,8 +21,8 @@ public class CRTableView_DB extends CRTableView<CRType_DB> {
 
 		addEventHandler(SortEvent.ANY, event -> {
 
-			System.out.println("HEY, Sorted???");
-			System.out.println (((CRTableView_DB) event.getSource()).getSortOrder().size());
+			CRELogger.get().logInfo("HEY, Sorted???");
+			CRELogger.get().logInfo(String.valueOf (((CRTableView_DB) event.getSource()).getSortOrder().size()));
 
 			this.crTable.getObservableCRList_DB().setSortOrder (
 				((CRTableView_DB) event.getSource()).getSortOrder().stream()

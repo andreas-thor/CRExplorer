@@ -13,6 +13,7 @@ import java.util.stream.IntStream;
 
 import com.opencsv.CSVReader;
 
+import cre.CRELogger;
 import cre.data.type.abs.CRType;
 import cre.store.mm.CRType_MM;
 import cre.store.mm.PubType_MM;
@@ -83,7 +84,7 @@ public class Scopus extends ImportReader  {
 	
 	@Override
 	public void close() throws IOException {
-		System.out.println(String.format("debug_NCR: %d", debug_NCR));
+		CRELogger.get().logInfo(String.format("debug_NCR: %d", debug_NCR));
 
 		csv.close();
 		super.close();
@@ -173,7 +174,7 @@ public class Scopus extends ImportReader  {
 		
 		line = line.trim();
 		if (line.length() == 0) { 
-			System.out.println("Hey, line is empty");
+			CRELogger.get().logInfo("Hey, line is empty");
 			return null;
 		}
 		
@@ -225,11 +226,11 @@ public class Scopus extends ImportReader  {
 				res.setJ(Scopus_matchYearTitle.group(3).trim());
 			}
 		} else {	// no year
-			System.out.println("NO YEAR MATCHES");	
+			CRELogger.get().logInfo("NO YEAR MATCHES");	
 			String[] crsplit = line.split (",", 2);
 			res.setJ_N(crsplit[0].trim());
 			res.setJ(line.trim());
-			System.out.println(line + "->" + res.getJ_N() + "/" + res.getJ());
+			CRELogger.get().logInfo(line + "->" + res.getJ_N() + "/" + res.getJ());
 		}
 
 

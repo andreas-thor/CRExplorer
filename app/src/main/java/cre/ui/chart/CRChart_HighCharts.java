@@ -3,6 +3,7 @@ package cre.ui.chart;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import cre.CRELogger;
 import cre.data.type.abs.CRChartData;
 import cre.data.type.abs.CRChartData.SERIESTYPE;
 import cre.data.type.abs.CRTable;
@@ -29,7 +30,7 @@ public abstract class CRChart_HighCharts extends CRChart {
 	public class ChartCallBack  {
 		
 		public void onRedraw(double min, double max) {
-			System.out.println("HighChart On Redraw " + min + "/" + max);
+			CRELogger.get().logInfo("HighChart On Redraw " + min + "/" + max);
 			onYearRangeFilter(min, max);
 		}
 		

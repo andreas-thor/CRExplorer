@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cre.CRELogger;
 // import cre.data.CRSearch;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRType;
@@ -180,7 +181,7 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 		int debug_after = this.allPubs.size();
 
 		if (debug_after != debug_before+1) {
-			System.out.println("debug_after != debug_before+1");
+			CRELogger.get().logInfo("debug_after != debug_before+1");
 		}
 		
 		
@@ -258,10 +259,10 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 		
 		duringUpdate = true;		// mutex to avoid chart updates during computation
 		
-		System.out.println("update Data");
-		System.out.println(System.currentTimeMillis());
+		CRELogger.get().logInfo("update Data");
+		CRELogger.get().logInfo(String.valueOf(System.currentTimeMillis()));
 		
-		System.out.println("Compute Ranges in CRTable_MM");
+		CRELogger.get().logInfo("Compute Ranges in CRTable_MM");
 		
 		IntRange range_RPY = getStatistics().getMaxRangeRPY();
 		IntRange range_PY  = getStatistics().getMaxRangePY();
@@ -272,7 +273,7 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 		int[] CNT_RPY = new int[range_RPY.getSize()];	// number of CRs by RPY
 		
 		// Group CRs by RPY, compute NCR_ALL and NCR_RPY
-		System.out.println("mapRPY_CRs");
+		CRELogger.get().logInfo("mapRPY_CRs");
 		CRTable.get().getCR().forEach(cr -> {
 			NCR_ALL[0] += cr.getN_CR();
 			if (cr.getRPY()!=null) {

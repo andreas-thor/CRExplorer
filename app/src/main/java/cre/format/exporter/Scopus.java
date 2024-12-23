@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import com.opencsv.CSVWriter;
 
+import cre.CRELogger;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRType;
 import cre.ui.statusbar.StatusBar;
@@ -94,7 +95,7 @@ public class Scopus   {
 
 		StatusBar.get().setValue ("Saving Scopus file done");
 
-		System.out.println(String.format("debug_countNR: %d", debug_countNR.get()));
+		CRELogger.get().logInfo(String.format("debug_countNR: %d", debug_countNR.get()));
 	}
 	
 	// FIXME: wieder zurück auf private

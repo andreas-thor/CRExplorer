@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import cre.CRELogger;
 import javafx.collections.ObservableList;
 import javafx.beans.InvalidationListener;
 import javafx.collections.ListChangeListener;
@@ -81,7 +82,7 @@ public class OberservableCRList_DB implements ObservableList<CRType_DB> {
             dbCon.commit();
             stmt.close();
 
-            System.out.println(String.format("setSortOrder update: %d", i));
+            CRELogger.get().logInfo(String.format("setSortOrder update: %d", i));
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -94,7 +95,7 @@ public class OberservableCRList_DB implements ObservableList<CRType_DB> {
             .selectCR(String.format("WHERE CR_SORT_ORDER >= %d AND CR_SORT_ORDER < %d ORDER BY CR_SORT_ORDER", this.cache_Start, this.cache_Start+CACHE_SIZE))
             // .peek(x -> System.out.println(x.getID()))
             .toArray(CRType_DB[]::new);
-        System.out.println(String.format("Update Cache (start=%d, length=%d)", this.cache_Start, this.cache.length));
+            CRELogger.get().logInfo(String.format("Update Cache (start=%d, length=%d)", this.cache_Start, this.cache.length));
 
     }
 
@@ -108,7 +109,7 @@ public class OberservableCRList_DB implements ObservableList<CRType_DB> {
         if ((this.cache_Start>=0) && (index>=this.cache_Start) && (index<this.cache_Start+CACHE_SIZE)) {
             int cachePos = index-this.cache_Start;
             if (cachePos>=this.cache.length) {
-                System.out.println("Wäre ein Index out of Bounds");
+                CRELogger.get().logInfo("Wäre ein Index out of Bounds");
                 return null;
             }
             return this.cache[index-this.cache_Start];
@@ -124,7 +125,7 @@ public class OberservableCRList_DB implements ObservableList<CRType_DB> {
     public int size() {
         if (this.size == -1) {
             this.size = statistics.getNumberOfCRsByVisibility(true);
-            System.out.println(String.format("size()=%d", this.size));
+            CRELogger.get().logInfo(String.format("size()=%d", this.size));
 
         }
         // System.out.println(String.format("size()=%d", this.size));
