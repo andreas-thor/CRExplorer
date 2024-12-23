@@ -1,6 +1,6 @@
 /*
 This script checks if the storage engines "MM" (main memory) and "DB" (database) are equivalent. 
-To this end, several files are imported, some data manipulation is done (remove CRs, clustering, merging) 
+To this end, several files are imported, some data manipulation is done (remove CRs, cluster & merge) 
 and the resulting export files are checked if they are byte-wise equivalent.
 */
 
@@ -12,18 +12,37 @@ def scriptDir = new File(getClass().protectionDomain.codeSource.location.path).p
 // CRExplorer Script
 set (n_pct_range: 1)
 
+files = [
+    // [type: "WOS", files: [ "${scriptDir}/../data/savedrecs_JOI1.txt", "${scriptDir}/../data/savedrecs_JOI2.txt"]],
+    // [type: "SCOPUS", files: [ "${scriptDir}/../data/scopus_export_csv_incl_citations_abstract_references.csv"]],
+    [type: "CRE", files: [ "${scriptDir}/../data/sciento_bearb.cre"]]
+]
 
-for (removeRPY in [ [10,2013], null ]) {
-    for (removeNCR in [ [0, 10], null ]) {
-        for (engine in ["MM", "DB"]) {
+for (file in files) {
+    for (removeRPY in [ [10 ,2013], null ]) {
+        for (removeNCR in [ [0, 10], null ]) {
+            for (threshold : [0.5, 0.75, 0.9, null]) {
 
-            init (engine)
-            importFile (type: "WOS", files: [scriptDir + "/../data/savedrecs_JOI1.txt", scriptDir + "/../data/savedrecs_JOI2.txt"])
-            removeCR (RPY: removeRPY)
-            removeCR (N_CR: removeNCR)
-            exportFile (type: "CSV_CR_PUB", file: scriptDir + "/"+ engine + ".csv")
+                for (engine in ["MM", "DB"]) {
+
+                    init (engine)
+                    if (file.type == "CRE") openFile (file) else importFile (file)
+                    removeCR (RPY: removeRPY)
+                    removeCR (N_CR: removeNCR)
+                    if (threshold != null) {
+                        cluster (threshold: threshold)
+                        merge()
+                    }
+                    exportFile (type: "CSV_CR_PUB", file: "${scriptDir}/${engine}.csv")
+                }
+
+                // compare the resulting two files and delete them afterwards
+                assert FileUtils.contentEquals(new File ("${scriptDir}/MM.csv"), new File ("${scriptDir}/DB.csv"))
+                new File ("${scriptDir}/MM.csv").delete()
+                new File ("${scriptDir}/DB.csv").delete()
+
+                input("HJ")
+            }
         }
-
-        assert FileUtils.contentEquals(new File (scriptDir + "/MM.csv"), new File (scriptDir + "/DB.csv"))
     }
 }

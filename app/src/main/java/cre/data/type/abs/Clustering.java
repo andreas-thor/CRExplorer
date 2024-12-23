@@ -8,6 +8,8 @@ import java.util.stream.Stream;
 
 import org.simmetrics.StringMetric;
 
+import cre.CRELogger;
+
 // import org.simmetrics.StringMetric;
 
 
@@ -106,12 +108,12 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 		generateAutoMatching();
 
 		Long stop2 = System.currentTimeMillis();
-		System.out.println(String.format("generateInitialClustering > generateAutoMatching > Time is %.1f seconds", (stop2-stop1)/1000.0));
+		CRELogger.get().logInfo(String.format("generateInitialClustering > generateAutoMatching > Time is %.1f seconds", (stop2-stop1)/1000.0));
 
 		updateClustering(Clustering.ClusteringType.INIT, null, min_threshold, false, false, false, false);
 
 		Long stop3 = System.currentTimeMillis();
-		System.out.println(String.format("generateInitialClustering > updateClustering > Time is %.1f seconds", (stop3-stop2)/1000.0));
+		CRELogger.get().logInfo(String.format("generateInitialClustering > updateClustering > Time is %.1f seconds", (stop3-stop2)/1000.0));
 	}
 	
 	

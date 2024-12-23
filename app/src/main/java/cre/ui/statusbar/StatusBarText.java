@@ -25,7 +25,7 @@ public class StatusBarText implements StatusBarUI {
 		if (percent > 0) {
 			 out.append(String.format(" [%d%%]", percent));
 		} 
-		System.out.println(out.toString());
+		System.out.print(out.toString() + "\r");
 	}
 
 	

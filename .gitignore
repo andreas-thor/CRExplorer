@@ -19,3 +19,9 @@
 **/.ipynb_checkpoints
 .cache/
 .ipython/
+
+
+# CRE Logfiles
+
+CRE.log
+CRE.log.lck

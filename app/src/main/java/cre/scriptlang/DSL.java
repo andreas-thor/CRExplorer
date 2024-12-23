@@ -52,15 +52,16 @@ public class DSL extends Script {
 		StatusBar.get().updateInfo();
 	}
 
-	public static void input() {
-		input(null);
+	public static String input() {
+		return input(null);
 	}
 
-	public static void input(String msg) {
+	public static String input(String msg) {
 		System.out.print(msg == null ? "" : msg);
 		Scanner s = new Scanner(System.in);
-		s.nextLine();
+		String result = s.nextLine();
 		s.close();
+		return result;
 	}
 
 
