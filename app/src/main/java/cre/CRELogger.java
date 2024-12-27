@@ -14,9 +14,10 @@ public class CRELogger {
     private CRELogger() {
         this.logger = Logger.getLogger("CRELogger");
         try {
-            FileHandler fh = new FileHandler("CRE.log", true);
+            FileHandler fh = new FileHandler("CRE.log", false);
             fh.setFormatter(new SimpleFormatter());
             this.logger.addHandler(fh);
+            this.logger.setUseParentHandlers(false);
         } catch (Exception e) {
             
         }

@@ -1,5 +1,8 @@
 package cre.data.type.abs;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public interface Statistics {
 
 	public class IntRange {
@@ -112,7 +115,19 @@ public interface Statistics {
 	public int getNumberOfCRsWithoutRPY ();
 
 
+	default Map<String, Object> toMap() {
 
+		HashMap<String, Object> result = new HashMap<>();
+		result.put("NumberOfCRs", getNumberOfCRs());
+		result.put("NumberOfPubs(includePubsWithoutCRs=true)", getNumberOfPubs (true)); 
+		result.put("NumberOfPubs(includePubsWithoutCRs=false)", getNumberOfPubs (false)); 
+		result.put("MaxRangePY", getMaxRangePY ()); 
+		result.put("NumberOfDistinctPY", getNumberOfDistinctPY ());
+		result.put("MaxRangeNCR", getMaxRangeNCR ()); 
+		result.put("MaxRangeRPY", getMaxRangeRPY ()); 
+		result.put("NumberOfDistinctRPY", getNumberOfDistinctRPY ()); 
+		return result;
 
+	}
 	
 }

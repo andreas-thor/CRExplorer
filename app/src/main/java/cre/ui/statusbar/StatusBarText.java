@@ -6,13 +6,15 @@ import java.util.Date;
 public class StatusBarText implements StatusBarUI {
 
 	private boolean showProgress = true;
+	private String lastLabel = "";
 	
 	public void setShowProgress (boolean showProgress) {
 		this.showProgress = showProgress;
+		if (this.showProgress) System.out.print("\n");
 	}
 	
 	public void printInfo (String info) {
-		System.out.println(info);
+		System.out.print("\n" + info);
 	}
 	
 	
@@ -25,7 +27,11 @@ public class StatusBarText implements StatusBarUI {
 		if (percent > 0) {
 			 out.append(String.format(" [%d%%]", percent));
 		} 
+		
+		if (!lastLabel.equals(label)) System.out.print("\r\n");
+		
 		System.out.print(out.toString() + "\r");
+		lastLabel = label;
 	}
 
 	

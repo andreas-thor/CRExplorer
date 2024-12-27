@@ -29,9 +29,11 @@ import groovy.lang.Script;
 public class DSL extends Script {
 
 	public static StatusBarText status;
+	private static Scanner s;
 
 	public DSL() {
 		status = new StatusBarText();
+		s = new Scanner(System.in);
 		StatusBar.get().setUI(status);
 	}
 
@@ -57,10 +59,9 @@ public class DSL extends Script {
 	}
 
 	public static String input(String msg) {
+		System.out.print("\n");
 		System.out.print(msg == null ? "" : msg);
-		Scanner s = new Scanner(System.in);
 		String result = s.nextLine();
-		s.close();
 		return result;
 	}
 
@@ -69,8 +70,10 @@ public class DSL extends Script {
 		Map<String, Object> params = DSL_Helper.makeParamsUpperCase(map);
 		Integer[] ids = DSL_Helper.getIds(params);
 		return Arrays.stream(ids).map(id -> CRTable.get().getCRById(id).toMap()).toList();
-		// int id = Integer.valueOf(params.get("ID").toString()).intValue();
-		// return CRTable.get().getCRById(id).toMap();
+	}
+
+	public static Map<String, Object> getStatistics () throws Exception {
+		return CRTable.get().getStatistics().toMap();
 	}
 
 

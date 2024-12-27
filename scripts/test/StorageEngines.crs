@@ -13,8 +13,8 @@ def scriptDir = new File(getClass().protectionDomain.codeSource.location.path).p
 set (n_pct_range: 1)
 
 files = [
-    // [type: "WOS", files: [ "${scriptDir}/../data/savedrecs_JOI1.txt", "${scriptDir}/../data/savedrecs_JOI2.txt"]],
-    // [type: "SCOPUS", files: [ "${scriptDir}/../data/scopus_export_csv_incl_citations_abstract_references.csv"]],
+    [type: "WOS", files: [ "${scriptDir}/../data/savedrecs_JOI1.txt", "${scriptDir}/../data/savedrecs_JOI2.txt"]],
+    [type: "SCOPUS", files: [ "${scriptDir}/../data/scopus_export_csv_incl_citations_abstract_references.csv"]],
     [type: "CRE", files: [ "${scriptDir}/../data/sciento_bearb.cre"]]
 ]
 
@@ -27,6 +27,11 @@ for (file in files) {
 
                     init (engine)
                     if (file.type == "CRE") openFile (file) else importFile (file)
+
+
+                    print (getStatistics())
+                    input ("Warte")
+
                     removeCR (RPY: removeRPY)
                     removeCR (N_CR: removeNCR)
                     if (threshold != null) {
