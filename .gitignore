@@ -24,4 +24,4 @@
 # CRE Logfiles
 
 CRE.log
-CRE.log.lck
+CRE.log.*

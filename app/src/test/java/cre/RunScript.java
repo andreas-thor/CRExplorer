@@ -3,6 +3,7 @@ package cre;
 import java.io.IOException;
 
 import org.codehaus.groovy.control.CompilationFailedException;
+import org.junit.Test;
 
 import cre.scriptlang.ScriptExecutionEngine;
 
@@ -10,7 +11,7 @@ public class RunScript {
 
 	
 	
-	// @Test
+	@Test
 	public void checkScript () throws CompilationFailedException, IOException {
 		
 		

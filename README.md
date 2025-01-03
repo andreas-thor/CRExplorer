@@ -18,11 +18,10 @@ Go to directory where crexplorer.jar is located
 
 Enable database mode
 * data is stored in a local PostgreSQL database and, thus, CRExplorer consumes less main memory but needs longer for certain operations
-* connection to database via JDBC
-    * default database: localhost:5455/cre with username=postgres and password=cre
-    * see section Docker for running a PostgreSQL db
-* additional parameter: ``-db`` employs default database 
-* with specific database location: ``-db=<host>:<port>/<dbname>`` (e.g., ``-db=192.0.1.2:6512/credb)
+* connection to database via JDBC 
+    * Step 1: Start a Postgres Database (for example using docker; see below)
+    * Step 2: Start CRExplorer with additional parameter ``-db=jdbc:postgresql://<Server>:<Port>/<Databasename>?user=<Username>&password=<Password>``
+        * replace the placeholders with the appropriate values, e.g., if you run the PostgreSQL database using docker: ``-db=jdbc:postgresql://localhost:5432/crexplorer?user=cre&password=cre``
 
 ## Run PostgreSQL Database in docker
 

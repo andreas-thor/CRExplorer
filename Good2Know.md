@@ -51,7 +51,7 @@ Sample App installed based on https://openjfx.io/openjfx-docs/#gradle
 
 ## Bugs / ToDO
 
-
+* java tests wieder hinzufügen
 
 ### DONE
 

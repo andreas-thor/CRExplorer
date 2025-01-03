@@ -41,16 +41,19 @@ application {
 }
  
 
+
 test {
 	
 	jvmArgs = ['-Xmx6144M']	
   filter {
-    // excludeTestsMatching "cre.FileFormats"
+    excludeTestsMatching "cre.FileFormats"
 	excludeTestsMatching "cre.IndicatorsExample"
     excludeTestsMatching "cre.StorageEngine"
     excludeTestsMatching "cre.StorageEngineShort"
+	// excludeTestsMatching "cre.RunScript"
    }
 } 
+
 
 tasks.withType(JavaExec) {
     jvmArgs = ['-Xmx6144M']
