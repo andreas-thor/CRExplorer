@@ -77,7 +77,8 @@ public class CSV_Pub extends ImportReader  {
 		PubType_MM pub = new PubType_MM();
 
 		for (int i=0; i<header.length; i++) {
-            if (header[i].equalsIgnoreCase("ID"))          try { pub.setID(Integer.valueOf(line[i])); } catch (NumberFormatException e) { }
+			// we take the first ID column
+            if ((header[i].equalsIgnoreCase("ID")) && (pub.getID()==null))          try { pub.setID(Integer.valueOf(line[i])); } catch (NumberFormatException e) { }
             if (header[i].equalsIgnoreCase("PT"))          pub.setPT(line[i]);
 
             if (header[i].equalsIgnoreCase("AU"))          for (String l:line[i].split("; ")) pub.addAU(l);
