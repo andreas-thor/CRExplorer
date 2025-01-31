@@ -625,6 +625,11 @@ public class MainController {
 	}
 
 	@FXML
+	public void OnMenuFileImportCSVAll() throws IOException {
+		importFiles(ImportFormat.CSVPUB);
+	}	
+
+	@FXML
 	public void OnMenuFileSave() throws IOException {
 		exportFile(ExportFormat.CRE, false);
 		// saveFile(false);

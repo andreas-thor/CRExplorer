@@ -29,6 +29,7 @@
 						<MenuItem text="Crossref File..." onAction="#OnMenuFileImportCrossrefFile"/>
 						<MenuItem text="Crossref Search..." onAction="#OnMenuFileImportCrossrefSearch"/>
 						<MenuItem text="CSV..." onAction="#OnMenuFileImportCSV"/>
+						<MenuItem text="CSV (Cited References + Citing Publications)..." onAction="#OnMenuFileImportCSVAll"/>
 					</Menu>
 					<SeparatorMenuItem />
 					<MenuItem text="Save" accelerator="Shortcut+S" onAction="#OnMenuFileSave"/>

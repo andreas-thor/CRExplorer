@@ -31,6 +31,9 @@ public enum ImportFormat {
 	
 	CSV("CSV", "csv", true, null, cre.format.importer.CSV::load),
 
+	CSVPUB("CSV_PUB", "csv", true, new CSV_Pub(), null),
+
+
 	CRE("CRE", "cre", false, null, cre.format.importer.CRE::load);
 
 
