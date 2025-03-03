@@ -2,18 +2,16 @@ package cre.scriptlang;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
 import cre.CitedReferencesExplorerFX;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRTable.TABLE_IMPL_TYPES;
 import cre.store.db.CRTable_DB;
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
 
 public class ScriptExecutionEngine {
 

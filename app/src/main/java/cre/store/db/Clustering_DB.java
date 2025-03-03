@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.apache.commons.lang3.tuple.Triple;
 import org.simmetrics.StringMetric;
 import org.simmetrics.metrics.StringMetrics;
 
@@ -24,7 +23,6 @@ import cre.CRELogger;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.Clustering;
 import cre.data.type.abs.MatchPairGroup;
-import cre.store.mm.CRType_MM;
 import cre.ui.statusbar.StatusBar;
 
 public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {

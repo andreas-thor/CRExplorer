@@ -5,8 +5,6 @@ import java.io.IOException;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.junit.Test;
 
-import cre.scriptlang.ScriptExecutionEngine;
-
 public class RunScript {
 
 	
