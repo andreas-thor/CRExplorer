@@ -140,7 +140,7 @@ public class MainController {
 					t.interrupt();
 				t = new Thread(() -> {
 					crTable.getClustering().updateClustering(Clustering.ClusteringType.REFRESH, null, threshold, useVol, usePag, useDOI, nullEqualsNull);
-					tableView.updateTableViewData();
+					Platform.runLater(() -> tableView.updateTableViewData());
 					refreshTableValues();
 				});
 				t.start();

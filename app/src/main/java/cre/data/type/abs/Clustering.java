@@ -25,6 +25,7 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 	private final double weight_author = 2.0;
 	private final double weight_journal = 1.0;
 	private final double weight_title = 5.0;
+	private final double weight_doi = 1.0;
 	public static final double min_threshold = 0.5;
 	
 	public static enum ManualMatchType { SAME, DIFFERENT, EXTRACT }
@@ -96,6 +97,14 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 		if ((comp_T[0].length()>0) || (comp_T[1].length()>0)) {
 			sim += weight_title * (((comp_T[0].length()>0) && (comp_T[1].length()>0)) ? l.compare(comp_T[0].toLowerCase(), comp_T[1].toLowerCase()) : 0.0);
 			weight += weight_title;
+		}
+
+		// compare DOI (weight=1)
+		// ignore if both DOIs are empty; set sim=0 if just one is emtpy; compute similarity otherwise
+		String[] comp_DOI = new String[] { cr1.getDOI() == null ? "" : cr1.getDOI(), cr2.getDOI() == null ? "" : cr2.getDOI()};
+		if ((!comp_DOI[0].isEmpty()) || (!comp_DOI[1].isEmpty())) {
+			sim += weight_doi * ((!comp_DOI[0].isEmpty()) && (!comp_DOI[1].isEmpty()) ? l.compare(comp_DOI[0], comp_DOI[1]) : 0.0);
+			weight += weight_doi;
 		}
 		
 		return sim/weight;		// weighted average of AU_L, J_N, and TI
