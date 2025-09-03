@@ -2,6 +2,7 @@ package cre.data.type.abs;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,6 +28,7 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 	private final double weight_title = 5.0;
 	private final double weight_doi = 1.0;
 	public static final double min_threshold = 0.5;
+	private final boolean jaccard = true;
 	
 	public static enum ManualMatchType { SAME, DIFFERENT, EXTRACT }
 
@@ -51,6 +53,9 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 			
 			for (int yIndx=0; yIndx<compareY.size(); yIndx++) {
 				double s1 = l.compare(compareY.get(yIndx), x);
+				if(Objects.equals(x, "[anonymous]") && Objects.equals(compareY.get(yIndx), "[anonymous]")) {
+					s1 *= 0.1;
+				}
 
 			// for (double s1: l.batchCompareSet(compareY.toArray(new String[compareY.size()]), x)) {
 				if (s1>=min_threshold) {
@@ -58,7 +63,7 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 					// the two CRs to be compared
 					C cr1 = crlist.get(xIndx);
 					C cr2 = crlist.get(xIndx+yIndx+1);
-					double s = simCR (cr1, cr2, s1, l);
+					double s = jaccard ? simCR2(cr1, cr2, s1, new JaccardHelper(JaccardHelper.Mode.WORD, 2)) : simCR (cr1, cr2, s1, l);
 					if (s >= min_threshold) {
 						onNewPair.accept(cr1, cr2, s);
 					}
@@ -109,8 +114,44 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 		
 		return sim/weight;		// weighted average of AU_L, J_N, and TI
 	}
-	
-	
+
+	public double simCR2 (C cr1, C cr2, double sim_author, JaccardHelper j) {
+
+		double sim = weight_author * sim_author;
+		double weight = weight_author;
+
+		// Journal (weight = 1), nur wenn beide vorhanden
+		String j1 = cr1.getJ_N() == null ? "" : cr1.getJ_N();
+		String j2 = cr2.getJ_N() == null ? "" : cr2.getJ_N();
+		if (!j1.isEmpty() && !j2.isEmpty()) {
+			sim += weight_journal * j.compare(j1, j2);
+			weight += weight_journal;
+		}
+
+		// Titel (weight = 5)
+		// - beide leer: ignorieren
+		// - genau einer leer: Similarity = 0, Gewicht zählt trotzdem
+		// - beide da: Jaccard vergleichen
+		String t1 = cr1.getTI() == null ? "" : cr1.getTI();
+		String t2 = cr2.getTI() == null ? "" : cr2.getTI();
+		if (!t1.isEmpty() || !t2.isEmpty()) {
+			sim += weight_title * ((!t1.isEmpty() && !t2.isEmpty()) ? j.compare(t1, t2) : 0.0);
+			weight += weight_title;
+		}
+
+		// DOI (weight = 1) – gleiche Logik wie Titel
+		String d1 = cr1.getDOI() == null ? "" : cr1.getDOI();
+		String d2 = cr2.getDOI() == null ? "" : cr2.getDOI();
+		if (!d1.isEmpty() || !d2.isEmpty()) {
+			sim += weight_doi * ((!d1.isEmpty() && !d2.isEmpty()) ? j.compare(d1, d2) : 0.0);
+			weight += weight_doi;
+		}
+
+		return sim / weight; // gewichteter Mittelwert aus Autor, Journal, Titel, DOI
+	}
+
+
+
 	public void generateInitialClustering () {
 		Long stop1 = System.currentTimeMillis(); 
 
