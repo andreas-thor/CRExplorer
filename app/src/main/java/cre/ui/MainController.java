@@ -970,7 +970,33 @@ public class MainController {
 	public void OnMenuStdCluster() {
 
 		new Thread(() -> {
-			crTable.getClustering().generateInitialClustering();
+			crTable.getClustering().generateInitialClustering("lev");
+			matchView.setVisible(true);
+			tablePane.requestLayout();
+			matchView.updateClustering();
+			updateTableCRList();
+
+		}).start();
+	}
+
+	@FXML
+	public void OnMenuJaccCluster() {
+
+		new Thread(() -> {
+			crTable.getClustering().generateInitialClustering("jacc");
+			matchView.setVisible(true);
+			tablePane.requestLayout();
+			matchView.updateClustering();
+			updateTableCRList();
+
+		}).start();
+	}
+
+	@FXML
+	public void OnMenuCosCluster() {
+
+		new Thread(() -> {
+			crTable.getClustering().generateInitialClustering("cos");
 			matchView.setVisible(true);
 			tablePane.requestLayout();
 			matchView.updateClustering();

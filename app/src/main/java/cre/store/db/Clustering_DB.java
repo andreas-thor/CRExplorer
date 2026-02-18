@@ -123,7 +123,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 	
 
 	@Override
-	public void generateAutoMatching() {
+	public void generateAutoMatching(String alg) {
 
 		
 		// standard blocking: year + first letter of last name
@@ -158,6 +158,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 				CRTable.get().getStatistics().getNumberOfCRs(), noOfBlocks, noOfComparisons));
 
 			StringMetric l = StringMetrics.levenshtein();
+			String alg1 = alg;
 			
 			
 			// TODO: handle missing values
@@ -263,7 +264,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 							e.printStackTrace();
 						}	
 						
-					});
+					}, alg);
 					
 	
 						

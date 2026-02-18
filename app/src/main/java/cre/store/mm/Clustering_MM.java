@@ -79,7 +79,7 @@ public class Clustering_MM extends Clustering<CRType_MM, PubType_MM> {
 	}
 	
 	@Override
-	public void generateAutoMatching () {
+	public void generateAutoMatching (String alg) {
 	
 		// standard blocking: year + first letter of last name
 		StatusBar.get().setValue(String.format("Blocking of %d objects...", CRTable.get().getStatistics().getNumberOfCRs()));
@@ -111,7 +111,7 @@ public class Clustering_MM extends Clustering<CRType_MM, PubType_MM> {
 			crossCompareCR(crlist, l, (CRType_MM cr1, CRType_MM cr2, double sim) -> {
 				result.add(new CRPair (cr1, cr2, sim));
 				testCount.incrementAndGet();
-			});
+			}, alg);
 		
 			return result;
 		})
