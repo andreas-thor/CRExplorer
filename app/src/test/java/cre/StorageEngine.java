@@ -88,7 +88,7 @@ public class StorageEngine {
 								}
 				
 								if (threshold != null) {
-									CRTable.get().getClustering().generateInitialClustering();
+									CRTable.get().getClustering().generateInitialClustering("lev");
 									CRTable.get().getClustering().updateClustering(Clustering.ClusteringType.REFRESH, null, threshold, false, false, false, false);
 								}
 				

@@ -51,13 +51,10 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
@@ -65,9 +62,11 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.WindowEvent;
+import javafx.util.Pair;
 
 public class MainController {
 
+	public CheckMenuItem useRPYMenuItem;
 	CRTable<? extends CRType<?>, ? extends PubType<?>> crTable;
 	CRChart crChart[] = new CRChart[2];
 
@@ -140,7 +139,7 @@ public class MainController {
 					t.interrupt();
 				t = new Thread(() -> {
 					crTable.getClustering().updateClustering(Clustering.ClusteringType.REFRESH, null, threshold, useVol, usePag, useDOI, nullEqualsNull);
-					tableView.updateTableViewData();
+					Platform.runLater(() -> tableView.updateTableViewData());
 					refreshTableValues();
 				});
 				t.start();
@@ -970,13 +969,125 @@ public class MainController {
 	public void OnMenuStdCluster() {
 
 		new Thread(() -> {
-			crTable.getClustering().generateInitialClustering();
+			crTable.getClustering().generateInitialClustering("lev");
 			matchView.setVisible(true);
 			tablePane.requestLayout();
 			matchView.updateClustering();
 			updateTableCRList();
 
 		}).start();
+	}
+
+	@FXML
+	public void OnMenuJaccCluster() {
+
+		new Thread(() -> {
+			crTable.getClustering().generateInitialClustering("jacc");
+			matchView.setVisible(true);
+			tablePane.requestLayout();
+			matchView.updateClustering();
+			updateTableCRList();
+
+		}).start();
+	}
+
+	// old - kept for reference
+	@FXML
+	public void OnMenuCosClusterOLD() {
+
+		new Thread(() -> {
+			crTable.getClustering().generateInitialClustering("cos");
+			matchView.setVisible(true);
+			tablePane.requestLayout();
+			matchView.updateClustering();
+			updateTableCRList();
+
+		}).start();
+	}
+
+	@FXML
+	public void OnMenuCosCluster() {
+
+		// Erstelle das Dialog-Fenster
+		Dialog<Pair<Integer, String>> dialog = new Dialog<>();
+		dialog.setTitle("Clustering Parameter");
+		dialog.setHeaderText("""
+                The number determines how many letters or words will be grouped when using the chosen algorithm.
+                Usually values between 2 and 4 perform the best.
+                The mode of the algorithm determines if it analyzes n letters or n words.
+                For example: Char and 2 will split everything into 2 character long strings: test -> te,es,st
+                Please choose a number for the parameter n and the mode of the chosen algorithm:
+                """);
+
+		// OK und Abbrechen Buttons
+		ButtonType okButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+		dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
+
+		// Grid für Eingaben
+		GridPane grid = new GridPane();
+		grid.setHgap(10);
+		grid.setVgap(10);
+		grid.setPadding(new Insets(20, 150, 10, 10));
+
+		// Zahl-Eingabe
+		TextField numberField = new TextField();
+		numberField.setPromptText("e.g. 2");
+
+		// Dropdown
+		ChoiceBox<String> choiceBox = new ChoiceBox<>();
+		choiceBox.getItems().addAll("Word", "Char");
+		choiceBox.setValue("Word"); // default
+
+		//grid.add(new Label("The number determines how many letters or words will be grouped when using the chosen algorithm. Usually values between 2 and 4 perform the best.\n"),0,0);
+		//grid.add(new Label("The mode of the algorithm determines if it analyzes n letters or n words. For example: Char and 2 will split everything into 2 character long strings: test -> te,es,st\n"),0,1);
+		grid.add(new Label("Number:"), 0, 2);
+		grid.add(numberField, 1, 2);
+		grid.add(new Label("Mode:"), 0, 3);
+		grid.add(choiceBox, 1, 3);
+
+		dialog.getDialogPane().setContent(grid);
+
+		// Enable/Disable OK Button nur wenn Zahl gültig ist
+		Node okButton = dialog.getDialogPane().lookupButton(okButtonType);
+		okButton.setDisable(true);
+		numberField.textProperty().addListener((obs, oldVal, newVal) -> {
+			okButton.setDisable(!newVal.matches("\\d+"));
+		});
+
+		// Ergebnis-Konvertierung
+		dialog.setResultConverter(dialogButton -> {
+			if (dialogButton == okButtonType) {
+				return new Pair<>(Integer.parseInt(numberField.getText()), choiceBox.getValue());
+			}
+			return null;
+		});
+
+		Optional<Pair<Integer, String>> result = dialog.showAndWait();
+
+		result.ifPresent(pair -> {
+			int userNumber = pair.getKey();
+			String mode = pair.getValue();
+			System.out.println("Zahl: " + userNumber + ", Modus: " + mode);
+
+			new Thread(() -> {
+				// Clustering mit beiden Parametern starten
+				crTable.getClustering().generateInitialClustering("cos");
+
+				// UI-Updates auf JavaFX Thread
+				Platform.runLater(() -> {
+					matchView.setVisible(true);
+					tablePane.requestLayout();
+					matchView.updateClustering();
+					updateTableCRList();
+				});
+
+			}).start();
+		});
+	}
+
+	@FXML
+	public void toggleRPYblocking() {
+		crTable.getClustering().setBlockingRPY(useRPYMenuItem.isSelected() ? "" : "noauth");
 	}
 
 	@FXML
