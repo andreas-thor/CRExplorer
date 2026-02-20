@@ -33,6 +33,8 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 	public static enum ManualMatchType { SAME, DIFFERENT, EXTRACT }
 
 	public static enum ClusteringType { INIT, REFRESH }
+
+	public abstract void setBlockingRPY(String s);
 	
 	
 	
@@ -152,13 +154,13 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 				weight += weight_doi;
 			}
 		}
-		System.out.println((sim/weight > 0.90) ? sim/weight : "");
+		//System.out.println((sim/weight > 0.90) ? sim/weight : "");
 		algorithm = 0;
 		return sim/weight;		// weighted average of AU_L, J_N, and TI
 	}
 
 	public void generateInitialClustering (String alg) {
-		Long stop1 = System.currentTimeMillis(); 
+		Long stop1 = System.currentTimeMillis();
 
 		generateAutoMatching(alg);
 

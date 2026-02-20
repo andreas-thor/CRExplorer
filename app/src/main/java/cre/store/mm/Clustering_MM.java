@@ -22,6 +22,7 @@ import cre.ui.statusbar.StatusBar;
 
 public class Clustering_MM extends Clustering<CRType_MM, PubType_MM> {
 
+	String blockingRPY = "";
 	
 	private class CRPair {
 		
@@ -77,16 +78,47 @@ public class Clustering_MM extends Clustering<CRType_MM, PubType_MM> {
 		matchResult.put(true,  new HashMap<CRType_MM,Map<CRType_MM,Double>>());		// manual match result
 		timestampedPairs = new TreeMap<Long, ArrayList<CRPair>>();
 	}
+
+	@Override
+	public void setBlockingRPY(String s) {
+		blockingRPY = s;
+	}
 	
 	@Override
 	public void generateAutoMatching (String alg) {
 	
 		// standard blocking: year + first letter of last name
 		StatusBar.get().setValue(String.format("Blocking of %d objects...", CRTable.get().getStatistics().getNumberOfCRs()));
-		Map<String, List<CRType_MM>> blocks = crTab.getCR().collect(Collectors.groupingBy(
+		// temp replaced by blocks for testing
+		Map<String, List<CRType_MM>> blocks2 = crTab.getCR().collect(Collectors.groupingBy(
 			cr -> ((cr.getRPY() != null) && (cr.getAU_L() != null) && (cr.getAU_L().length() > 0)) ? cr.getRPY() + cr.getAU_L().substring(0,1).toLowerCase() : "", 
 			Collectors.toList()
 		));
+
+		Map<String, List<CRType_MM>> blocks =
+				crTab.getCR().collect(Collectors.groupingBy(cr -> {
+
+					// Author muss vorhanden sein
+					if (cr.getAU_L() == null || cr.getAU_L().isEmpty()) {
+						return "";
+					}
+
+					String firstLetter =
+							cr.getAU_L().toLowerCase();
+
+					// noauth → nur Author-Initial
+					if ("noauth".equals(blockingRPY)) {
+						return firstLetter;
+					}
+
+					// Default → RPY + Author-Initial
+					if (cr.getRPY() != null) {
+						return cr.getRPY() + firstLetter;
+					}
+
+					return "";
+
+				}, Collectors.toList()));
 
 		StatusBar.get().initProgressbar(blocks.entrySet().stream().mapToInt(entry -> (entry.getValue().size()*(entry.getValue().size()-1))/2).sum(), String.format("Matching %d objects in %d blocks", CRTable.get().getStatistics().getNumberOfCRs(), blocks.size()));
 		matchResult.put(false, new HashMap<CRType_MM,Map<CRType_MM,Double>>());		// remove automatic match result, but preserve manual matching
