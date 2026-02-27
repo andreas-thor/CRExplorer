@@ -46,7 +46,7 @@ public class DSL_Helper {
 		try {
 			return ImportFormat.valueOf ((params.getOrDefault("TYPE", "").toString()).toUpperCase());
 		} catch (IllegalArgumentException | NullPointerException e) {
-			throw new Exception ("Missing or unknown import file format (must be WOS, SCOPUS, or CROSSREF)");
+			throw new Exception ("Missing or unknown import file format (must be WOS, SCOPUS, CROSSREF, or CSVPUB)");
 		}
 	}
 	

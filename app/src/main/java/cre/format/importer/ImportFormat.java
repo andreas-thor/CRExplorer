@@ -2,6 +2,7 @@ package cre.format.importer;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -83,14 +84,22 @@ public enum ImportFormat {
 			StatusBar.get().initProgressbar(file.length(), String.format("Analyzing %4$s file %1$d of %2$d (%3$s) ...", (++idx), files.size(), file.getName(), this.getLabel()));
 
 			this.importReader.init(file);
+
+			LocalTime currentTime = LocalTime.now();
+			System.out.println("Aktuelle Uhrzeit: " + currentTime);						
 			StreamSupport.stream(this.importReader.getIterable().spliterator(), false)
 				.filter(pub -> pub != null)
 				.forEach(pub -> {
 					if (crTab.isAborted()) this.importReader.stop();
 					StatusBar.get().incProgressbar(pub.getLength());
 					crStatsInfo.updateStats(pub);
+	
 				});
-			this.importReader.close();
+				currentTime = LocalTime.now();
+				System.out.println("Aktuelle Uhrzeit: " + currentTime);						
+	
+
+				this.importReader.close();
 				
 		}
 		
