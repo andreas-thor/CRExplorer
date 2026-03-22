@@ -44,7 +44,7 @@ public abstract class MatchPanel extends TitledPane {
 
 		
 		// Volume CheckBoxes
-		volPagDOI = new CheckBox[] { new CheckBox("Volume"), new CheckBox("Page"), new CheckBox("DOI"), new CheckBox("Treat missing values as equal") };	// was: NULL=NULL?
+		volPagDOI = new CheckBox[] { new CheckBox("Volume"), new CheckBox("Page"), new CheckBox("DOI"), new CheckBox("Treat Missing Values as Equal") };	// was: NULL=NULL?
 		GridPane g = new GridPane();
 		g.setPrefWidth(200);
 		for (int i=0; i<volPagDOI.length; i++) {

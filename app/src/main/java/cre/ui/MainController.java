@@ -59,6 +59,9 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.WindowEvent;
@@ -978,19 +981,6 @@ public class MainController {
 		}).start();
 	}
 
-	@FXML
-	public void OnMenuJaccCluster() {
-
-		new Thread(() -> {
-			crTable.getClustering().generateInitialClustering("jacc");
-			matchView.setVisible(true);
-			tablePane.requestLayout();
-			matchView.updateClustering();
-			updateTableCRList();
-
-		}).start();
-	}
-
 	// old - kept for reference
 	@FXML
 	public void OnMenuCosClusterOLD() {
@@ -1005,56 +995,60 @@ public class MainController {
 		}).start();
 	}
 
-	@FXML
-	public void OnMenuCosCluster() {
+	public void OnMenuCosJaccCluster(String algorithm) {
 
-		// Erstelle das Dialog-Fenster
+		// Dialog erstellen
 		Dialog<Pair<Integer, String>> dialog = new Dialog<>();
 		dialog.setTitle("Clustering Parameter");
-		dialog.setHeaderText("""
-                The number determines how many letters or words will be grouped when using the chosen algorithm.
-                Usually values between 2 and 4 perform the best.
-                The mode of the algorithm determines if it analyzes n letters or n words.
-                For example: Char and 2 will split everything into 2 character long strings: test -> te,es,st
-                Please choose a number for the parameter n and the mode of the chosen algorithm:
-                """);
+		dialog.setHeaderText("Choose the clustering parameters");
 
-		// OK und Abbrechen Buttons
+		// Buttons
 		ButtonType okButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
 		dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
 
-		// Grid für Eingaben
-		GridPane grid = new GridPane();
-		grid.setHgap(10);
-		grid.setVgap(10);
-		grid.setPadding(new Insets(20, 150, 10, 10));
-
-		// Zahl-Eingabe
+		// Eingabefelder
 		TextField numberField = new TextField();
 		numberField.setPromptText("e.g. 2");
+		numberField.setPrefWidth(60);
 
-		// Dropdown
 		ChoiceBox<String> choiceBox = new ChoiceBox<>();
 		choiceBox.getItems().addAll("Word", "Char");
-		choiceBox.setValue("Word"); // default
+		choiceBox.setValue("Word");
 
-		//grid.add(new Label("The number determines how many letters or words will be grouped when using the chosen algorithm. Usually values between 2 and 4 perform the best.\n"),0,0);
-		//grid.add(new Label("The mode of the algorithm determines if it analyzes n letters or n words. For example: Char and 2 will split everything into 2 character long strings: test -> te,es,st\n"),0,1);
-		grid.add(new Label("Number:"), 0, 2);
-		grid.add(numberField, 1, 2);
-		grid.add(new Label("Mode:"), 0, 3);
-		grid.add(choiceBox, 1, 3);
+		// Beschreibungstext
+		Text text1 = new Text("""
+            The number determines how many letters or words will be grouped when using the chosen algorithm.
+            Usually values between 2 and 4 perform the best.
+            The mode of the algorithm determines if it analyzes n letters or n words.
+            For example: Char and 2 will split everything into 2 character long strings: 
+            test -> te, es, st
 
-		dialog.getDialogPane().setContent(grid);
+            Please choose a number for the parameter n: \s""");
+		Text text2 = new Text("\nAnd the mode of the chosen algorithm: ");
+		TextFlow textFlow = new TextFlow(
+				text1,
+				numberField,
+				text2,
+				choiceBox
+		);
+		textFlow.setLineSpacing(5);
 
-		// Enable/Disable OK Button nur wenn Zahl gültig ist
+		// Container für Abstand/Padding
+		VBox content = new VBox(textFlow);
+		content.setPadding(new Insets(20));
+		content.setPrefWidth(500);
+
+		dialog.getDialogPane().setContent(content);
+
+		// OK-Button erst aktivieren, wenn Zahl gültig ist
 		Node okButton = dialog.getDialogPane().lookupButton(okButtonType);
 		okButton.setDisable(true);
+
 		numberField.textProperty().addListener((obs, oldVal, newVal) -> {
 			okButton.setDisable(!newVal.matches("\\d+"));
 		});
 
-		// Ergebnis-Konvertierung
+		// Ergebnis zurückgeben
 		dialog.setResultConverter(dialogButton -> {
 			if (dialogButton == okButtonType) {
 				return new Pair<>(Integer.parseInt(numberField.getText()), choiceBox.getValue());
@@ -1071,7 +1065,7 @@ public class MainController {
 
 			new Thread(() -> {
 				// Clustering mit beiden Parametern starten
-				crTable.getClustering().generateInitialClustering("cos");
+				crTable.getClustering().generateInitialClustering(algorithm);
 
 				// UI-Updates auf JavaFX Thread
 				Platform.runLater(() -> {
@@ -1080,9 +1074,18 @@ public class MainController {
 					matchView.updateClustering();
 					updateTableCRList();
 				});
-
 			}).start();
 		});
+	}
+
+	@FXML
+	public void OnMenuCosCluster() {
+		OnMenuCosJaccCluster("cos");
+	}
+
+	@FXML
+	public void OnMenuJaccCluster() {
+		OnMenuCosJaccCluster("jacc");
 	}
 
 	@FXML
