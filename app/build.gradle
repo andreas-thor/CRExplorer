@@ -66,6 +66,7 @@ dependencies {
 	compile group: 'org.apache.lucene', name: 'lucene-queryparser', version: '8.4.0'
     */
     
+	// TODO: Versionen überprüfen und ggf. aktualisieren
     implementation 'org.codehaus.groovy:groovy-all:3.0.9' 
 
     implementation 'com.github.mpkorstanje:simmetrics-core:4.1.1'
