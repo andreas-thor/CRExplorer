@@ -1,24 +1,23 @@
  
 plugins {
-  id 'application'
-  id 'org.openjfx.javafxplugin' version '0.1.0'
   id 'groovy'
-
+  id 'application'
+  id 'org.openjfx.javafxplugin' version '0.0.10'
 }
+ 
+sourceCompatibility = JavaVersion.VERSION_25
+targetCompatibility = JavaVersion.VERSION_25
 
-java {
-	sourceCompatibility = JavaVersion.VERSION_25
-	targetCompatibility = JavaVersion.VERSION_25
-	sourceSets.main.java.srcDirs = ["src/main/java"]
-	sourceSets.test.java.srcDirs = ["src/test/java"] 	
-}
+sourceSets.main.java.srcDirs = ["src/main/java"]
+sourceSets.main.groovy.srcDirs = []
+sourceSets.test.java.srcDirs = ["src/test/java"]
+
 
 task versionTxt()  {
     doLast {
         new File("${projectDir}/src/main/resources" , "version.txt").text = new Date().format('yyyyMMdd-HHmmss')
     }
 }
- 
 
 compileJava {
 	dependsOn versionTxt 
@@ -31,7 +30,6 @@ repositories {
     }
 }
 
-
 javafx {
     version = "25" // v17 has a scrollto bug (we had v16 previously)
     modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.web', 'javafx.graphics', 'javafx.base', 'javafx.swing']
@@ -42,6 +40,8 @@ application {
 	// mainClass = 'cre.Script' 
 	
 }
+ 
+
 
 test {
 	
@@ -117,6 +117,6 @@ jar {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 
-	archiveBaseName = 'crexplorer'
+	baseName = 'crexplorer'
 }
 
