@@ -121,6 +121,7 @@ public enum ImportFormat {
 		Random rand = new Random();
 		CRTable<?, ?> crTab = CRTable.get(); 
 		crTab.init();
+		crTab.onBeforeImport();
 
 //		final long noMaxCRs = UserSettings.get().getMaxCR();
 //		final Sampling sampling = UserSettings.get().getSampling();
@@ -222,6 +223,11 @@ public enum ImportFormat {
 			StatusBar.get().setValue(String.format("Loading %1$s file%2$s aborted (due to user request)", this.getLabel(), files.size()>1 ? "s" : ""));
 			throw new AbortedException();
 		}
+
+		crTab.onAfterImport();
+
+
+
 		
 //		System.out.println("CRTable.get().getPub().count(true)=" + CRTable.get().getPub(true).count());
 //		System.out.println("CRTable.get().getPub().count()=" + CRTable.get().getPub().count());

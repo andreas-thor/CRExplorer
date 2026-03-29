@@ -12,7 +12,9 @@ import cre.CRELogger;
 // import cre.data.CRSearch;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRType;
+import cre.data.type.abs.Filter;
 import cre.data.type.abs.Loader;
+import cre.data.type.abs.Remover;
 import cre.data.type.abs.Statistics;
 import cre.data.type.abs.Statistics.IntRange;
 import cre.ui.statusbar.StatusBar;
@@ -26,14 +28,18 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	private HashMap<PubType_MM, PubType_MM> allPubs; 
 	
 	private Loader_MM loader;
-
-	
+	private Remover_MM remover;
+	private Filter_MM filter;
 	
 	private Statistics_MM statistics;
 	
 	private boolean duringUpdate;
-	private boolean showNull;
 	
+	public boolean isDuringUpdate() {
+		return duringUpdate;
+	}
+
+
 	private Clustering_MM crmatch;
 
 	private CRTableView_MM tableView;
@@ -46,11 +52,18 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	}
 	
 	
+
+
 	@Override
-	public Loader getLoader() {
-		return this.loader;
+	public Remover getRemover() {
+		return this.remover;
 	}
 	
+	@Override
+	public Filter getFilter() {
+		return this.filter;
+	}
+
 	@Override
 	public Statistics getStatistics() {
 		return this.statistics;
@@ -60,6 +73,8 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	public Clustering_MM getClustering() {
 		return this.crmatch;
 	}
+
+
 
 	@Override
 	public CRTableView_MM getTableView() {
@@ -80,6 +95,8 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	private CRTable_MM () { 
 		this.statistics = new Statistics_MM();
 		this.loader = new Loader_MM();
+		this.remover = new Remover_MM(this);
+		this.filter = new Filter_MM (this);
 		init();
 	}
 	
@@ -105,7 +122,7 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 		crmatch = new Clustering_MM(this);
 		duringUpdate = false;
 		this.setAborted(false);
-		showNull = true;
+		this.getFilter().setShowNull(true);
 		
 		/* REMOVED Lucene Search due to module problems
 		CRSearch.get().init();
@@ -170,8 +187,16 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 //		return addPub (pub, addCRs, false);
 //	}
 	
+
 	@Override
-	public PubType_MM addPub (PubType_MM pub) {
+	public void onBeforeImport() {
+		// Nothing to do here
+	}
+
+
+
+	@Override
+	public void addPub (PubType_MM pub) {
 		
 		pub.setID(this.allPubs.size()+1);
 		
@@ -198,9 +223,16 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 			}
 		}
 		
-		return pub;
 	}
 	
+
+	@Override
+	public void onAfterImport() {
+		// Nothing to do here
+	}
+
+	
+
 
 	
 	/**
@@ -373,15 +405,12 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	}
 	
 	
-
-	
-	
-	private void removeCR (Predicate<CRType_MM> cond) {
+    void removeCR (Predicate<CRType_MM> cond) {
 		
 		crById.values().removeIf( cr ->  { 
 			if (cond.test(cr)) {
 				cr.removeAllPubs(true);
-				this.allCRs.remove(cr);
+				allCRs.remove(cr);
 				return true;
 			} else {
 				return false;
@@ -390,166 +419,35 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 		updateData();
 	}
 
-	
-	
-	
-	/**
-	 * Remove list of CRs
-	 * @param toDelete list of CRs to be deleted
-	 */
-	@Override
-	public void removeCR (List<Integer> toDelete) {
-		getCR().forEach(cr -> cr.setFlag(false));
-		toDelete.forEach(crId -> crTab.getCRById(crId).setFlag(true));
-		removeCR(cr -> cr.isFlag());
-	}
-	
 
-	/**
-	 * Remove all but the given list of CRs
-	 * @param toRetain list of CRs to be retained
-	 */
+
+
+
 	@Override
-	public void retainCR (List<Integer> toRetain) {
-		getCR().forEach(cr -> cr.setFlag(true));
-		toRetain.forEach(crId -> crTab.getCRById(crId).setFlag(false));
-		removeCR(cr -> cr.isFlag());
-	}
-	
-	
-	/**
-	 * Remove all CRs without year (RPY)
-	 */
-	@Override
-	public void removeCRWithoutYear () {
-		removeCR (cr -> cr.getRPY() == null);
+	public void onBeforeLoad() {
+		this.loader.onBeforeLoad();
 	}
 
-	
-	/**
-	 * Remove all CRS within a given RPY range
-	 * @param range
-	 */
 	@Override
-	public void removeCRByYear (IntRange range) {
-		removeCR (cr -> ((cr.getRPY()!=null) && (range.getMin() <= cr.getRPY()) && (cr.getRPY() <= range.getMax())));
+	public void onAfterLoad() {
+		this.loader.onAfterLoad();
 	}
 
-	
-	/**
-	 * Remove all CRs within a given N_CR range
-	 * @param range
-	 */
 	@Override
-	public void removeCRByN_CR(IntRange range) {
-		removeCR (cr -> (range.getMin() <= cr.getN_CR()) && (cr.getN_CR() <= range.getMax()));
+	public void onNewCR(CRType_MM cr) {
+		this.loader.onNewCR(cr);
 	}
-	
-	
-	/**
-	 * Remove all CRs < / <= / = / >= / > PERC_YR
-	 * @param comp comparator (as string); TODO: ENUMERATION
-	 * @param threshold
-	 */
-	@Override
-	public void removeCRByPERC_YR (String comp, double threshold) {
-		switch (comp) {
-			case "<" : removeCR (cr -> cr.getPERC_YR() <  threshold); break;
-			case "<=": removeCR (cr -> cr.getPERC_YR() <= threshold); break;
-			case "=" : removeCR (cr -> cr.getPERC_YR() == threshold); break;
-			case ">=": removeCR (cr -> cr.getPERC_YR() >= threshold); break;
-			case ">" : removeCR (cr -> cr.getPERC_YR() >  threshold); break;
-		}
-	}
-	
-	
-	/**
-	 * Remove all citing publications, that do *not* reference any of the given CRs 
-	 * @param selCR list of CRs
-	 */
-	@Override
-	public void removePubByCR (List<Integer> selCR) {
-		selCR.stream()
-			.map(crId -> crTab.getCRById(crId))
-			.flatMap (cr -> cr.getPub())
-			.forEach(pub -> pub.setFlag(true));
 
-		removePub (pub -> !pub.isFlag());
-		getPub().forEach(pub -> pub.setFlag(false));
+	@Override
+	public void onNewPub(PubType_MM pub, List<Integer> crIds) {
+		this.loader.onNewPub(pub, crIds);
+	}
+
+	@Override
+	public void onNewMatchPair(int crId1, int crId2, double sim, boolean isManual) {
+		this.loader.onNewMatchPair(crId1, crId2, sim, isManual);
+	}
 		
-//		removePub (pub -> !selCR.stream().flatMap (cr -> cr.getPub()).distinct().collect(Collectors.toList()).contains(pub));
-	}
-	
-	
-	
-	private void removePub (Predicate<PubType_MM> cond) {
-		getPub().filter(cond).collect(Collectors.toList()).forEach(pub -> pub.removeAllCRs(true));
-		removeCR(cr -> cr.getN_CR()==0);
-	}
-	
-	/**
-	 * Retail all citing publications within given citiny year (PY) range, 
-	 * i.e., remove all citing publications OUTSIDE the given citing year (PY) range
-	 * @param range
-	 */
-	@Override
-	public void retainPubByCitingYear (IntRange range) {
-		removePub (pub -> (pub.getPY()==null) || (range.getMin() > pub.getPY()) || (pub.getPY() > range.getMax()));
-	}
-	
-	
-
-	
-	
-	/**
-	 * Filter publications by year range
-	 * Filtering = set VI property to 1 or 0
-	 * @param from
-	 * @param to
-	 */
-	@Override
-	public void filterByYear (IntRange range) {
-		if (!duringUpdate) {
-			getCR().forEach ( it -> { it.setVI(((it.getRPY()!=null) && (range.getMin()<=it.getRPY()) && (range.getMax()>=it.getRPY())) || ((it.getRPY()==null) && (this.showNull))); });
-		}
-	}
-	
-
-	@Override
-	public void filterByCluster (List<Integer> sel) {
-		if (!duringUpdate) {
-			getCR().forEach(cr -> cr.setVI(false));
-			sel.stream()
-				.map(id -> crTab.getCRById(id))
-				.map(cr -> cr.getCluster())
-				.flatMap(cluster -> cluster.getCR())
-				.forEach( cr -> cr.setVI(true) );
-		}
-	}
-	
-	
-
-	
-	@Override
-	public void setShowNull (boolean showNull) {
-		this.showNull = showNull;
-		getCR().forEach ( cr -> { if (cr.getRPY() == null) cr.setVI(showNull);  });
-	}
-	
-	@Override
-	public void showAll() {
-		this.showNull = true;
-		getCR().forEach ( cr -> cr.setVI(true) );
-	}
-
-
-
-
-
-
-
-
-	
 	
 
 }

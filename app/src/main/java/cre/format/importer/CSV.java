@@ -25,7 +25,7 @@ public class CSV {
 	public static void load (List<File> files) throws OutOfMemoryError, RuntimeException {
 		try {
 			CRTable.get().init();
-			CRTable.get().getLoader().onBeforeLoad();
+			CRTable.get().onBeforeLoad();
 			StatusBar.get().initProgressbar(files.stream().mapToLong(f -> f.length()).sum(), "Loading CSV files ...");
 
 			pubs = new ArrayList<>();
@@ -35,10 +35,10 @@ public class CSV {
 			for (ArrayList<Integer> crIds: pubs) {
 				PubType_MM p = new PubType_MM();
 				p.setPY(3000);
-				CRTable.get().getLoader().onNewPub(p, crIds);
+				CRTable.get().onNewPub(p, crIds);
 			}
 
-			CRTable.get().getLoader().onAfterLoad();
+			CRTable.get().onAfterLoad();
 			CRTable.get().updateData();
 			CRTable.get().getClustering().updateClustering(Clustering.ClusteringType.INIT, null, Clustering.min_threshold, false, false, false, false);
 	
@@ -68,7 +68,7 @@ public class CSV {
 			while ((line = csv.readNext()) != null) {
 				StatusBar.get().incProgressbar(Arrays.stream(line).mapToInt(s -> s.length()).sum());
 				CRType_MM cr = parseCR(header, line);
-				CRTable.get().getLoader().onNewCR(cr);
+				CRTable.get().onNewCR(cr);
 
 				try { 
 					int ncr = Integer.parseInt(line[idxNCR]); 

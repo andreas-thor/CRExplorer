@@ -59,7 +59,7 @@ public class CRE {
 		try {
 			CRTable.get().init();
 
-			CRTable.get().getLoader().onBeforeLoad();
+			CRTable.get().onBeforeLoad();
 
 			ZipEntry entry = null;
 			ZipFile zipFile = new ZipFile(file);
@@ -95,7 +95,7 @@ public class CRE {
 				
 			zipFile.close();
 
-			CRTable.get().getLoader().onAfterLoad();
+			CRTable.get().onAfterLoad();
 
 			CRTable.get().updateData();
 			CRTable.get().getClustering().updateClustering(Clustering.ClusteringType.INIT, null, Clustering.min_threshold, false, false, false, false);
@@ -129,7 +129,7 @@ public class CRE {
 			switch (parser.next()) {
 			case START_OBJECT: 	cr = new CRType_MM(); break; 
 			case END_OBJECT: 	
-				CRTable.get().getLoader().onNewCR(cr);
+				CRTable.get().onNewCR(cr);
 				break;
 			case KEY_NAME:		key = parser.getString(); break;
 			case VALUE_STRING: 
@@ -190,7 +190,7 @@ public class CRE {
 				crIds = new ArrayList<Integer>();
 				break; 
 			case END_OBJECT: 	
-				CRTable.get().getLoader().onNewPub (pub, crIds);
+				CRTable.get().onNewPub (pub, crIds);
 				break;
 			case KEY_NAME:		
 				key = parser.getString(); 
@@ -296,7 +296,7 @@ public class CRE {
 				}
 				break;
 			case VALUE_NUMBER:
-				CRTable.get().getLoader().onNewMatchPair (id1, id2, parser.getBigDecimal().doubleValue(), isManual);
+				CRTable.get().onNewMatchPair (id1, id2, parser.getBigDecimal().doubleValue(), isManual);
 				break;
 			default:break;  
 			}

@@ -210,15 +210,15 @@ public class DSL extends Script {
 
 		IntRange range = DSL_Helper.getRange(params.get("N_CR"), null); 
 		if (range != null) {
-			CRTable.get().removeCRByN_CR(range);
+			CRTable.get().getRemover().removeCRByN_CR(range);
 			return;
 		}
 
 		range = DSL_Helper.getRange(params.get("RPY"), null); 
 		if (range != null) {
-			CRTable.get().removeCRByYear(range);
+			CRTable.get().getRemover().removeCRByYear(range);
 			if (DSL_Helper.getWithoutYear(params.get("RPY"))) {
-				CRTable.get().removeCRWithoutYear();
+				CRTable.get().getRemover().removeCRWithoutYear();
 			}
 			return;
 		}
@@ -234,7 +234,7 @@ public class DSL extends Script {
 
 		IntRange range = DSL_Helper.getRange(params.get("PY"), null); 
 		if (range != null) {
-			CRTable.get().retainPubByCitingYear(range);
+			CRTable.get().getRemover().retainPubByCitingYear(range);
 			return;
 		} 
 		

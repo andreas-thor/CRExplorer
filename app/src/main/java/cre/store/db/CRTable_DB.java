@@ -8,13 +8,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cre.CRELogger;
 import cre.data.type.abs.CRTable;
+import cre.data.type.abs.Filter;
 import cre.data.type.abs.Loader;
+import cre.data.type.abs.Remover;
 import cre.data.type.abs.Statistics;
 import cre.data.type.abs.Statistics.IntRange;
 import cre.store.mm.CRType_MM;
@@ -32,13 +33,15 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	public static String url = "localhost:5455/cre";	// default database url; can be overwritten by main program
 	public static boolean createSchemaOnStartup = true;
 	
-	private boolean showNull;
-
-	private int numberOfPubs; 
+	 
 	
 	private Statistics_DB statistics;
 	private Clustering_DB clustering;
 	private Loader_DB loader;
+	private Remover_DB remover; 
+	private Filter_DB filter;
+	private Importer_DB importer;
+
 
 	private OberservableCRList_DB observableCRList;
 
@@ -53,11 +56,17 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	}
 	
 	
-	@Override
-	public Loader getLoader() {
-		return this.loader;
-	}
 	
+	@Override
+	public Remover getRemover() {
+		return this.remover;
+	}
+
+	@Override
+	public Filter getFilter() {
+		return this.filter;
+	}
+
 	@Override
 	public Statistics getStatistics() {
 		return this.statistics;
@@ -117,17 +126,20 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 				Queries.sqlDialect = "postgres";
 			}
 			if (CRTable_DB.url.toLowerCase().startsWith("jdbc:sqlite")) {
-				Class.forName("org.postgresql.Driver" );
+    			Class.forName("org.sqlite.JDBC");				
 				Queries.sqlDialect = "sqlite";
 			}
 			dbCon = DriverManager.getConnection(CRTable_DB.url);
 
 			dbStore = new DB_Store(dbCon);
-			dbStore.init();
+			// dbStore.init();
 			
 			statistics = new Statistics_DB(dbCon);
 			clustering = new Clustering_DB(dbCon);
 			loader = new Loader_DB(dbCon);
+			remover = new Remover_DB(dbCon);
+			filter = new Filter_DB(dbCon);
+			importer = new Importer_DB(dbCon);
 			createNewObservableCRList_DB();
 			
 
@@ -137,23 +149,23 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 			e.printStackTrace();
 		}
 
-		init();
+		// init();
 	}
 	
 	
 	@Override
 	public void init() {
 		this.setAborted(false);
-		this.numberOfPubs = 0;
-		this.showNull = true;
-
+		
 		try {
 			this.dbStore.init();
 		} catch (SQLException | URISyntaxException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
+		this.filter.setShowNull(true);
+
 	}
 
 	
@@ -179,36 +191,6 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
 
 
-
-	@Override
-	public PubType_DB addPub(PubType_MM pub) {
-
-		this.numberOfPubs++;
-		pub.setID(this.numberOfPubs);
-		
-		try {
-
-			dbStore.insertPub(pub);
-			for(CRType_MM cr: pub.getCR().collect(Collectors.toSet())) {
-				
-				try {
-					dbStore.insertCR(cr, pub.getID());
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		// TODO Auto-generated method stub
-		return null;		
-		
-	}
 
 	@Override
 	public void merge() {
@@ -238,8 +220,6 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 		
 		
 		try {
-			// we may have some insert statements in the batch to be executed after loading
-			dbStore.finishInsert();
 			
 			Statement stmt = dbCon.createStatement();
 
@@ -397,79 +377,56 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 			e.printStackTrace();
 		}
 	}
-	
 
 
-	
-	
+	/** 
+	 * -------------------- Loader -------------------------
+	 */
+
 	@Override
-	public void removeCR(List<Integer> toDelete) {
-		String crList = toDelete.stream().map(crId -> String.valueOf(crId)).collect(Collectors.joining(","));
-		dbStore.removeCR(String.format("CR_ID IN (%s)", crList));
+	public void onBeforeLoad() {
+		this.loader.onBeforeLoad();
 	}
 
 	@Override
-	public void retainCR(List<Integer> toRetain) {
-		String crList = toRetain.stream().map(crId -> String.valueOf(crId)).collect(Collectors.joining(","));
-		dbStore.removeCR(String.format("CR_ID NOT IN (%s)", crList));
+	public void onAfterLoad() {
+		this.loader.onAfterLoad();
 	}
 
 	@Override
-	public void removeCRWithoutYear() {
-		dbStore.removeCR("CR_RPY IS NULL");
+	public void onNewCR(CRType_MM cr) {
+		this.loader.onNewCR(cr);
 	}
 
 	@Override
-	public void removeCRByYear(IntRange range) {
-		dbStore.removeCR(String.format("NOT(CR_RPY IS NULL) AND (%d<=CR_RPY) AND (%d>=CR_RPY)", range.getMin(), range.getMax()));  
+	public void onNewPub(PubType_MM pub, List<Integer> crIds) {
+		this.loader.onNewPub(pub, crIds);
 	}
 
 	@Override
-	public void removeCRByN_CR(IntRange range) {
-		dbStore.removeCR(String.format("(%d<=CR_N_CR) AND (%d>=CR_N_CR)", range.getMin(), range.getMax()));
-	}
-
-	@Override
-	public void removeCRByPERC_YR(String comp, double threshold) {
-		dbStore.removeCR(String.format(Locale.US, "COALESCE(CR_PERC_YR,0) %s %f", comp, threshold));	// locale US to force decimal point
-	}
-
-	@Override
-	public void removePubByCR(List<Integer> selCR) {
-		String crIds = selCR.stream().map(crId -> String.valueOf(crId)).collect(Collectors.joining(","));
-		dbStore.removePub(String.format("NOT IN (SELECT PUB_ID FROM PUB_CR WHERE CR_ID IN (%s))", crIds));
+	public void onNewMatchPair(int crId1, int crId2, double sim, boolean isManual) {
+		this.loader.onNewMatchPair(crId1, crId2, sim, isManual);
 	}
 	
+
+	/**
+	 * ----------------------- Importer ----------------------------------------
+	 */
+
 	@Override
-	public void retainPubByCitingYear(IntRange range) {
-		dbStore.removePub(String.format("IN (SELECT PUB_ID FROM PUB WHERE (PUB_PY IS NULL) OR (%d > PUB_PY) OR (PUB_PY > %d))", range.getMin(), range.getMax()));
+	public void onBeforeImport () {
+		this.importer.onBeforeImport ();
 	}
 
 	@Override
-	public void filterByYear(IntRange range) {
-		String newValue = String.format("(NOT(CR_RPY IS NULL) AND (%d<=CR_RPY) AND (%d>=CR_RPY)) %s", range.getMin(), range.getMax(), this.showNull?" OR (CR_RPY IS NULL)":"");  
-		dbStore.updateCR_VI(newValue, null);
+	public void addPub(PubType_MM pub) {
+		this.importer.addPub(pub);
 	}
 
 	@Override
-	public void filterByCluster(List<Integer> sel) {
-		// String clList = sel.stream().map(cr -> "(" + cr.getClusterC1() + "," + cr.getClusterC2() + ")").collect (Collectors.joining( "," ));
-		String crList = sel.stream().map(crId -> String.valueOf(crId)).collect (Collectors.joining( "," ));
-		dbStore.updateCR_VI(String.format("(CR_Clusterid1, CR_Clusterid2) in (SELECT CR_Clusterid1, CR_Clusterid2 FROM CR WHERE CR_ID IN (%s))", crList), null);
+	public void onAfterImport () {
+		this.importer.onAfterImport ();
 	}
-
-	@Override
-	public void setShowNull(boolean showNull) {
-		dbStore.updateCR_VI(showNull?"1":"0", "CR_RPY IS NULL");
-		this.showNull = showNull;
-	}
-
-	@Override
-	public void showAll() {
-		dbStore.updateCR_VI("1", null);
-		this.showNull = true;		
-	}
-
 
 
 }
