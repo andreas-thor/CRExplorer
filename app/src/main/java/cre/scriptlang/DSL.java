@@ -210,15 +210,15 @@ public class DSL extends Script {
 
 		IntRange range = DSL_Helper.getRange(params.get("N_CR"), null); 
 		if (range != null) {
-			CRTable.get().getRemover().removeCRByN_CR(range);
+			CRTable.get().removeCRByN_CR(range);
 			return;
 		}
 
 		range = DSL_Helper.getRange(params.get("RPY"), null); 
 		if (range != null) {
-			CRTable.get().getRemover().removeCRByYear(range);
+			CRTable.get().removeCRByYear(range);
 			if (DSL_Helper.getWithoutYear(params.get("RPY"))) {
-				CRTable.get().getRemover().removeCRWithoutYear();
+				CRTable.get().removeCRWithoutYear();
 			}
 			return;
 		}
@@ -234,7 +234,7 @@ public class DSL extends Script {
 
 		IntRange range = DSL_Helper.getRange(params.get("PY"), null); 
 		if (range != null) {
-			CRTable.get().getRemover().retainPubByCitingYear(range);
+			CRTable.get().retainPubByCitingYear(range);
 			return;
 		} 
 		
@@ -267,7 +267,6 @@ public class DSL extends Script {
 
 			try {
 				CRTable.get().setNpctRange(Integer.valueOf(params.get("N_PCT_RANGE").toString()).intValue());
-				CRTable.get().updateData();
 			} catch (Exception e) {
 				throw new Exception("Wrong value for set parameter N_PCT_RANGE: " + params.get("N_PCT_RANGE"));
 			}

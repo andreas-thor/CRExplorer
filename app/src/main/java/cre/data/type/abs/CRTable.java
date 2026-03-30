@@ -8,7 +8,7 @@ import cre.store.db.CRTable_DB;
 import cre.store.mm.CRTable_MM;
 import cre.ui.CRTableView;
 
-public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> implements Importer, Loader {
+public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> implements Importer, Loader, Remover, Filter {
  
 	public static enum COMPARATOR { LT, LTE, EQ, GTE, GT };
 	
@@ -48,9 +48,6 @@ public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> implem
 	}
 	
 	
-	public abstract Remover getRemover();
-
-	public abstract Filter getFilter();
 	
 	public abstract Statistics getStatistics();
 	
@@ -134,18 +131,7 @@ public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> implem
 	 * @param removed Data has been removed --> adjust clustering data structures; adjust CR lists per publication
 	 */
 	
-	public abstract void updateData () throws OutOfMemoryError; 
 
-	
-
-
-	
-
-	
-		
-
-	
-	
 	
 
 	
@@ -162,13 +148,15 @@ public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> implem
 		return npctRange;
 	}
 
-
 	public void setNpctRange(int npctRange) {
-		if (npctRange>=0) {
+		if ((npctRange>=0) && (this.npctRange != npctRange)) {
 			this.npctRange = npctRange;
+			onNpctRangeChanged();
 		}
 	}
 	
+	protected abstract void onNpctRangeChanged (); 
+
 	
 	protected void computeCRIndicators (int rpyIdx, int crSize, int pySize, int NCR_ALL, int[] NCR_RPY, int[][] NCR_CR_PY, int[] NCR_CR, int[] NCR_CR_all, int[] NPYEARS_CR, int[] NCR_PY, int[] NCR, CRIndicatorsUpdate updateCR) {
 

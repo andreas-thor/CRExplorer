@@ -115,13 +115,15 @@ public enum ImportFormat {
 			return;
 		}
 		
-		long ts1 = System.currentTimeMillis();
-		long ms1 = Runtime.getRuntime().totalMemory();
+
 
 		Random rand = new Random();
 		CRTable<?, ?> crTab = CRTable.get(); 
 		crTab.init();
 		crTab.onBeforeImport();
+
+		long ts1 = System.currentTimeMillis();
+		long ms1 = Runtime.getRuntime().totalMemory();
 
 //		final long noMaxCRs = UserSettings.get().getMaxCR();
 //		final Sampling sampling = UserSettings.get().getSampling();
@@ -135,9 +137,6 @@ public enum ImportFormat {
 		/* CLUSTER sampling --> pick a single PY at random; no pubs w/o year */
 		final boolean importPubsWOYear = (sampling==Sampling.CLUSTER) ? false : importPubsWithoutYear;
 		final IntRange pyRangeSampled  = (sampling==Sampling.CLUSTER) ? new IntRange(pyRange.getMin() + rand.nextInt(pyRange.getSize())) : pyRange;
-		
-			
-			
 		
 		
 		AtomicLong noAvailableCRs = new AtomicLong (CRStatsInfo.get().getNumberOfCRs (rpyRange, importCRsWithoutYear, pyRangeSampled, importPubsWithoutYear));
@@ -224,7 +223,6 @@ public enum ImportFormat {
 			throw new AbortedException();
 		}
 
-		crTab.onAfterImport();
 
 
 
@@ -240,14 +238,11 @@ public enum ImportFormat {
 
 		CRELogger.get().logInfo("Load time is " + ((ts2-ts1)/1000d) + " seconds");
 		CRELogger.get().logInfo("Load Memory usage " + ((ms2-ms1)/1024d/1024d) + " MBytes");
+
 		
-		crTab.updateData();
+		crTab.onAfterImport();
 
-		long ts3 = System.currentTimeMillis();
-		long ms3 = Runtime.getRuntime().totalMemory();
-
-		CRELogger.get().logInfo("Update time is " + ((ts3-ts2)/1000d) + " seconds");
-		CRELogger.get().logInfo("Update Memory usage " + ((ms3-ms2)/1024d/1024d) + " MBytes");
+		
 
 		
 		StatusBar.get().setValue(String.format("Loading %1$s file%2$s done", this.getLabel(), files.size()>1 ? "s" : ""));

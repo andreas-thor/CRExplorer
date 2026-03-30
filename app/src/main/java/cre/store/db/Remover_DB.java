@@ -63,7 +63,7 @@ public class Remover_DB implements Remover {
 	}    
 
 
-	void removeCR (String predicate) {
+	private void removeCR (String predicate) {
 		try {
 			Statement stmt = dbCon.createStatement();
 			stmt.executeUpdate(String.format ("DELETE FROM PUB_CR WHERE CR_ID IN (SELECT CR_ID FROM CR WHERE %s)",  predicate)); 
@@ -71,7 +71,6 @@ public class Remover_DB implements Remover {
 			stmt.executeUpdate(String.format ("DELETE FROM CR_MATCH_MANU WHERE CR_ID1 IN (SELECT CR_ID FROM CR WHERE %1$s) OR CR_ID2 IN (SELECT CR_ID FROM CR WHERE %1$s)",  predicate)); 
 			stmt.executeUpdate(String.format ("DELETE FROM CR WHERE %s",  predicate)); 
 			dbCon.commit();
-			CRTable_DB.get().updateData();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -85,7 +84,7 @@ public class Remover_DB implements Remover {
 	 * @param crIds comma-separated ids
 	 */
 
-	void removePub (String predicate) {
+	private void removePub (String predicate) {
 		try {
 			Statement stmt = dbCon.createStatement();
 
