@@ -21,7 +21,7 @@
 .ipython/
 
 
-# CRE Logfiles
-
+# Logfiles
+/*.log
 CRE.log
 CRE.log.*
