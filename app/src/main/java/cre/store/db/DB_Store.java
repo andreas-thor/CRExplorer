@@ -50,6 +50,8 @@ class DB_Store {
 			stmt.close();
 		}
 
+		// TODO: Add VACUUM command to reduce file size!
+
 		/* create prepared statements & sql scripts */
 		updateCRIndicators_PrepStmt = dbCon.prepareStatement(Queries.getQuery("crpub", "pst_update_cr_indicators").get(0));
 		updateCRIndicators_Counter = 0;		
