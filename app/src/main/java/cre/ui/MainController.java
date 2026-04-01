@@ -1016,15 +1016,8 @@ public class MainController {
 		choiceBox.setValue("Word");
 
 		// Beschreibungstext
-		Text text1 = new Text("""
-            The number determines how many letters or words will be grouped when using the chosen algorithm.
-            Usually values between 2 and 4 perform the best.
-            The mode of the algorithm determines if it analyzes n letters or n words.
-            For example: Char and 2 will split everything into 2 character long strings: 
-            test -> te, es, st
-
-            Please choose a number for the parameter n: \s""");
-		Text text2 = new Text("\nAnd the mode of the chosen algorithm: ");
+		Text text1 = new Text("Please choose a number for the parameter n:  ");
+		Text text2 = new Text("\nAnd the mode of the chosen algorithm:  ");
 		TextFlow textFlow = new TextFlow(
 				text1,
 				numberField,
