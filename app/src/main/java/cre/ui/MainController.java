@@ -1000,7 +1000,7 @@ public class MainController {
 		// Dialog erstellen
 		Dialog<Pair<Integer, String>> dialog = new Dialog<>();
 		dialog.setTitle("Clustering Parameter");
-		dialog.setHeaderText("Choose the clustering parameters");
+		//dialog.setHeaderText("Choose the clustering parameters");
 
 		// Buttons
 		ButtonType okButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
@@ -1016,8 +1016,8 @@ public class MainController {
 		choiceBox.setValue("Word");
 
 		// Beschreibungstext
-		Text text1 = new Text("Please choose a number for the parameter n:  ");
-		Text text2 = new Text("\nAnd the mode of the chosen algorithm:  ");
+		Text text1 = new Text("Number for the Parameter n:  ");
+		Text text2 = new Text("\nMode for the Algorithm:  ");
 		TextFlow textFlow = new TextFlow(
 				text1,
 				numberField,
@@ -1029,7 +1029,7 @@ public class MainController {
 		// Container für Abstand/Padding
 		VBox content = new VBox(textFlow);
 		content.setPadding(new Insets(20));
-		content.setPrefWidth(500);
+		content.setPrefWidth(300);
 
 		dialog.getDialogPane().setContent(content);
 
