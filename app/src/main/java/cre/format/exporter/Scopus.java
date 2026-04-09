@@ -32,7 +32,7 @@ public class Scopus   {
 		final AtomicLong debug_countNR = new AtomicLong(0);
 
 		/* TODO: Filter not supported yet ... nun drin? */
-		StatusBar.get().initProgressbar(CRTable.get().getStatistics().getNumberOfPubs());
+		StatusBar.get().initProgressbar(CRTable.get().getNumberOfPubs());
 		CSVWriter csv = new CSVWriter (new OutputStreamWriter(out, "UTF-8"));
 		
 		csv.writeNext(new String[] {"Authors","Title","Year","Source title","Volume","Issue","Art. No.","Page start","Page end","Page count","Cited by","DOI","Link","Affiliations","Authors with affiliations","Abstract","Author Keywords","References","Document Type","Source","EID"});

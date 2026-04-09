@@ -37,7 +37,7 @@ public class Loader_MM implements Loader {
 		
 		if ((cr1==null) || (cr2==null)) return;
 		
-		CRTable_MM.get().getClustering().addPair(cr1, cr2, sim, isManual);
+		CRTable_MM.get().addPair(cr1, cr2, sim, isManual);
 	}
 
 	@Override

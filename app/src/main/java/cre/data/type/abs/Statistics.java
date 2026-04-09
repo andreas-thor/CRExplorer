@@ -62,6 +62,8 @@ public interface Statistics {
 	
 	
 	public long getNumberOfCRs ();
+
+	public long getSumNCR();
 	
 	public long getNumberOfPubs ();
 

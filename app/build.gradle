@@ -7,8 +7,8 @@ plugins {
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_25
-	targetCompatibility = JavaVersion.VERSION_25
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 	sourceSets.main.java.srcDirs = ["src/main/java"]
 	sourceSets.test.java.srcDirs = ["src/test/java"] 	
 }
@@ -33,7 +33,7 @@ repositories {
 
 
 javafx {
-    version = "25" // v17 has a scrollto bug (we had v16 previously)
+    version = "21" // v17 has a scrollto bug (we had v16 previously)
     modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.web', 'javafx.graphics', 'javafx.base', 'javafx.swing']
 }
 
@@ -67,7 +67,7 @@ dependencies {
     */
     
 	// TODO: Versionen überprüfen und ggf. aktualisieren
-    implementation 'org.codehaus.groovy:groovy-all:3.0.9' 
+    implementation 'org.codehaus.groovy:groovy-all:3.0.25' 
 
     implementation 'com.github.mpkorstanje:simmetrics-core:4.1.1'
 	implementation group: 'javax.json', name: 'javax.json-api', version: '1.1'
@@ -79,7 +79,7 @@ dependencies {
 	implementation group: 'com.h2database', name: 'h2', version: '2.1.214'
 	implementation group: 'org.postgresql', name: 'postgresql', version: '42.6.0'
 	implementation group: 'org.yaml', name: 'snakeyaml', version: '1.24'
-	implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.45.3.0'
+	implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.50.3.0'
 	
  	runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:win"
 	runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:linux"

@@ -24,7 +24,7 @@ class CRType_DB extends CRType<PubType_DB> {
 	 * @throws SQLException
 	 */
 	
-	static void addToBatch (PreparedStatement pst, CRType<?> cr, int pubId) throws SQLException {
+	static void addToBatch (PreparedStatement pst, CRType<?> cr, int pubId, Integer pubYear) throws SQLException {
 		
 		pst.clearParameters();
 		pst.setInt		(1, cr.getID());
@@ -53,6 +53,13 @@ class CRType_DB extends CRType<PubType_DB> {
 		pst.setBoolean	(18, cr.getVI());
 		pst.setString	(19, cr.getFormatType().toString());
 		pst.setInt		(20, pubId);
+
+		if (pubYear == null) {
+			pst.setNull	(21, java.sql.Types.INTEGER);
+		} else {
+			pst.setInt 	(21, pubYear);
+		}
+
 		pst.addBatch();
 	}
 	

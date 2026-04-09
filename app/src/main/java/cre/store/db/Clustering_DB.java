@@ -25,7 +25,7 @@ import cre.data.type.abs.Clustering;
 import cre.data.type.abs.MatchPairGroup;
 import cre.ui.statusbar.StatusBar;
 
-public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
+public class Clustering_DB implements Clustering<CRType_DB> {
 
 	private class CRPair {
 		
@@ -127,7 +127,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 
 		
 		// standard blocking: year + first letter of last name
-		StatusBar.get().setValue(String.format("Blocking of %d objects...", CRTable.get().getStatistics().getNumberOfCRs()));
+		StatusBar.get().setValue(String.format("Blocking of %d objects...", CRTable.get().getNumberOfCRs()));
 		
 		try {
 
@@ -155,7 +155,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 			rs.close();
 			
 			StatusBar.get().initProgressbar(noOfComparisons, String.format("Matching %d objects in %d blocks (%d comparisons)", 
-				CRTable.get().getStatistics().getNumberOfCRs(), noOfBlocks, noOfComparisons));
+				CRTable.get().getNumberOfCRs(), noOfBlocks, noOfComparisons));
 
 			StringMetric l = StringMetrics.levenshtein();
 			
@@ -331,7 +331,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 	public void updateClustering(ClusteringType type, Set<CRType_DB> changeCR, double threshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull) {
 		
 
-		StatusBar.get().initProgressbar(1, String.format("Clustering %d objects (%s) with threshold %.2f", CRTable.get().getStatistics().getNumberOfCRs(), type.toString(), threshold));
+		StatusBar.get().initProgressbar(1, String.format("Clustering %d objects (%s) with threshold %.2f", CRTable.get().getNumberOfCRs(), type.toString(), threshold));
 
 
 		try {
@@ -406,6 +406,33 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 		
 		
 		
+	}
+
+
+
+
+
+	@Override
+	public void merge() {
+		// TODO Auto-generated method stub
+		
+		try {
+			StatusBar.get().setValue("Merging ");
+			Statement stmt = dbCon.createStatement();
+			for (String s: Queries.getQuery("crpub", "merge_cr")) {
+				CRELogger.get().logInfo(s);
+				stmt.execute(s);
+			}
+			dbCon.commit();
+			CRTable.get().updateData();
+			StatusBar.get().setValue("Merging done");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			CRELogger.get().logError(e.toString());
+			e.printStackTrace();
+		}
+		
+
 	}
 
 	@Override

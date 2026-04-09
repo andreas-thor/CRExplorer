@@ -8,14 +8,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import cre.CRELogger;
 import cre.Timestamp;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.Clustering;
-import cre.data.type.abs.Statistics;
-import cre.data.type.abs.Statistics.IntRange;
+import cre.data.type.abs.MatchPairGroup;
 import cre.store.mm.CRType_MM;
 import cre.store.mm.PubType_MM;
 import cre.ui.statusbar.StatusBar;
@@ -34,6 +34,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	 
 	
 	private Statistics_DB statistics;
+
 	private Clustering_DB clustering;
 	private Loader_DB loader;
 	private Remover_DB remover; 
@@ -54,19 +55,9 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	}
 	
 	
+
+
 	
-
-
-
-	@Override
-	public Statistics getStatistics() {
-		return this.statistics;
-	}
-	
-	@Override
-	public Clustering_DB getClustering() {
-		return this.clustering;
-	}
 
 	@Override
 	public CRTableView_DB getTableView() {
@@ -182,36 +173,13 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
 
 
-
-	@Override
-	public void merge() {
-		// TODO Auto-generated method stub
-		
-		try {
-			StatusBar.get().setValue("Merging ");
-			Statement stmt = dbCon.createStatement();
-			for (String s: Queries.getQuery("crpub", "merge_cr")) {
-				CRELogger.get().logInfo(s);
-				stmt.execute(s);
-			}
-			dbCon.commit();
-			updateData();
-			StatusBar.get().setValue("Merging done");
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			CRELogger.get().logError(e.toString());
-			e.printStackTrace();
-		}
-		
-
-	}
-
 	@Override
 	protected void onNpctRangeChanged () {
 		updateData();
 	} 
 	
-	private void updateData() throws OutOfMemoryError {
+	@Override
+	public void updateData() throws OutOfMemoryError {
 		
 		
 		try {
@@ -222,7 +190,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
 			IntRange range_RPY  = statistics.getMaxRangeRPY();
 			IntRange range_PY  = statistics.getMaxRangePY();
-			int NCR_ALL = statistics.getSumNCR();
+			int NCR_ALL = (int) statistics.getSumNCR();
 			
 			int[] NCR_RPY = new int[range_RPY.getSize()];
 			int[] CNT_RPY = new int[range_RPY.getSize()];
@@ -395,7 +363,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	public void onAfterLoad() {
 		this.loader.onAfterLoad();
 		updateData();
-		getClustering().updateClustering(Clustering.ClusteringType.INIT, null, Clustering.min_threshold, false, false, false, false);
+		updateClustering(Clustering.ClusteringType.INIT, null, Clustering.min_threshold, false, false, false, false);
 
 	}
 
@@ -521,5 +489,150 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	}
 
 	// #endregion
+
+	// #region Statistics --------------------------------------------------
+
+	@Override
+	public long getNumberOfCRs() {
+		return this.statistics.getNumberOfCRs();
+	}
+
+	@Override
+	public long getSumNCR() {
+		return this.statistics.getSumNCR();
+	}
+
+
+	@Override
+	public long getNumberOfPubs() {
+		return this.statistics.getNumberOfPubs();
+	}
+
+	@Override
+	public long getNumberOfPubs(boolean includePubsWithoutCRs) {
+		return this.statistics.getNumberOfPubs(includePubsWithoutCRs);
+	}
+
+	@Override
+	public IntRange getMaxRangePY() {
+		return this.statistics.getMaxRangePY();
+	}
+
+	@Override
+	public int getNumberOfDistinctPY() {
+		return this.statistics.getNumberOfDistinctPY();
+	}
+
+	@Override
+	public IntRange getMaxRangeNCR() {
+		return this.statistics.getMaxRangeNCR();
+	}
+
+	@Override
+	public IntRange getMaxRangeRPY() {
+		return this.statistics.getMaxRangeRPY();
+	}
+
+	@Override
+	public IntRange getMaxRangeRPY(boolean visibleOnly) {
+		return this.statistics.getMaxRangeRPY(visibleOnly);
+	}
+
+	@Override
+	public int getNumberOfDistinctRPY() {
+		return this.statistics.getNumberOfDistinctRPY();
+	}
+
+	@Override
+	public int getNumberOfCRsByVisibility(boolean visible) {
+		return this.statistics.getNumberOfCRsByVisibility (visible);
+	}
+
+	@Override
+	public long getNumberOfCRsByNCR(IntRange range) {
+		return this.statistics.getNumberOfCRsByNCR (range);
+	}
+
+	@Override
+	public long getNumberOfCRsByPercentYear(String comp, double threshold) {
+		return this.statistics.getNumberOfCRsByPercentYear (comp, threshold);
+	}
+
+	@Override
+	public long getNumberOfCRsByRPY(IntRange range) {
+		return this.statistics.getNumberOfCRsByRPY (range);
+	}
+
+	@Override
+	public long getNumberOfPubsByCitingYear(IntRange range) {
+		return this.statistics.getNumberOfPubsByCitingYear (range);
+	}
+
+	@Override
+	public int getNumberOfCRsWithoutRPY() {
+		return this.statistics.getNumberOfCRsWithoutRPY();
+	}
+
+
+	// #endregion
+
+	// #region Clustering --------------------------------------------------
+
+
+	@Override
+	public void generateAutoMatching() {
+		this.clustering.generateAutoMatching();
+	}
+
+	@Override
+	public Set<CRType_DB> addManuMatching(List<Integer> selCR, ManualMatchType matchType) {
+		return this.clustering.addManuMatching(selCR, matchType);
+	}
+
+	@Override
+	public Set<CRType_DB> undoManuMatching() {
+		return this.clustering.undoManuMatching();
+	}
+
+	@Override
+	public void updateClustering(ClusteringType type, Set<CRType_DB> changeCR, double threshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull) {
+		this.clustering.updateClustering(type, changeCR, threshold, useVol, usePag, useDOI, nullEqualsNull);
+	}
+
+	@Override
+	public void merge() {
+		this.clustering.merge();
+	}
+
+
+	@Override
+	public long getNumberOfMatches(boolean manual) {
+		return this.clustering.getNumberOfMatches(manual);
+	}
+
+	@Override
+	public long getNumberOfClusters() {
+		return this.clustering.getNumberOfClusters();
+	}
+
+	@Override
+	public Stream<MatchPairGroup> getMatchPairGroups(boolean manual) {
+		return this.clustering.getMatchPairGroups(manual);
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+	// #endregion
+
 
 }

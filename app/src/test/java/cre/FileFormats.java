@@ -28,7 +28,7 @@ import cre.format.importer.ImportFormat;
 public class FileFormats {
 
     private long[] getTableStatistics() {
-        Statistics s = CRTable.get().getStatistics();
+        Statistics s = CRTable.get();
         return new long[] { 
             s.getNumberOfCRs(),
             s.getNumberOfPubs(),

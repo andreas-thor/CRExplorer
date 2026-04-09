@@ -14,7 +14,7 @@ import cre.CRELogger;
 
 
 
-public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
+public interface Clustering<C extends CRType<?>> {
 
 	@FunctionalInterface
 	public interface NewMatchingPair<C>  {
@@ -22,9 +22,9 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 	}
 	
 	// weights for weighted similarity   
-	private final double weight_author = 2.0;
-	private final double weight_journal = 1.0;
-	private final double weight_title = 5.0;
+	final double weight_author = 2.0;
+	final double weight_journal = 1.0;
+	final double weight_title = 5.0;
 	public static final double min_threshold = 0.5;
 	
 	public static enum ManualMatchType { SAME, DIFFERENT, EXTRACT }
@@ -33,7 +33,7 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 	
 	
 	
-	public void  crossCompareCR(List<C> crlist, StringMetric l, NewMatchingPair<C> onNewPair) {
+	default void  crossCompareCR(List<C> crlist, StringMetric l, NewMatchingPair<C> onNewPair) {
 		
 		// allX = List of all AU_L values; compareY = List of compare string 
 		List<String> allX = crlist.stream().map ( cr -> cr.getAU_L().toLowerCase()).collect (Collectors.toList());
@@ -77,7 +77,7 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 	 * @return
 	 */
 	
-	public double simCR (C cr1, C cr2, double sim_author, StringMetric l) {
+	default double simCR (C cr1, C cr2, double sim_author, StringMetric l) {
 		
 		// increasing sim + weight if data is available; weight for author is 2
 		double sim = weight_author*sim_author;
@@ -102,7 +102,7 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 	}
 	
 	
-	public void generateInitialClustering () {
+	default void generateInitialClustering () {
 		Long stop1 = System.currentTimeMillis(); 
 
 		generateAutoMatching();
@@ -123,7 +123,7 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 	public abstract Set<C> addManuMatching (List<Integer> selCR, ManualMatchType matchType);
 
 	
-	public void addManuMatching (List<Integer> selCR, Clustering.ManualMatchType matchType, double matchThreshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull) {
+	default void addManuMatching (List<Integer> selCR, Clustering.ManualMatchType matchType, double matchThreshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull) {
 		updateClustering(Clustering.ClusteringType.REFRESH, addManuMatching(selCR, matchType), matchThreshold, useVol, usePag, useDOI, nullEqualsNull);
 	}
 	
@@ -131,7 +131,7 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 	public abstract Set<C> undoManuMatching ();
 	
 	
-	public void undoManuMatching (double threshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull) {
+	default void undoManuMatching (double threshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull) {
 		updateClustering(Clustering.ClusteringType.REFRESH, undoManuMatching(), threshold, useVol, usePag, useDOI, nullEqualsNull);
 	}
 
@@ -143,5 +143,5 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 	
 	public abstract Stream<MatchPairGroup> getMatchPairGroups(boolean manual);
 	
-	
+	public abstract void merge ();
 }

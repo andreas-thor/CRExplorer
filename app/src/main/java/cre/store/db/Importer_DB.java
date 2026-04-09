@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import cre.data.type.abs.CRType;
@@ -25,16 +24,14 @@ public class Importer_DB {
 	private int insertPub_Counter;    
 
 	private final int BATCH_SIZE_MAX = 50000;
-	private List<String> wrapup_insert_SQL;
 
 
     public Importer_DB(Connection dbCon) throws SQLException {
         this.dbCon = dbCon;
 
 		/* create prepared statements & sql scripts */
-		insertCR_PrepStmt = dbCon.prepareStatement(Queries.getQuery("crpub", "pst_insert_cr").get(0)); 
-		insertPub_PrepStmt = dbCon.prepareStatement(Queries.getQuery("crpub", "pst_insert_pub").get(0));
-		wrapup_insert_SQL = Queries.getQuery("crpub", "wrapup_insert");
+		insertCR_PrepStmt = dbCon.prepareStatement(Queries.getQuery("Importer_DB", "pst_insert_cr").get(0)); 
+		insertPub_PrepStmt = dbCon.prepareStatement(Queries.getQuery("Importer_DB", "pst_insert_pub").get(0));
 
     }
 
@@ -44,7 +41,19 @@ public class Importer_DB {
 		this.insertPub_Counter = 0;        
 
         this.numberOfPubs = 0;
-        this.testcounter = 0;   	
+        this.testcounter = 0;   
+		
+		try {
+			Statement stmt = dbCon.createStatement();
+			for (String s: Queries.getQuery("Importer_DB", "before_import")) {
+				stmt.execute(s);
+			}
+			stmt.close();
+			dbCon.commit();		
+		} catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();			
+		}
     }
 
 
@@ -62,7 +71,7 @@ public class Importer_DB {
 			for(CRType_MM cr: pub.getCR().collect(Collectors.toSet())) {
 				
 				try {
-					insertCR(cr, pub.getID());
+					insertCR(cr, pub.getID(), pub.getPY());
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -81,9 +90,9 @@ public class Importer_DB {
 	}    
 
 
-	void insertCR (CRType<?> cr, int pubId) throws SQLException {
+	void insertCR (CRType<?> cr, int pubId, Integer pubYear) throws SQLException {
 		
-		CRType_DB.addToBatch(insertCR_PrepStmt, cr, pubId);
+		CRType_DB.addToBatch(insertCR_PrepStmt, cr, pubId, pubYear);
 		
 		if (++insertCR_Counter>=BATCH_SIZE_MAX) {
 
@@ -124,15 +133,20 @@ public class Importer_DB {
                 insertPub_PrepStmt.executeBatch();
                 insertPub_Counter = 0;
             }	
-            
-            System.out.println("Executing " + wrapup_insert_SQL);
-            Statement stmt = dbCon.createStatement();
-            for (String s: wrapup_insert_SQL) {
-                System.out.println(s);
-                stmt.execute(s);
-            }
-            stmt.close();
-            dbCon.commit();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+		
+		// wrap-up import process
+		try {
+			Statement stmt = dbCon.createStatement();
+			for (String s: Queries.getQuery("Importer_DB", "after_import")) {
+				System.out.println(s);
+				stmt.execute(s);
+			}
+			stmt.close();
+			dbCon.commit();		
 
         } catch (SQLException e) {
             // TODO Auto-generated catch block
