@@ -164,7 +164,7 @@ delete_all:
   - sqlite: DELETE FROM CR_MATCH_AUTO
   - sqlite: DELETE FROM CR_MATCH_MANU
   - sqlite: DELETE FROM CR_Cluster
-  - sqlite: VACUUM
+
 
 
 

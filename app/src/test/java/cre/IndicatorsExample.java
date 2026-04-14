@@ -6,10 +6,10 @@ import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
 import cre.data.type.abs.CRTable;
-import cre.data.type.abs.CRTable.CRTypes;
 import cre.data.type.abs.CRTable.TABLE_IMPL_TYPES;
-import cre.data.type.abs.CRTable.ZValueSymbol;
 import cre.data.type.abs.CRType.PERCENTAGE;
+import cre.data.type.abs.Indicators.CRTypes;
+import cre.data.type.abs.Indicators.ZValueSymbol;
 
 public class IndicatorsExample {
 

@@ -36,7 +36,12 @@ class DB_Store {
 		
 		
 		this.dbCon = dbCon;
+		
+
+		
+
 		this.dbCon.setAutoCommit(false);
+		
 
 		/* create tables */
 		if (CRTable_DB.createSchemaOnStartup) {
@@ -68,8 +73,14 @@ class DB_Store {
 		}
 		dbCon.commit();
 
-		/* reset batch counters */
+		/* vacuum sqlite database --> reduce file size */
+		if (Queries.sqlDialect.equalsIgnoreCase("sqlite")) {
+			this.dbCon.setAutoCommit(true);
+			stmt.executeUpdate("VACUUM");
+			this.dbCon.setAutoCommit(false);
+		}
 
+		/* reset batch counters */
 		updateCRIndicators_Counter = 0;		
 		
 	}
