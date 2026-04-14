@@ -14,6 +14,11 @@ public class Statistics_MM implements Statistics {
 	}
 	
 	@Override
+	public long getSumNCR() {
+		return CRTable_MM.get().getCR().mapToInt(cr -> cr.getN_CR()).sum();
+	}
+
+	@Override
 	public long getNumberOfPubs () {
 		return CRTable_MM.get().getPub().count();
 	}

@@ -20,7 +20,7 @@ import cre.data.type.abs.Clustering;
 import cre.data.type.abs.MatchPairGroup;
 import cre.ui.statusbar.StatusBar;
 
-public class Clustering_MM extends Clustering<CRType_MM, PubType_MM> {
+public class Clustering_MM implements Clustering<CRType_MM> {
 
 	
 	private class CRPair {
@@ -82,13 +82,13 @@ public class Clustering_MM extends Clustering<CRType_MM, PubType_MM> {
 	public void generateAutoMatching () {
 	
 		// standard blocking: year + first letter of last name
-		StatusBar.get().setValue(String.format("Blocking of %d objects...", CRTable.get().getStatistics().getNumberOfCRs()));
+		StatusBar.get().setValue(String.format("Blocking of %d objects...", CRTable.get().getNumberOfCRs()));
 		Map<String, List<CRType_MM>> blocks = crTab.getCR().collect(Collectors.groupingBy(
 			cr -> ((cr.getRPY() != null) && (cr.getAU_L() != null) && (cr.getAU_L().length() > 0)) ? cr.getRPY() + cr.getAU_L().substring(0,1).toLowerCase() : "", 
 			Collectors.toList()
 		));
 
-		StatusBar.get().initProgressbar(blocks.entrySet().stream().mapToInt(entry -> (entry.getValue().size()*(entry.getValue().size()-1))/2).sum(), String.format("Matching %d objects in %d blocks", CRTable.get().getStatistics().getNumberOfCRs(), blocks.size()));
+		StatusBar.get().initProgressbar(blocks.entrySet().stream().mapToInt(entry -> (entry.getValue().size()*(entry.getValue().size()-1))/2).sum(), String.format("Matching %d objects in %d blocks", CRTable.get().getNumberOfCRs(), blocks.size()));
 		matchResult.put(false, new HashMap<CRType_MM,Map<CRType_MM,Double>>());		// remove automatic match result, but preserve manual matching
 		StringMetric l = StringMetrics.levenshtein();
 		
@@ -190,7 +190,7 @@ public class Clustering_MM extends Clustering<CRType_MM, PubType_MM> {
 			((changeCR == null) ? crTab.getCR() : changeCR.stream()).forEach(cr -> cr.setCluster (new CRCluster(cr, cr.getCluster().getC1())));
 		}
 
-		StatusBar.get().initProgressbar(pbSize, String.format("Clustering %d objects (%s) with threshold %.2f", CRTable.get().getStatistics().getNumberOfCRs(), type.toString(), threshold));
+		StatusBar.get().initProgressbar(pbSize, String.format("Clustering %d objects (%s) with threshold %.2f", CRTable.get().getNumberOfCRs(), type.toString(), threshold));
 		
 		// automatic matches
 		matchResult.get(false).forEach((cr1, pairs) -> {
@@ -243,6 +243,51 @@ public class Clustering_MM extends Clustering<CRType_MM, PubType_MM> {
 	}
 	
 	
+	/**
+	 * Merge CRs based on clustering
+	 */
+
+	@Override
+	public void merge () {
+		
+		// get all clusters with size > 1
+		Set<CRCluster> clusters = crTab.getCR().filter(cr -> cr.getClusterSize()>1).map(cr -> cr.getCluster()).distinct().collect(Collectors.toSet());
+		StatusBar.get().setValue(String.format("Merging of %d clusters...", clusters.size()));
+
+		// merge clusters
+		clusters.forEach(cl -> {
+			
+			StatusBar.get().incProgressbar();
+			
+			// get mainCR = CR with highest number of citations
+			CRType_MM crMain = cl.getMainCR();
+			Set<CRType_MM> crMerge = cl.getCR().collect(Collectors.toSet());
+			crMerge.remove(crMain);
+
+			// merge CRs with main CR
+			for (CRType_MM cr:crMerge) {
+				cr.getPub().collect(Collectors.toList()).stream().forEach(crPub -> {		// make a copy to avoid concurrent modification
+					crPub.addCR(crMain, true);
+					crPub.removeCR(cr, true);
+				});
+			}
+			
+			// remove merged CRs
+			crTab.removeCR(crMerge.stream().map(cr -> cr.getID()).toList());
+
+
+			// crMerge.stream().forEach(cr -> this.crById.remove(cr.getID()));
+			// this.allCRs.keySet().removeAll(crMerge);
+		});
+		
+		// reset clusters and match result
+		crTab.getCR().forEach(cr -> cr.setCluster(new CRCluster(cr)));
+		init();
+		
+		crTab.updateData();
+		StatusBar.get().setValue("Merging done");
+
+	}
 
 	
 	

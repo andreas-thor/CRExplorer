@@ -68,6 +68,7 @@ create_schema:
       CR_VI boolean,	
       CR_Format varchar,
       PUB_ID int, 
+      PUB_PY int, 
       PRIMARY KEY (CR_ID)  
     )
 
@@ -104,6 +105,8 @@ create_schema:
   - CREATE TABLE PUB_CR ( 
       PUB_ID	int, 
       CR_ID 	int, 
+      CR_RPY int,
+      PUB_PY int, 
       PRIMARY KEY (PUB_ID, CR_ID)  
     )
   
@@ -229,10 +232,11 @@ pst_insert_cr:
       CR_ClusterSize,
       CR_VI,	
       CR_Format,
-      PUB_ID
+      PUB_ID,
+      PUB_PY
     ) 
     VALUES (
-      ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+      ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
     )
 
 pst_insert_pub: 
@@ -289,8 +293,12 @@ pst_update_cr_indicators:
       CR_ID = ?
 
 wrapup_insert: 
-  - INSERT INTO PUB_CR (CR_ID, PUB_ID)
-    SELECT DISTINCT first_value (CR_ID) over (partition by CR_CR order by CR_ID), PUB_ID
+  - INSERT INTO PUB_CR (CR_ID, CR_RPY, PUB_ID, PUB_PY)
+    SELECT DISTINCT 
+      first_value (CR_ID) over (partition by CR_CR order by CR_ID), 
+      first_value (CR_RPY) over (partition by CR_CR order by CR_ID), 
+      PUB_ID, 
+      PUB_PY
     FROM CR_Temp
 
   - INSERT INTO CR 
@@ -306,5 +314,5 @@ wrapup_insert:
     ) AS T
     ON (CR_Temp.CR_ID = T.CR_ID)
 
-  - postgres: TRUNCATE TABLE CR_Temp
-  - sqlite: DELETE FROM CR_Temp
+  - Xpostgres: -- TRUNCATE TABLE CR_Temp
+  - Xsqlite: -- DELETE FROM CR_Temp

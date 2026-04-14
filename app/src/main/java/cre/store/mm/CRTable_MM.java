@@ -13,9 +13,7 @@ import cre.CRELogger;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRType;
 import cre.data.type.abs.Clustering;
-import cre.data.type.abs.Filter;
-import cre.data.type.abs.Statistics;
-import cre.data.type.abs.Statistics.IntRange;
+import cre.data.type.abs.MatchPairGroup;
 import cre.ui.statusbar.StatusBar;
 
 public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
@@ -38,7 +36,7 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	}
 
 
-	private Clustering_MM crmatch;
+	private Clustering_MM clustering;
 
 	private CRTableView_MM tableView;
 	
@@ -55,15 +53,9 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 
 	
 
-	@Override
-	public Statistics getStatistics() {
-		return this.statistics;
-	}
+
 	
-	@Override
-	public Clustering_MM getClustering() {
-		return this.crmatch;
-	}
+
 
 
 
@@ -109,7 +101,7 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 		allCRs = new HashMap<CRType_MM, CRType_MM>();
 		allPubs = new HashMap<PubType_MM, PubType_MM>();
 		
-		crmatch = new Clustering_MM(this);
+		clustering = new Clustering_MM(this);
 		duringUpdate = false;
 		this.setAborted(false);
 		this.setShowNull(true);
@@ -182,48 +174,6 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 
 
 	
-	/**
-	 * Merge CRs based on clustering
-	 */
-
-	@Override
-	public void merge () {
-		
-		// get all clusters with size > 1
-		Set<CRCluster> clusters = getCR().filter(cr -> cr.getClusterSize()>1).map(cr -> cr.getCluster()).distinct().collect(Collectors.toSet());
-		StatusBar.get().setValue(String.format("Merging of %d clusters...", clusters.size()));
-
-		// merge clusters
-		clusters.forEach(cl -> {
-			
-			StatusBar.get().incProgressbar();
-			
-			// get mainCR = CR with highest number of citations
-			CRType_MM crMain = cl.getMainCR();
-			Set<CRType_MM> crMerge = cl.getCR().collect(Collectors.toSet());
-			crMerge.remove(crMain);
-
-			// merge CRs with main CR
-			for (CRType_MM cr:crMerge) {
-				cr.getPub().collect(Collectors.toList()).stream().forEach(crPub -> {		// make a copy to avoid concurrent modification
-					crPub.addCR(crMain, true);
-					crPub.removeCR(cr, true);
-				});
-			}
-			
-			// remove merged CRs
-			crMerge.stream().forEach(cr -> this.crById.remove(cr.getID()));
-			this.allCRs.keySet().removeAll(crMerge);
-		});
-		
-		// reset clusters and match result
-		getCR().forEach(cr -> cr.setCluster(new CRCluster(cr)));
-		crmatch.init();
-		
-		updateData();
-		StatusBar.get().setValue("Merging done");
-
-	}
 	
 	@Override
 	protected void onNpctRangeChanged () {
@@ -234,9 +184,10 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	/**
 	 * Update computation of percentiles for all CRs
 	 * Called after loading, deleting or merging of CRs
-	 * @param removed Data has been removed --> adjust clustering data structures; adjust CR lists per publication
 	 */
-	private void updateData () throws OutOfMemoryError {
+	
+	@Override
+	public void updateData () throws OutOfMemoryError {
 
 
 		long ts2 = System.currentTimeMillis();
@@ -249,8 +200,8 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 		
 		CRELogger.get().logInfo("Compute Ranges in CRTable_MM");
 		
-		IntRange range_RPY = getStatistics().getMaxRangeRPY();
-		IntRange range_PY  = getStatistics().getMaxRangePY();
+		IntRange range_RPY = getMaxRangeRPY();
+		IntRange range_PY  = getMaxRangePY();
 
 		
 		int[] NCR_ALL = new int[1];	// NCR overall (array length=1; array to make it effectively final)
@@ -426,7 +377,7 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	public void onAfterLoad() {
 		this.loader.onAfterLoad();
 		updateData();
-		getClustering().updateClustering(Clustering.ClusteringType.INIT, null, Clustering.min_threshold, false, false, false, false);
+		updateClustering(Clustering.ClusteringType.INIT, null, Clustering.min_threshold, false, false, false, false);
 	}
 
 	@Override
@@ -548,6 +499,140 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	@Override
 	public void showAll() {
 		this.filter.showAll();
+	}
+
+	// #endregion
+
+
+	// #region Statistics --------------------------------------------------
+
+	@Override
+	public long getNumberOfCRs() {
+		return this.statistics.getNumberOfCRs();
+	}
+
+	@Override
+	public long getSumNCR() {
+		return this.statistics.getSumNCR();
+	}
+
+	@Override
+	public long getNumberOfPubs() {
+		return this.statistics.getNumberOfPubs();
+	}
+
+	@Override
+	public long getNumberOfPubs(boolean includePubsWithoutCRs) {
+		return this.statistics.getNumberOfPubs(includePubsWithoutCRs);
+	}
+
+	@Override
+	public IntRange getMaxRangePY() {
+		return this.statistics.getMaxRangePY();
+	}
+
+	@Override
+	public int getNumberOfDistinctPY() {
+		return this.statistics.getNumberOfDistinctPY();
+	}
+
+	@Override
+	public IntRange getMaxRangeNCR() {
+		return this.statistics.getMaxRangeNCR();
+	}
+
+	@Override
+	public IntRange getMaxRangeRPY() {
+		return this.statistics.getMaxRangeRPY();
+	}
+
+	@Override
+	public IntRange getMaxRangeRPY(boolean visibleOnly) {
+		return this.statistics.getMaxRangeRPY(visibleOnly);
+	}
+
+	@Override
+	public int getNumberOfDistinctRPY() {
+		return this.statistics.getNumberOfDistinctRPY();
+	}
+
+	@Override
+	public int getNumberOfCRsByVisibility(boolean visible) {
+		return this.statistics.getNumberOfCRsByVisibility (visible);
+	}
+
+	@Override
+	public long getNumberOfCRsByNCR(IntRange range) {
+		return this.statistics.getNumberOfCRsByNCR (range);
+	}
+
+	@Override
+	public long getNumberOfCRsByPercentYear(String comp, double threshold) {
+		return this.statistics.getNumberOfCRsByPercentYear (comp, threshold);
+	}
+
+	@Override
+	public long getNumberOfCRsByRPY(IntRange range) {
+		return this.statistics.getNumberOfCRsByRPY (range);
+	}
+
+	@Override
+	public long getNumberOfPubsByCitingYear(IntRange range) {
+		return this.statistics.getNumberOfPubsByCitingYear (range);
+	}
+
+	@Override
+	public int getNumberOfCRsWithoutRPY() {
+		return this.statistics.getNumberOfCRsWithoutRPY();
+	}
+
+	// #endregion
+
+	// #region Clustering --------------------------------------------------
+
+
+	@Override
+	public void generateAutoMatching() {
+		this.clustering.generateAutoMatching();
+	}
+
+	@Override
+	public Set<CRType_MM> addManuMatching(List<Integer> selCR, ManualMatchType matchType) {
+		return this.clustering.addManuMatching(selCR, matchType);
+	}
+
+	@Override
+	public Set<CRType_MM> undoManuMatching() {
+		return this.clustering.undoManuMatching();
+	}
+
+	@Override
+	public void updateClustering(ClusteringType type, Set<CRType_MM> changeCR, double threshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull) {
+		this.clustering.updateClustering(type, changeCR, threshold, useVol, usePag, useDOI, nullEqualsNull);
+	}
+
+	@Override
+	public void merge() {
+		this.clustering.merge();
+	}
+
+	@Override
+	public long getNumberOfMatches(boolean manual) {
+		return this.clustering.getNumberOfMatches(manual);
+	}
+
+	@Override
+	public long getNumberOfClusters() {
+		return this.clustering.getNumberOfClusters();
+	}
+
+	@Override
+	public Stream<MatchPairGroup> getMatchPairGroups(boolean manual) {
+		return this.clustering.getMatchPairGroups(manual);
+	}
+
+	public void addPair (CRType_MM cr1, CRType_MM cr2, double s, boolean isManual) {
+		this.clustering.addPair(cr1, cr2, s, isManual);
 	}
 
 	// #endregion

@@ -11,9 +11,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import cre.data.type.abs.CRType;
 import cre.data.type.abs.CRType.PERCENTAGE;
-import cre.data.type.abs.PubType;
 
 class DB_Store { 
 
@@ -43,14 +41,13 @@ class DB_Store {
 		/* create tables */
 		if (CRTable_DB.createSchemaOnStartup) {
 			Statement stmt = dbCon.createStatement();
-			for (String s: Queries.getQuery("crpub", "create_schema")) {
+			for (String s: Queries.getQuery("DB_Store", "create_schema")) {
 				stmt.execute(s);
 			}
 			dbCon.commit();
 			stmt.close();
 		}
 
-		// TODO: Add VACUUM command to reduce file size!
 
 		/* create prepared statements & sql scripts */
 		updateCRIndicators_PrepStmt = dbCon.prepareStatement(Queries.getQuery("crpub", "pst_update_cr_indicators").get(0));
@@ -66,7 +63,7 @@ class DB_Store {
 
 		/* delete all rows from all tables */
 		Statement stmt = dbCon.createStatement();
-		for (String s: Queries.getQuery("crpub", "delete_all")) {
+		for (String s: Queries.getQuery("DB_Store", "delete_all")) {
 			stmt.execute(s);
 		}
 		dbCon.commit();
