@@ -25,3 +25,6 @@
 /*.log
 CRE.log
 CRE.log.*
+
+# Build report
+/build
