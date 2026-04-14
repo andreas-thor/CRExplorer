@@ -14,7 +14,8 @@ npyears:
         SELECT 
             CR_RPY,
             COUNT (DISTINCT PUB_PY) AS CNT_PY,
-            SUM (N_CR_VALID) AS N_CR_RPY
+            SUM (N_CR) AS N_CR_RPY, 
+            SUM (N_CR_VALID) AS N_CR_VALID_RPY
         FROM PubYear
         GROUP BY CR_RPY
     ),
@@ -27,7 +28,7 @@ npyears:
             COUNT (PUB_PY) AS N_PYEARS, 
             COALESCE (1.0*COUNT (PUB_PY) /( CountPY.CNT_PY), 0) AS PERC_PYEARS,
             COALESCE (1.0*SUM(N_CR_VALID) / CountPY.N_CR_RPY, 0) AS PERC_YR,
-            COALESCE (1.0*SUM(N_CR_VALID) / (SELECT SUM (N_CR_VALID) FROM PubYear), 0) AS PERC_ALL
+            COALESCE (1.0*SUM(N_CR_VALID) / (SELECT SUM (N_CR) FROM PubYear), 0) AS PERC_ALL /* hier VALID geteilt durch ALL */
         FROM PubYear 
         LEFT OUTER JOIN CountPY USING (CR_RPY)
         GROUP BY CR_ID
@@ -77,7 +78,8 @@ npyears:
     SET
         CR_N_CR = CR_New.N_CR,
         CR_N_PYEARS = CR_New.N_PYEARS,
-        CR_PERC_YR = CR_New.PERC_PYEARS,
+        CR_PYEAR_PERC = CR_New.PERC_PYEARS,
+        CR_PERC_YR = CR_New.PERC_YR,
         CR_PERC_ALL = CR_New.PERC_ALL,
         CR_N_PCT_P50 = CR_New.P50,
         CR_N_PCT_P75 = CR_New.P75,

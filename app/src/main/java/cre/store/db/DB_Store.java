@@ -71,14 +71,16 @@ class DB_Store {
 		for (String s: Queries.getQuery("DB_Store", "delete_all")) {
 			stmt.execute(s);
 		}
+		stmt.close();
 		dbCon.commit();
 
 		/* vacuum sqlite database --> reduce file size */
-		if (Queries.sqlDialect.equalsIgnoreCase("sqlite")) {
-			this.dbCon.setAutoCommit(true);
-			stmt.executeUpdate("VACUUM");
-			this.dbCon.setAutoCommit(false);
-		}
+		// if (Queries.sqlDialect.equalsIgnoreCase("sqlite")) {
+		// 	this.dbCon.setAutoCommit(true);
+		// 	stmt.executeUpdate("VACUUM");
+		// 	stmt.close();
+		// 	this.dbCon.setAutoCommit(false);
+		// }
 
 		/* reset batch counters */
 		updateCRIndicators_Counter = 0;		
