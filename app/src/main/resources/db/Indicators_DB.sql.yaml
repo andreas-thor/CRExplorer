@@ -42,31 +42,28 @@ npyears:
     ),
     /* Bildung der Zitierungszahlen unter Berücksichtigung von NPCT_RANGE (in Join-Bedingung <= ...) */
     PubYearRange AS (
-        SELECT P1.CR_ID, P1.CR_RPY, P1.PUB_PY, SUM (P2.N_CR_VALID) AS N_CR_VALID
-        FROM PubYearComplete P1 
-        JOIN PubYearComplete P2 ON (P1.CR_ID = P2.CR_ID AND ABS (P1.PUB_PY - P2.PUB_PY) <= 0)
-        GROUP BY P1.CR_ID, P1.PUB_PY
+        SELECT CR_ID, CR_RPY, PUB_PY, N_CR_VALID, 1 AS Valid
+        FROM PubYearComplete 
+        %1$s  /* ggf. hinzufügen von UNIONs falls NPCT-Range > 0 */
     ), 
     /* Bildung der prozentualen Ranking-Werte */
     RankPerCent AS (
-        SELECT CR_ID, PUB_PY, N_CR_VALID, 
-        (CASE WHEN CR_RPY IS NULL OR PUB_PY IS NULL THEN 0 ELSE 
-        PERCENT_RANK()  
-            OVER ( 
-                PARTITION BY CR_RPY, PUB_PY
-                ORDER BY N_CR_VALID ASC
-            ) END) AS P
+        SELECT CR_ID, N_CR_VALID, Valid, 
+        (CASE WHEN CR_RPY IS NULL OR PUB_PY IS NULL THEN 0 ELSE 1 END) AS HASYEAR, 
+        RANK() OVER ( PARTITION BY CR_RPY, PUB_PY ORDER BY N_CR_VALID ASC ) AS R, 
+        COUNT(*) OVER ( PARTITION BY CR_RPY, PUB_PY ORDER BY N_CR_VALID ASC RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS C
         FROM PubYearRange
     ), 
-    /* Zählen, wie häufig jeweils in den Top-x % */
+    /* Zählen, wie häufig jeweils in den Top-x %% (zwei Prozentzeichen wegen Java-String-Format Escape) */
     CR_Indicators2 AS (
         SELECT CR_ID, 
-            SUM (CASE WHEN P>=0.5 THEN 1 ELSE 0 END) AS P50,
-            SUM (CASE WHEN P>=0.75 THEN 1 ELSE 0 END) AS P75,
-            SUM (CASE WHEN P>=0.90 THEN 1 ELSE 0 END) AS P90,
-            SUM (CASE WHEN P>=0.99 THEN 1 ELSE 0 END) AS P99,
-            SUM (CASE WHEN P>=0.999 THEN 1 ELSE 0 END) AS P999
+            SUM (CASE WHEN HASYEAR = 0 OR C=1 OR 1.0*R/C<=0.5   THEN 0 ELSE 1 END) AS P50,
+            SUM (CASE WHEN HASYEAR = 0 OR C=1 OR 1.0*R/C<=0.75  THEN 0 ELSE 1 END) AS P75,
+            SUM (CASE WHEN HASYEAR = 0 OR C=1 OR 1.0*R/C<=0.9   THEN 0 ELSE 1 END) AS P90,
+            SUM (CASE WHEN HASYEAR = 0 OR C=1 OR 1.0*R/C<=0.99  THEN 0 ELSE 1 END) AS P99,
+            SUM (CASE WHEN HASYEAR = 0 OR C=1 OR 1.0*R/C<=0.999 THEN 0 ELSE 1 END) AS P999
         FROM RankPerCent
+        WHERE Valid=1
         GROUP BY CR_ID
     ),
     CR_New AS (
@@ -88,3 +85,15 @@ npyears:
         CR_N_PCT_P999 = CR_New.P999
     FROM CR_New
     WHERE CR.CR_ID = CR_New.CR_ID
+
+
+npctrange:
+  - UNION ALL 
+    SELECT CR_ID, CR_RPY, PUB_PY - %1$d , N_CR_VALID, 0 AS Valid /* Parameter $1 durchläuft alle Werte von 1 bis NPCTRANGE */
+    FROM PubYearComplete 
+    WHERE PUB_PY - %1$d IN (SELECT DISTINCT PUB_PY FROM PubYear)
+    UNION ALL 
+    SELECT CR_ID, CR_RPY, PUB_PY + %1$d , N_CR_VALID, 0 AS Valid
+    FROM PubYearComplete  
+    WHERE PUB_PY + %1$d IN (SELECT DISTINCT PUB_PY FROM PubYear) 
+

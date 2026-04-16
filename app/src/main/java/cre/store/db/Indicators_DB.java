@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import cre.Timestamp;
+import cre.data.type.abs.CRTable;
 import cre.data.type.abs.Indicators;
 import cre.data.type.abs.Statistics.IntRange;
 
@@ -23,13 +24,17 @@ public class Indicators_DB implements Indicators{
 			
 			Timestamp.ts("updateData start");
 
+			String unionNPTCRange = "";
+			String unionParam = Queries.getQuery("Indicators_DB", "npctrange").get(0);
+			for (int i=1; i<=CRTable.get().getNpctRange(); i++) {
+				unionNPTCRange += " " + String.format(unionParam, i);
+			}
 
 			Statement stmt = dbCon.createStatement();
-			for (String s: Queries.getQuery("Indicators_DB", "npyears")) {
-				stmt.execute(s);
-			}
-			stmt.close();
+			String s = String.format(Queries.getQuery("Indicators_DB", "npyears").get(0), unionNPTCRange);
+			stmt.execute (s);
 			dbCon.commit();	
+			stmt.close();
 
 
 

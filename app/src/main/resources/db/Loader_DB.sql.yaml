@@ -55,10 +55,11 @@ on_new_pub:
 on_new_pub_cr:
   - INSERT INTO PUB_CR  ( 
         PUB_ID, 
-        CR_ID
+        CR_ID,
+        PUB_PY
     ) 
     VALUES ( 
-        ?, ? 
+        ?, ?, ? 
     )
 
 on_new_matchpair_manu:
@@ -94,3 +95,8 @@ on_after_load:
         CR_ClusterId2 = 1
     FROM CRPUBCOUNT
     WHERE CR.CR_ID = CRPUBCOUNT.CR_ID
+
+  - UPDATE PUB_CR
+    SET CR_RPY = CR.CR_RPY
+    FROM CR
+    WHERE CR.CR_ID = PUB_CR.CR_ID

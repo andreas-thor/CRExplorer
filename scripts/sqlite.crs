@@ -2,6 +2,7 @@ importFile (file: "C:\\Dev\\CRExplorer\\data\\wos_py_2021_uts_ptaa_wos_b_202301_
 
 // importFile (file: "C:\\Dev\\CRExplorer\\data\\savedrecs_JOI1.txt", type: "WOS")
 
+info()
 print (getCRById (id: [2]))
 // cluster (threshold: 0.8)
 // merge()

@@ -3,6 +3,7 @@ package cre.store.db;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.util.List;
 
@@ -140,6 +141,7 @@ public class Loader_DB implements Loader {
 				pst_OnNewPub_CR.clearParameters();
 				pst_OnNewPub_CR.setInt(1, pub.getID());
 				pst_OnNewPub_CR.setInt(2, crId);
+				if (pub.getPY()==null) { pst_OnNewPub_CR.setNull( 3, Types.INTEGER); } else { pst_OnNewPub_CR.setInt ( 3, pub.getPY()); } 
 				pst_OnNewPub_CR.addBatch();
 				pst_OnNewPub_CR_Counter++;
 			}
@@ -225,7 +227,13 @@ public class Loader_DB implements Loader {
 				pst_OnNew_MatchPair_Auto_Counter = 0;
 			}		
 			
-			this.dbCon.createStatement().execute(Queries.getQuery("Loader_DB", "on_after_load").get(0));
+			Statement stmt = dbCon.createStatement();
+			for (String s: Queries.getQuery("Loader_DB", "on_after_load")) {
+				stmt.execute(s);
+			}
+			dbCon.commit();
+			stmt.close();
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
