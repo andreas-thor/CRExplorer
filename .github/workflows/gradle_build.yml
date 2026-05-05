@@ -30,7 +30,7 @@ jobs:
     - name: Set up JDK 24
       uses: actions/setup-java@v3
       with:
-        java-version: '24'
+        java-version: '21'
         distribution: 'adopt'
 
     - name: Build with Gradle
@@ -62,7 +62,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: dev # ${{ steps.getversion.outputs.version }}
+        tag_name: 2.1 # ${{ steps.getversion.outputs.version }}
         release_name: Release ${{ steps.getversion.outputs.version }}
         draft: false
         prerelease: true
