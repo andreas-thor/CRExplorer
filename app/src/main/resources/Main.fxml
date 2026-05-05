@@ -93,8 +93,11 @@
 			</Menu>
 			<Menu text="_Disambiguation"  >
 				<items>
-					<MenuItem text="Cluster equivalent Cited References" onAction="#OnMenuStdCluster" />
+					<MenuItem text="Cluster equivalent Cited References Levenshtein" onAction="#OnMenuStdCluster" />
+					<MenuItem text="Cluster equivalent Cited References Cosine" onAction="#OnMenuCosCluster" />
+					<MenuItem text="Cluster equivalent Cited References Jaccard" onAction="#OnMenuJaccCluster" />
 					<MenuItem text="Merge clustered Cited References" onAction="#OnMenuStdMerge" />
+					<CheckMenuItem text="Include RPY in Blocking Process" onAction="#toggleRPYblocking" selected="true" fx:id="useRPYMenuItem" />
 				</items>
 			</Menu>
 			<Menu text="_Help">

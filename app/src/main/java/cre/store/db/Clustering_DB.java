@@ -27,6 +27,8 @@ import cre.ui.statusbar.StatusBar;
 
 public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 
+	String blockingRPY = "";
+
 	private class CRPair {
 		
 		int cr1;
@@ -120,21 +122,40 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 		// changeCR = all CRs that are in the same cluster as selCR
 		return CRTable_DB.get().getDBStore().selectCR(String.format("WHERE (CR_ClusterId1, CR_ClusterId2) IN (SELECT CR_ClusterId1, CR_ClusterId2 FROM CR WHERE CR.CR_ID IN (%s))", crIds)).collect(Collectors.toSet());
 	}
+
+	@Override
+	public void setBlockingRPY(String s) {
+		blockingRPY = s;
+	}
 	
 
 	@Override
-	public void generateAutoMatching() {
+	public void generateAutoMatching(String alg) {
 
 		
 		// standard blocking: year + first letter of last name
 		StatusBar.get().setValue(String.format("Blocking of %d objects...", CRTable.get().getStatistics().getNumberOfCRs()));
-		
 		try {
 
-			dbCon.createStatement().execute(
-				"UPDATE CR SET CR_BLOCKINGKEY = " + 
-				"CASE WHEN (cr_RPY is not null) AND  (cr_AU_L is not null) AND (length(cr_AU_L)>0) " + 
-				"THEN concat (cr_rpy, lower (substring(cr_AU_L,  1, 1))) ELSE NULL END ");
+			// Option to remove the RPY from the blocking key to allow the user to choose what it chooses
+			String blockingKey = switch(blockingRPY) {
+				case "noauth" ->
+								"UPDATE CR SET CR_BLOCKINGKEY = " +
+								"CASE WHEN (cr_AU_L is not null) AND (length(cr_AU_L)>0) " +
+								"THEN lower (substring(cr_AU_L,1,1)) ELSE NULL END";
+				default ->
+								"UPDATE CR SET CR_BLOCKINGKEY = " +
+								"CASE WHEN (cr_RPY is not null) AND (cr_AU_L is not null) AND (length(cr_AU_L)>0) " +
+								"THEN concat (cr_rpy, lower (substring(cr_AU_L,1,1))) ELSE NULL END";
+			};
+			dbCon.createStatement().execute(blockingKey);
+			System.out.println(blockingKey);
+
+
+//			dbCon.createStatement().execute(
+//				"UPDATE CR SET CR_BLOCKINGKEY = " +
+//				"CASE WHEN (cr_RPY is not null) AND  (cr_AU_L is not null) AND (length(cr_AU_L)>0) " +
+//				"THEN concat (cr_rpy, lower (substring(cr_AU_L,  1, 1))) ELSE NULL END ");
 
 			// ResultSet rs = dbCon.createStatement().executeQuery ("SELECT COUNT (DISTINCT CR_BLOCKINGKEY) FROM CR WHERE NOT (CR_BLOCKINGKEY IS NULL)");
 
@@ -158,6 +179,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 				CRTable.get().getStatistics().getNumberOfCRs(), noOfBlocks, noOfComparisons));
 
 			StringMetric l = StringMetrics.levenshtein();
+			String alg1 = alg;
 			
 			
 			// TODO: handle missing values
@@ -234,7 +256,6 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 			CRTable_DB.get().getDBStore().selectCRBlock("CR_BLOCKINGKEY", "WHERE NOT (CR_BLOCKINGKEY IS NULL) ORDER BY CR_BLOCKINGKEY")//.parallel()
 				.forEach( crlist -> {
 				
-				
 					StatusBar.get().incProgressbar(crlist.size()*(crlist.size()-1)/2);
 
 					List<CRPair> result = new ArrayList<>();
@@ -263,7 +284,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 							e.printStackTrace();
 						}	
 						
-					});
+					}, alg);
 					
 	
 						

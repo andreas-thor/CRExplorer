@@ -51,23 +51,25 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.WindowEvent;
+import javafx.util.Pair;
 
 public class MainController {
 
+	public CheckMenuItem useRPYMenuItem;
 	CRTable<? extends CRType<?>, ? extends PubType<?>> crTable;
 	CRChart crChart[] = new CRChart[2];
 
@@ -140,7 +142,7 @@ public class MainController {
 					t.interrupt();
 				t = new Thread(() -> {
 					crTable.getClustering().updateClustering(Clustering.ClusteringType.REFRESH, null, threshold, useVol, usePag, useDOI, nullEqualsNull);
-					tableView.updateTableViewData();
+					Platform.runLater(() -> tableView.updateTableViewData());
 					refreshTableValues();
 				});
 				t.start();
@@ -970,13 +972,118 @@ public class MainController {
 	public void OnMenuStdCluster() {
 
 		new Thread(() -> {
-			crTable.getClustering().generateInitialClustering();
+			crTable.getClustering().generateInitialClustering("lev");
 			matchView.setVisible(true);
 			tablePane.requestLayout();
 			matchView.updateClustering();
 			updateTableCRList();
 
 		}).start();
+	}
+
+	// old - kept for reference
+	@FXML
+	public void OnMenuCosClusterOLD() {
+
+		new Thread(() -> {
+			crTable.getClustering().generateInitialClustering("cos");
+			matchView.setVisible(true);
+			tablePane.requestLayout();
+			matchView.updateClustering();
+			updateTableCRList();
+
+		}).start();
+	}
+
+	public void OnMenuCosJaccCluster(String algorithm) {
+
+		// Dialog erstellen
+		Dialog<Pair<Integer, String>> dialog = new Dialog<>();
+		dialog.setTitle("Clustering Parameter");
+		//dialog.setHeaderText("Choose the clustering parameters");
+
+		// Buttons
+		ButtonType okButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+		dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
+
+		// Eingabefelder
+		TextField numberField = new TextField();
+		numberField.setPromptText("e.g. 2");
+		numberField.setPrefWidth(60);
+
+		ChoiceBox<String> choiceBox = new ChoiceBox<>();
+		choiceBox.getItems().addAll("Word", "Char");
+		choiceBox.setValue("Word");
+
+		// Beschreibungstext
+		Text text1 = new Text("Number for the Parameter n:  ");
+		Text text2 = new Text("\nMode for the Algorithm:  ");
+		TextFlow textFlow = new TextFlow(
+				text1,
+				numberField,
+				text2,
+				choiceBox
+		);
+		textFlow.setLineSpacing(5);
+
+		// Container für Abstand/Padding
+		VBox content = new VBox(textFlow);
+		content.setPadding(new Insets(20));
+		content.setPrefWidth(300);
+
+		dialog.getDialogPane().setContent(content);
+
+		// OK-Button erst aktivieren, wenn Zahl gültig ist
+		Node okButton = dialog.getDialogPane().lookupButton(okButtonType);
+		okButton.setDisable(true);
+
+		numberField.textProperty().addListener((obs, oldVal, newVal) -> {
+			okButton.setDisable(!newVal.matches("\\d+"));
+		});
+
+		// Ergebnis zurückgeben
+		dialog.setResultConverter(dialogButton -> {
+			if (dialogButton == okButtonType) {
+				return new Pair<>(Integer.parseInt(numberField.getText()), choiceBox.getValue());
+			}
+			return null;
+		});
+
+		Optional<Pair<Integer, String>> result = dialog.showAndWait();
+
+		result.ifPresent(pair -> {
+			int userNumber = pair.getKey();
+			String mode = pair.getValue();
+			System.out.println("Zahl: " + userNumber + ", Modus: " + mode);
+
+			new Thread(() -> {
+				// Clustering mit beiden Parametern starten
+				crTable.getClustering().generateInitialClustering(algorithm);
+
+				// UI-Updates auf JavaFX Thread
+				Platform.runLater(() -> {
+					matchView.setVisible(true);
+					tablePane.requestLayout();
+					matchView.updateClustering();
+					updateTableCRList();
+				});
+			}).start();
+		});
+	}
+
+	@FXML
+	public void OnMenuCosCluster() {
+		OnMenuCosJaccCluster("cos");
+	}
+
+	@FXML
+	public void OnMenuJaccCluster() {
+		OnMenuCosJaccCluster("jacc");
+	}
+
+	@FXML
+	public void toggleRPYblocking() {
+		crTable.getClustering().setBlockingRPY(useRPYMenuItem.isSelected() ? "" : "noauth");
 	}
 
 	@FXML
