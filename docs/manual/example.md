@@ -1,3 +1,7 @@
+---
+hidden: covers
+---
+
 # Example – analyzing the discovery of the *greenhouse effect*
 
 For demonstrating the potential of CRExplorer, Figure 1 shows the citation classics concerning the discovery of the *greenhouse effect*, a basic component of climate change. As dataset, we downloaded from the WoS 3,244 publications containing the term *greenhouse effect* in the title or in the abstract or as a keyword (date of searching: October 27th, 2016; analyses using more recent datasets yield similar results because we focus on citation classics). These papers contain 81,126 CRs to publications which have appeared over 379 years. Figure 1 – as produced by CRExplorer – shows three distinct peaks during the 19th century and a few further peaks during the first half of the 20th century.

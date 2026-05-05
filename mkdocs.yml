@@ -6,6 +6,7 @@ nav:
   - "WoS Landmark Papers": https://andreas-thor.github.io/CRExplorer/landmark.html
   - "Guide & Datasets": guide_datasets.md
   - "Manual": 
+    - "Cover": manual/cover.md
     - "Introduction": manual/intro.md
     - "Example: Greenhouse Effect": manual/example.md
     - "User Interface": manual/user_interface.md
@@ -54,6 +55,7 @@ extra:
 
 
 plugins:
+    
   - enumerate-headings:     
       toc_depth: 0
       strict: true
@@ -61,6 +63,7 @@ plugins:
       include:
         - "*"
       exclude:
+        - manual/cover.md
         - index.md
         - run_download.md
         - guide_datasets.md
@@ -75,15 +78,11 @@ plugins:
           enabled: !ENV [MKDOCS_EXPORTER_PDF, true]
           explicit: false
           concurrency: 8
-          # stylesheets:
-          #   - resources/stylesheets/pdf.scss
-          # covers:
-          #   front: resources/templates/covers/front.html.j2
-          #   back: resources/templates/covers/back.html.j2
           aggregator:
             enabled: true
-            output: site.pdf
-            covers: all
+            output: manual.pdf
+
+
 
       # buttons:
       #   - title: Download as PDF

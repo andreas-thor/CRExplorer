@@ -5,7 +5,7 @@ pdf: false
 
 # Guide and Datasets
 
-1. [CitedReferencesExplorer (CRExplorer) Manual](manual.pdf)
+1. [CitedReferencesExplorer (CRExplorer) Manual](../manual.pdf)
     <br/>by Andreas Thor, Werner Marx, and Lutz Bornmann
 1. [Introducing CitedReferencesExplorer (CRExplorer): A program for Reference Publication Year Spectroscopy with Cited References Disambiguation](http://dx.doi.org/10.1016/j.joi.2016.02.005)
     <br/>by Andreas Thor, Werner Marx, Loet Leydesdorff, and Lutz Bornmann ([arXiv](http://arxiv.org/abs/1601.01199))
@@ -21,5 +21,5 @@ pdf: false
 ## Datasets
 
 * <a href="../data/savedrecs_JOI1.txt" download>Example Dataset #1</a> (Web of Science, ~2MB)
-* [Example Dataset #2](data/savedrecs_JOI2.txt) (Web of Science, ~150kB)
-* [Scientometrics Dataset](data/sciento_bearb.cre) (CRE file as used in [4], ~5MB)
+* <a href="../data/savedrecs_JOI2.txt" download>Example Dataset #2</a> (Web of Science, ~150kB)
+* <a href="../data/sciento_bearb.cre" download>Scientometrics Dataset</a> (CRE file as used in [4], ~5MB)
