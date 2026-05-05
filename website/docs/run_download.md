@@ -5,7 +5,7 @@ pdf: false
 
 # Running CRExplorer & System Requirements
 
-CRExplorer is packaged as a Java Archive (JAR) and requires a system with Java 17 (or higher) support.
+CRExplorer is packaged as a Java Archive (JAR) and requires a system with Java 24 (or higher) support.
 
 [Download Version 2.0](https://github.com/andreas-thor/CRExplorer/releases/download/v2.0/crexplorer.jar){ .md-button .md-button--primary }
 
