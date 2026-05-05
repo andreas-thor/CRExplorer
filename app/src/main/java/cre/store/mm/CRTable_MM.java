@@ -592,8 +592,8 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 
 
 	@Override
-	public void generateAutoMatching() {
-		this.clustering.generateAutoMatching();
+	public void generateAutoMatching(String alg) {
+		this.clustering.generateAutoMatching(alg);
 	}
 
 	@Override
@@ -634,6 +634,22 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	public void addPair (CRType_MM cr1, CRType_MM cr2, double s, boolean isManual) {
 		this.clustering.addPair(cr1, cr2, s, isManual);
 	}
+
+	@Override
+	public void setBlockingRPY(String s) {
+		this.clustering.setBlockingRPY(s);
+	}
+
+	@Override
+	public int getAlgorithm() {
+		return this.clustering.getAlgorithm();
+	}
+
+	@Override
+	public void setAlgorithm(int algorithm) {
+		this.clustering.setAlgorithm(algorithm);
+	}
+
 
 	// #endregion
 

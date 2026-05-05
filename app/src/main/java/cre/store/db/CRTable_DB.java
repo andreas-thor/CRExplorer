@@ -580,8 +580,8 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
 
 	@Override
-	public void generateAutoMatching() {
-		this.clustering.generateAutoMatching();
+	public void generateAutoMatching(String alg) {
+		this.clustering.generateAutoMatching(alg);
 	}
 
 	@Override
@@ -620,17 +620,20 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 		return this.clustering.getMatchPairGroups(manual);
 	}
 
+	@Override
+	public void setBlockingRPY(String s) {
+		this.clustering.setBlockingRPY(s);
+	}
 
+	@Override
+	public int getAlgorithm() {
+		return this.clustering.getAlgorithm();
+	}
 
-
-
-
-
-
-
-
-
-
+	@Override
+	public void setAlgorithm(int algorithm) {
+		this.clustering.setAlgorithm(algorithm);
+	}
 
 	// #endregion
 
