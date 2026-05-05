@@ -37,3 +37,8 @@ CRE.log.*
 
 # Build report
 /build
+
+
+.venv
+my-project
+site

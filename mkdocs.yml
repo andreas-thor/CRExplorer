@@ -1,0 +1,97 @@
+site_name: Cited References Explorer
+site_url: https://andreas-thor.github.io/crexplorer_handbook
+nav:
+  - "Introduction": index.md
+  - "Run & Download": run_download.md
+  - "WoS Landmark Papers": https://andreas-thor.github.io/CRExplorer/landmark.html
+  - "Guide & Datasets": guide_datasets.md
+  - "Manual": 
+    - "Introduction": manual/intro.md
+    - "Example: Greenhouse Effect": manual/example.md
+    - "User Interface": manual/user_interface.md
+    - "Options Panel": manual/options.md
+    - "Script Language": manual/script_language.md
+    - "Practical Short Guide": manual/short_guide.md
+    - "References": manual/references.md
+  - "Papers": papers.md
+  - "Authors & Contributors": authors_contributors.md
+  - "Legal Notice": legal_notice.md
+
+theme: 
+  name: material  
+
+  custom_dir: overrides  
+  features:
+    - toc.integrate
+  logo: CRLogo_white.png
+  favicon: favicon.ico
+  palette:
+      primary: black  
+
+
+markdown_extensions:
+  - pymdownx.blocks.caption
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tilde  
+  - attr_list
+  - pymdownx.arithmatex:
+      generic: true
+
+
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/andreas-thor/CRExplorer          
+    - icon: custom/htwk
+      link: https://www.htwk-leipzig.de/en/htwk-leipzig/     
+    - icon: custom/mpg
+      link: http://www.mpg.de/en   
+
+
+
+
+plugins:
+  - enumerate-headings:     
+      toc_depth: 0
+      strict: true
+      increment_across_pages: true
+      include:
+        - "*"
+      exclude:
+        - index.md
+        - run_download.md
+        - guide_datasets.md
+        - papers.md
+        - authors_contributors.md
+        - legal_notice.md
+      restart_increment_after:
+        - second_section.md 
+  - exporter: 
+      formats:
+        pdf:
+          enabled: !ENV [MKDOCS_EXPORTER_PDF, true]
+          explicit: false
+          concurrency: 8
+          # stylesheets:
+          #   - resources/stylesheets/pdf.scss
+          # covers:
+          #   front: resources/templates/covers/front.html.j2
+          #   back: resources/templates/covers/back.html.j2
+          aggregator:
+            enabled: true
+            output: site.pdf
+            covers: all
+
+      # buttons:
+      #   - title: Download as PDF
+      #     icon: material-file-download-outline
+      #     enabled: !!python/name:mkdocs_exporter.formats.pdf.buttons.download.enabled
+      #     attributes: !!python/name:mkdocs_exporter.formats.pdf.buttons.download.attributes        
+
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
