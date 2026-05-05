@@ -15,7 +15,7 @@ import cre.CRELogger;
 
 
 
-public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
+public interface Clustering<C extends CRType<?>> {
 
 	@FunctionalInterface
 	public interface NewMatchingPair<C>  {
@@ -23,12 +23,12 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 	}
 	
 	// weights for weighted similarity   
-	private final double weight_author = 2.0;
-	private final double weight_journal = 1.0;
-	private final double weight_title = 5.0;
-	private final double weight_doi = 1.0;
+	static final double weight_author = 2.0;
+	static final double weight_journal = 1.0;
+	static final double weight_title = 5.0;
+	static final double weight_doi = 1.0;
 	public static final double min_threshold = 0.5;
-	private int algorithm = 2;
+	// int algorithm = 2;
 	
 	public static enum ManualMatchType { SAME, DIFFERENT, EXTRACT }
 
@@ -36,9 +36,12 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 
 	public abstract void setBlockingRPY(String s);
 	
+	public abstract int getAlgorithm();
+	public abstract void setAlgorithm(int algorithm);
+
+
 	
-	
-	public void  crossCompareCR(List<C> crlist, StringMetric l, NewMatchingPair<C> onNewPair, String alg) {
+	default void  crossCompareCR(List<C> crlist, StringMetric l, NewMatchingPair<C> onNewPair, String alg) {
 		
 		// allX = List of all AU_L values; compareY = List of compare string 
 		List<String> allX = crlist.stream().map ( cr -> cr.getAU_L().toLowerCase()).collect (Collectors.toList());
@@ -84,12 +87,12 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 	 * @return
 	 */
 	
-	public double simCR (C cr1, C cr2, double sim_author, StringMetric l, JaccardHelper j, CosineHelper c, String alg) {
+	default double simCR (C cr1, C cr2, double sim_author, StringMetric l, JaccardHelper j, CosineHelper c, String alg) {
 
 		switch(alg) {
-            case "jacc" -> algorithm = 1;
-			case "cos" -> algorithm = 2;
-			default -> algorithm = 0;
+            case "jacc" -> setAlgorithm(1);
+			case "cos" -> setAlgorithm(2);
+			default -> setAlgorithm(0);
 		}
 		// increasing sim + weight if data is available; weight for author is 2
 		double sim = weight_author*sim_author;
@@ -99,7 +102,7 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 		String[] comp_J = new String[] { cr1.getJ_N() == null ? "" : cr1.getJ_N(), cr2.getJ_N() == null ? "" : cr2.getJ_N() };
 		if ((!comp_J[0].isEmpty()) && (!comp_J[1].isEmpty())) {
 			sim += weight_journal*
-					switch(algorithm) {
+					switch(getAlgorithm()) {
 						case 1 -> {
 							//System.out.println("JACCARD");
 							yield j.compare(comp_J[0].toLowerCase(), comp_J[1].toLowerCase());
@@ -117,7 +120,7 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 		// ignore if both titles are empty; set sim=0 if just one is emtpy; compute similarity otherwise
 		String[] comp_T = new String[] { cr1.getTI() == null ? "" : cr1.getTI(), cr2.getTI() == null ? "" : cr2.getTI() };
 		if ((!comp_T[0].isEmpty()) || (!comp_T[1].isEmpty())) {
-			sim += weight_title * (((!comp_T[0].isEmpty()) && (!comp_T[1].isEmpty())) ? switch(algorithm) {
+			sim += weight_title * (((!comp_T[0].isEmpty()) && (!comp_T[1].isEmpty())) ? switch(getAlgorithm()) {
 				case 1 -> {
 					//System.out.println("JACCARD");
 					yield j.compare(comp_T[0].toLowerCase(), comp_T[1].toLowerCase());
@@ -131,10 +134,10 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 			weight += weight_title;
 		}
 
-		if(algorithm != 0) {
+		if(getAlgorithm() != 0) {
 			String[] comp_DOI = new String[] {cr1.getDOI() == null ? "" : cr1.getDOI(), cr2.getDOI() == null ? "" : cr2.getDOI()};
 			if((!comp_DOI[0].isEmpty()) || (!comp_DOI[1].isEmpty())) {
-				sim += weight_doi * (((!comp_DOI[0].isEmpty()) && (!comp_DOI[1].isEmpty())) ? switch(algorithm) {
+				sim += weight_doi * (((!comp_DOI[0].isEmpty()) && (!comp_DOI[1].isEmpty())) ? switch(getAlgorithm()) {
 					case 1 -> j.compare(comp_DOI[0].toLowerCase(), comp_DOI[1].toLowerCase());
 					case 2 -> c.compare(comp_DOI[0].toLowerCase(), comp_DOI[1].toLowerCase());
 					default -> l.compare(comp_DOI[0].toLowerCase(), comp_DOI[1].toLowerCase());
@@ -143,10 +146,10 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 			}
 		}
 
-		if(algorithm != 0) {
+		if(getAlgorithm() != 0) {
 			String[] comp_CR = new String[] {cr1.getCR() == null ? "" : cr1.getCR(), cr2.getCR() == null ? "" : cr2.getCR()};
 			if((!comp_CR[0].isEmpty()) || (!comp_CR[1].isEmpty())) {
-				sim += weight_doi * (((!comp_CR[0].isEmpty()) && (!comp_CR[1].isEmpty())) ? switch(algorithm) {
+				sim += weight_doi * (((!comp_CR[0].isEmpty()) && (!comp_CR[1].isEmpty())) ? switch(getAlgorithm()) {
 					case 1 -> j.compare(comp_CR[0].toLowerCase(), comp_CR[1].toLowerCase());
 					case 2 -> c.compare(comp_CR[0].toLowerCase(), comp_CR[1].toLowerCase());
 					default -> l.compare(comp_CR[0].toLowerCase(), comp_CR[1].toLowerCase());
@@ -155,11 +158,13 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 			}
 		}
 		//System.out.println((sim/weight > 0.90) ? sim/weight : "");
-		algorithm = 0;
+		setAlgorithm(0);
 		return sim/weight;		// weighted average of AU_L, J_N, and TI
 	}
+	
+	
 
-	public void generateInitialClustering (String alg) {
+	default void generateInitialClustering (String alg) {
 		Long stop1 = System.currentTimeMillis();
 
 		generateAutoMatching(alg);
@@ -180,16 +185,16 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 	public abstract Set<C> addManuMatching (List<Integer> selCR, ManualMatchType matchType);
 
 	
-	public void addManuMatching (List<Integer> selCR, ManualMatchType matchType, double matchThreshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull) {
-		updateClustering(ClusteringType.REFRESH, addManuMatching(selCR, matchType), matchThreshold, useVol, usePag, useDOI, nullEqualsNull);
+	default void addManuMatching (List<Integer> selCR, Clustering.ManualMatchType matchType, double matchThreshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull) {
+		updateClustering(Clustering.ClusteringType.REFRESH, addManuMatching(selCR, matchType), matchThreshold, useVol, usePag, useDOI, nullEqualsNull);
 	}
 	
 	
 	public abstract Set<C> undoManuMatching ();
 	
 	
-	public void undoManuMatching (double threshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull) {
-		updateClustering(ClusteringType.REFRESH, undoManuMatching(), threshold, useVol, usePag, useDOI, nullEqualsNull);
+	default void undoManuMatching (double threshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull) {
+		updateClustering(Clustering.ClusteringType.REFRESH, undoManuMatching(), threshold, useVol, usePag, useDOI, nullEqualsNull);
 	}
 
 	public abstract void updateClustering (ClusteringType type, Set<C> changeCR, double threshold, boolean useVol, boolean usePag, boolean useDOI, boolean nullEqualsNull);
@@ -200,5 +205,5 @@ public abstract class Clustering<C extends CRType<P>, P extends PubType<C>> {
 	
 	public abstract Stream<MatchPairGroup> getMatchPairGroups(boolean manual);
 	
-	
+	public abstract void merge ();
 }

@@ -58,7 +58,6 @@ public class CRE {
 		
 		try {
 			CRTable.get().init();
-
 			CRTable.get().onBeforeLoad();
 
 			ZipEntry entry = null;

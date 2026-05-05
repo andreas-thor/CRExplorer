@@ -30,7 +30,7 @@ public class CSV {
 	
 	public static void saveCR (OutputStream out, boolean includePubsWithoutCRs, Predicate<CRType> filter, Comparator<CRType> comp) throws IOException {
 
-		StatusBar.get().initProgressbar(CRTable.get().getStatistics().getNumberOfCRs());
+		StatusBar.get().initProgressbar(CRTable.get().getNumberOfCRs());
 		
 		CSVWriter csv = new CSVWriter (new OutputStreamWriter(out, "UTF-8"));
 		csv.writeNext(Arrays.stream(CRType_ColumnView.CRColumn.values()).map(col -> col.id).toArray(String[]::new)); 
@@ -54,7 +54,7 @@ public class CSV {
 	 */
 	public static void savePub (OutputStream out, boolean includePubsWithoutCRs, Predicate<CRType> filter, Comparator<CRType> comp) throws IOException {
 
-		StatusBar.get().initProgressbar(CRTable.get().getStatistics().getNumberOfPubs());
+		StatusBar.get().initProgressbar(CRTable.get().getNumberOfPubs());
 		
 		CSVWriter csv = new CSVWriter (new OutputStreamWriter(out, "UTF-8"));
 		csv.writeNext(Arrays.stream(PubType_ColumnView.PubColumn.values()).map(col -> col.id).toArray(String[]::new)); 
@@ -71,7 +71,7 @@ public class CSV {
 	
 	public static void saveCRPub (OutputStream out, boolean includePubsWithoutCRs, Predicate<CRType> filter, Comparator<CRType> comp) throws IOException {
 
-		StatusBar.get().initProgressbar(CRTable.get().getStatistics().getNumberOfPubs());
+		StatusBar.get().initProgressbar(CRTable.get().getNumberOfPubs());
 		
 		CSVWriter csv = new CSVWriter (new OutputStreamWriter(out, "UTF-8"));
 		csv.writeNext (Stream.concat (

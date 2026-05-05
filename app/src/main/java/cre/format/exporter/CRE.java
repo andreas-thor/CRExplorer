@@ -29,7 +29,7 @@ public class CRE {
 		
 		/* TODO: filter is not supported yet */
 		
-		StatusBar.get().initProgressbar(CRTable.get().getStatistics().getNumberOfCRs() + CRTable.get().getStatistics().getNumberOfPubs() + CRTable.get().getClustering().getNumberOfMatches(true) + CRTable.get().getClustering().getNumberOfMatches(false));
+		StatusBar.get().initProgressbar(CRTable.get().getNumberOfCRs() + CRTable.get().getNumberOfPubs() + CRTable.get().getNumberOfMatches(true) + CRTable.get().getNumberOfMatches(false));
 		ZipOutputStream zip = new ZipOutputStream(out, Charset.forName("UTF-8"));
 		
 		zip.putNextEntry(new ZipEntry("crdata.json"));
@@ -145,7 +145,7 @@ public class CRE {
 		for (boolean loop: new boolean[] { false, true }) {
 
 			jgenMatch.writeStartObject(loop?"MATCH_MANU":"MATCH_AUTO");
-			CRTable.get().getClustering().getMatchPairGroups(loop).forEach(group -> {
+			CRTable.get().getMatchPairGroups(loop).forEach(group -> {
 				if (group.getMatches().count()>0) {
 					jgenMatch.writeStartObject(String.valueOf(group.getCrId1()));
 					group.getMatches().forEach(p -> jgenMatch.write(String.valueOf(p.getKey()), p.getValue()));

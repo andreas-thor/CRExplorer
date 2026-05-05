@@ -8,7 +8,8 @@ import cre.store.db.CRTable_DB;
 import cre.store.mm.CRTable_MM;
 import cre.ui.CRTableView;
 
-public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> implements Importer, Loader, Remover, Filter {
+public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> 
+	implements Importer, Loader, Remover, Filter, Statistics, Clustering<C> {
  
 	public static enum COMPARATOR { LT, LTE, EQ, GTE, GT };
 	
@@ -48,10 +49,10 @@ public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> implem
 	}
 	
 	
+	public abstract void updateData();
 	
-	public abstract Statistics getStatistics();
 	
-	public abstract Clustering<C,P> getClustering();
+	// public abstract Clustering<C,P> getClustering();
 	
 	// public abstract ObservableList<? extends CRType<?>> getObservableCRList();
 
@@ -121,7 +122,7 @@ public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> implem
 	 * Merge CRs based on clustering
 	 */
 
-	public abstract void merge ();
+	
 	
 	
 	

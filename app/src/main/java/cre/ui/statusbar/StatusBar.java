@@ -52,16 +52,16 @@ public class StatusBar {
 	
 	
 	public void updateInfo () {
-		IntRange yearsRPY = CRTable.get().getStatistics().getMaxRangeRPY();
-		IntRange yearsRPYVisible = CRTable.get().getStatistics().getMaxRangeRPY(true);
-		IntRange yearsPY  = CRTable.get().getStatistics().getMaxRangePY();
+		IntRange yearsRPY = CRTable.get().getMaxRangeRPY();
+		IntRange yearsRPYVisible = CRTable.get().getMaxRangeRPY(true);
+		IntRange yearsPY  = CRTable.get().getMaxRangePY();
 
 		
 		if (this.statUI != null) {
 			statUI.printInfo(String.format("#CRs: %d (%d shown), #Clusters: %d, RPY: %d-%d (%d-%d shown), PY: %d-%d",
-				CRTable.get().getStatistics().getNumberOfCRs(),
-				CRTable.get().getStatistics().getNumberOfCRsByVisibility(true),
-				CRTable.get().getClustering().getNumberOfClusters(), 
+				CRTable.get().getNumberOfCRs(),
+				CRTable.get().getNumberOfCRsByVisibility(true),
+				CRTable.get().getNumberOfClusters(), 
 				yearsRPY.getMin(), 
 				yearsRPY.getMax(),
 				yearsRPYVisible.getMin(), 

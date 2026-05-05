@@ -34,7 +34,7 @@ public class WoS {
 	public static void save (OutputStream out, boolean includePubsWithoutCRs, Predicate<CRType> filter, Comparator<CRType> comp) throws IOException, RuntimeException {
 		
 		/* TODO: Filter is not supported yet */
-		StatusBar.get().initProgressbar(CRTable.get().getStatistics().getNumberOfPubs());
+		StatusBar.get().initProgressbar(CRTable.get().getNumberOfPubs());
 						
 		BufferedWriter bw = new BufferedWriter (new OutputStreamWriter(out, "UTF-8"));
 		bw.write("FN Thomson Reuters Web of Science\u0153 modified by CRExplorer");

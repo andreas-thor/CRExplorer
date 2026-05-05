@@ -39,7 +39,7 @@ public class CRTableView_MM extends CRTableView<CRType_MM> {
 		@Override
 		public int size() {
 			// TODO Auto-generated method stub
-			return crTable.getStatistics().getNumberOfCRsByVisibility(true);
+			return crTable.getNumberOfCRsByVisibility(true);
 			// throw new UnsupportedOperationException("Unimplemented method 'size'");
 		}
 

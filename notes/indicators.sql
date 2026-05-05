@@ -5,15 +5,13 @@
 -- alle Ziterungen werden gezählt bei N_CR, aber PUB_PY nur betrachtet, wenn nicht vor CR_RPY
 WITH PubYear AS (
     SELECT 
-        CR.CR_ID, 
-        CR.CR_RPY AS CR_RPY, 
+        CR_ID, 
+        CR_RPY , 
         (CASE WHEN CR_RPY > PUB_PY THEN NULL ELSE PUB_PY END) AS PUB_PY, 
         COUNT(*) AS N_CR,
         COUNT (CASE WHEN CR_RPY > PUB_PY THEN NULL ELSE PUB_PY END) AS N_CR_VALID 
-    FROM CR 
-    JOIN PUB_CR ON (CR.CR_ID = PUB_CR.CR_ID)
-    JOIN PUB ON (PUB_CR.PUB_ID = PUB.PUB_ID)
-    GROUP BY CR.CR_ID, CR.CR_RPY, PUB.PUB_PY
+    FROM PUB_CR
+    GROUP BY CR_ID, CR_RPY, PUB_PY
 ),
 -- Anzahl der PUB_PYs pro CR_RPY, d.h. in wie vielen Jahren (pub_py) wurden CRs auf dem Jahr cr_rpy zitiert
 CountPY AS (
@@ -24,6 +22,7 @@ CountPY AS (
     FROM PubYear
     GROUP BY CR_RPY
 )
+
 ,
 -- Berechnung der PYears inkl. prozentualem Anteil 
 CR_Indicators1 AS (
@@ -39,8 +38,16 @@ CR_Indicators1 AS (
     LEFT OUTER JOIN CountPY USING (CR_RPY)
     GROUP BY CR_ID
 )
+-- SELECT * FROM CR_Indicators1
 
-
+UPDATE CR 
+SET 
+    CR_N_CR = X.N_CR,
+    CR_N_PYEARS = X.N_PYEARS,
+    CR_PERC_YR = X.PERC_PYEARS,
+    CR_PERC_ALL = X.PERC_ALL
+FROM CR_Indicators1 AS X
+WHERE CR.CR_ID = X.CR_ID
 
 
 ,
@@ -122,10 +129,10 @@ SET
 FROM CR_New
 WHERE CR.CR_ID = CR_New.CR_ID
 
-UPDATE CR AS C
-SET N_CR = X.Y
+UPDATE CR 
+SET CR_N_CR = X.Y
 FROM (SELECT CR_ID, COUNT(*) AS Y FROM PUB_CR GROUP BY CR_ID) AS X
-WHERE C.CR_ID = X.CR_ID
+WHERE CR.CR_ID = X.CR_ID
 
 
 select * from cr limit 1

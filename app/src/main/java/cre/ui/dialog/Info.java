@@ -27,17 +27,17 @@ public class Info extends Dialog<Void> {
 		
 		grid.addRow(0, 
 			new Label("Number of Cited References"),
-			createTF (CRTable.get().getStatistics().getNumberOfCRs()));
+			createTF (CRTable.get().getNumberOfCRs()));
 		
 		grid.addRow(1, 
 			new Label("Number of Cited References (shown)"),
-			createTF (CRTable.get().getStatistics().getNumberOfCRsByVisibility(true)));
+			createTF (CRTable.get().getNumberOfCRsByVisibility(true)));
 		
 		grid.addRow(2, 
 			new Label("Number of Cited References Clusters"), 
-			createTF (CRTable.get().getClustering().getNumberOfClusters()));
+			createTF (CRTable.get().getNumberOfClusters()));
 		
-		IntRange rangeRPY = CRTable.get().getStatistics().getMaxRangeRPY();
+		IntRange rangeRPY = CRTable.get().getMaxRangeRPY();
 		grid.addRow(3, 
 			new Label("Range of Cited References Years"), 
 			createTF (rangeRPY.getMin(), 1),
@@ -46,17 +46,17 @@ public class Info extends Dialog<Void> {
 		
 		grid.addRow(4, 
 			new Label("Number of different Cited References Years"), 
-			createTF (CRTable.get().getStatistics().getNumberOfDistinctRPY()));
+			createTF (CRTable.get().getNumberOfDistinctRPY()));
 		
 		grid.addRow(5, 
 			new Label("Number of Publications"), 
-			createTF (CRTable.get().getStatistics().getNumberOfPubs(true)));
+			createTF (CRTable.get().getNumberOfPubs(true)));
 
 		grid.addRow(6, 
 				new Label("Number of Citing Publications"), 
-				createTF (CRTable.get().getStatistics().getNumberOfPubs()));
+				createTF (CRTable.get().getNumberOfPubs()));
 		
-		IntRange rangePY = CRTable.get().getStatistics().getMaxRangePY();
+		IntRange rangePY = CRTable.get().getMaxRangePY();
 		grid.addRow(7, 
 			new Label("Range of Citing Publications Years"),
 			createTF (rangePY.getMin(), 1),
@@ -65,7 +65,7 @@ public class Info extends Dialog<Void> {
 		
 		grid.addRow(8,
 			new Label("Number of different Citing Publications Years"),
-			createTF (CRTable.get().getStatistics().getNumberOfDistinctPY()));
+			createTF (CRTable.get().getNumberOfDistinctPY()));
 		
 		
 		getDialogPane().setContent(grid);
