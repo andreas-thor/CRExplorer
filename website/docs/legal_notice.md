@@ -13,7 +13,7 @@ Information in accordance with Section 5 TMG
 Andreas Thor<br />
 HTWK Leipzig University of Applied Sciences<br />
 Email: andreas.thor@htwk-leipzig.de<br />
-[https://www.htwk-leipzig.de/en/htwk-leipzig/]()
+[https://www.htwk-leipzig.de/en/htwk-leipzig/](https://www.htwk-leipzig.de/en/htwk-leipzig/])
 
 
 ## Disclaimer
