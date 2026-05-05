@@ -12,9 +12,8 @@ import cre.CRELogger;
 // import cre.data.CRSearch;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRType;
+import cre.data.type.abs.Clustering;
 import cre.data.type.abs.Filter;
-import cre.data.type.abs.Loader;
-import cre.data.type.abs.Remover;
 import cre.data.type.abs.Statistics;
 import cre.data.type.abs.Statistics.IntRange;
 import cre.ui.statusbar.StatusBar;
@@ -28,7 +27,6 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	private HashMap<PubType_MM, PubType_MM> allPubs; 
 	
 	private Loader_MM loader;
-	private Remover_MM remover;
 	private Filter_MM filter;
 	
 	private Statistics_MM statistics;
@@ -54,15 +52,8 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	
 
 
-	@Override
-	public Remover getRemover() {
-		return this.remover;
-	}
+
 	
-	@Override
-	public Filter getFilter() {
-		return this.filter;
-	}
 
 	@Override
 	public Statistics getStatistics() {
@@ -95,7 +86,6 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	private CRTable_MM () { 
 		this.statistics = new Statistics_MM();
 		this.loader = new Loader_MM();
-		this.remover = new Remover_MM(this);
 		this.filter = new Filter_MM (this);
 		init();
 	}
@@ -122,7 +112,7 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 		crmatch = new Clustering_MM(this);
 		duringUpdate = false;
 		this.setAborted(false);
-		this.getFilter().setShowNull(true);
+		this.setShowNull(true);
 		
 		/* REMOVED Lucene Search due to module problems
 		CRSearch.get().init();
@@ -188,50 +178,7 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 //	}
 	
 
-	@Override
-	public void onBeforeImport() {
-		// Nothing to do here
-	}
 
-
-
-	@Override
-	public void addPub (PubType_MM pub) {
-		
-		pub.setID(this.allPubs.size()+1);
-		
-		
-		int debug_before = this.allPubs.size();
-		this.allPubs.put(pub, pub);
-		int debug_after = this.allPubs.size();
-
-		if (debug_after != debug_before+1) {
-			CRELogger.get().logInfo("debug_after != debug_before+1");
-		}
-		
-		
-		for(CRType_MM cr: pub.getCR().collect(Collectors.toSet())) {
-			
-			CRType_MM crMain = this.allCRs.get(cr);
-			if (crMain == null) {
-				this.crById.put(cr.getID(), cr);
-				this.allCRs.put(cr, cr);
-			} else {
-				pub.removeCR(cr, false);	
-				pub.addCR(crMain, false);
-				crMain.addPub(pub, false);	
-			}
-		}
-		
-	}
-	
-
-	@Override
-	public void onAfterImport() {
-		// Nothing to do here
-	}
-
-	
 
 
 	
@@ -278,16 +225,22 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 
 	}
 	
-	
+	@Override
+	protected void onNpctRangeChanged () {
+		updateData();
+	} 
+
 	
 	/**
 	 * Update computation of percentiles for all CRs
 	 * Called after loading, deleting or merging of CRs
 	 * @param removed Data has been removed --> adjust clustering data structures; adjust CR lists per publication
 	 */
-	@Override
-	public void updateData () throws OutOfMemoryError {
+	private void updateData () throws OutOfMemoryError {
 
+
+		long ts2 = System.currentTimeMillis();
+		long ms2 = Runtime.getRuntime().totalMemory();
 		
 		duringUpdate = true;		// mutex to avoid chart updates during computation
 		
@@ -331,6 +284,14 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 		getChartData().updateChartData(range_RPY, NCR_RPY, CNT_RPY);
 		
 		duringUpdate = false;
+
+		
+		
+		long ts3 = System.currentTimeMillis();
+		long ms3 = Runtime.getRuntime().totalMemory();
+
+		CRELogger.get().logInfo("Update time is " + ((ts3-ts2)/1000d) + " seconds");
+		CRELogger.get().logInfo("Update Memory usage " + ((ms3-ms2)/1024d/1024d) + " MBytes");
 		
 	}
 
@@ -405,23 +366,56 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	}
 	
 	
-    void removeCR (Predicate<CRType_MM> cond) {
-		
-		crById.values().removeIf( cr ->  { 
-			if (cond.test(cr)) {
-				cr.removeAllPubs(true);
-				allCRs.remove(cr);
-				return true;
-			} else {
-				return false;
-			}
-		});
-		updateData();
+
+
+	// #region Importer ---------------------------------------------- 
+
+	@Override
+	public void onBeforeImport() {
+		// Nothing to do here
 	}
 
 
+	@Override
+	public void addPub (PubType_MM pub) {
+		
+		pub.setID(this.allPubs.size()+1);
+		
+		
+		int debug_before = this.allPubs.size();
+		this.allPubs.put(pub, pub);
+		int debug_after = this.allPubs.size();
 
+		if (debug_after != debug_before+1) {
+			CRELogger.get().logInfo("debug_after != debug_before+1");
+		}
+		
+		
+		for(CRType_MM cr: pub.getCR().collect(Collectors.toSet())) {
+			
+			CRType_MM crMain = this.allCRs.get(cr);
+			if (crMain == null) {
+				this.crById.put(cr.getID(), cr);
+				this.allCRs.put(cr, cr);
+			} else {
+				pub.removeCR(cr, false);	
+				pub.addCR(crMain, false);
+				crMain.addPub(pub, false);	
+			}
+		}
+		
+	}
+	
 
+	@Override
+	public void onAfterImport() {
+		updateData();
+	}
+
+	// #endregion
+	
+
+	// #region Loader ---------------------------------------------- 
 
 	@Override
 	public void onBeforeLoad() {
@@ -431,6 +425,8 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	@Override
 	public void onAfterLoad() {
 		this.loader.onAfterLoad();
+		updateData();
+		getClustering().updateClustering(Clustering.ClusteringType.INIT, null, Clustering.min_threshold, false, false, false, false);
 	}
 
 	@Override
@@ -447,8 +443,114 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	public void onNewMatchPair(int crId1, int crId2, double sim, boolean isManual) {
 		this.loader.onNewMatchPair(crId1, crId2, sim, isManual);
 	}
+
+	// #endregion 
+
 		
+	// #region Remover ----------------------------------------------
+
+
+	@Override
+	public void removeCR (List<Integer> toDelete) {
+		getCR().forEach(cr -> cr.setFlag(false));
+		toDelete.forEach(crId -> getCRById(crId).setFlag(true));
+		removeCR(cr -> cr.isFlag());
+	}
 	
+	@Override
+	public void retainCR (List<Integer> toRetain) {
+		getCR().forEach(cr -> cr.setFlag(true));
+		toRetain.forEach(crId -> getCRById(crId).setFlag(false));
+		removeCR(cr -> cr.isFlag());
+	}
+	
+	@Override
+	public void removeCRWithoutYear () {
+		removeCR (cr -> cr.getRPY() == null);
+	}
+
+	
+	@Override
+	public void removeCRByYear (IntRange range) {
+		removeCR (cr -> ((cr.getRPY()!=null) && (range.getMin() <= cr.getRPY()) && (cr.getRPY() <= range.getMax())));
+	}
+
+	@Override
+	public void removeCRByN_CR(IntRange range) {
+		removeCR (cr -> (range.getMin() <= cr.getN_CR()) && (cr.getN_CR() <= range.getMax()));
+	}
+	
+	@Override
+	public void removeCRByPERC_YR (String comp, double threshold) {
+		switch (comp) {
+			case "<" : removeCR (cr -> cr.getPERC_YR() <  threshold); break;
+			case "<=": removeCR (cr -> cr.getPERC_YR() <= threshold); break;
+			case "=" : removeCR (cr -> cr.getPERC_YR() == threshold); break;
+			case ">=": removeCR (cr -> cr.getPERC_YR() >= threshold); break;
+			case ">" : removeCR (cr -> cr.getPERC_YR() >  threshold); break;
+		}
+	}
+	
+	@Override
+	public void removePubByCR (List<Integer> selCR) {
+		selCR.stream()
+			.map(crId -> crTab.getCRById(crId))
+			.flatMap (cr -> cr.getPub())
+			.forEach(pub -> pub.setFlag(true));
+
+		removePub (pub -> !pub.isFlag());
+		getPub().forEach(pub -> pub.setFlag(false));
+	}
+	
+	@Override
+	public void retainPubByCitingYear (IntRange range) {
+		removePub (pub -> (pub.getPY()==null) || (range.getMin() > pub.getPY()) || (pub.getPY() > range.getMax()));
+	}	
+	
+	private void removePub (Predicate<PubType_MM> cond) {
+		getPub().filter(cond).collect(Collectors.toList()).forEach(pub -> pub.removeAllCRs(true));
+		removeCR(cr -> cr.getN_CR()==0);
+	}
+	
+	private void removeCR (Predicate<CRType_MM> cond) {
+		
+		crById.values().removeIf( cr ->  { 
+			if (cond.test(cr)) {
+				cr.removeAllPubs(true);
+				allCRs.remove(cr);
+				return true;
+			} else {
+				return false;
+			}
+		});
+		updateData();
+	}
+
+	// #endregion
+
+	// #region Filter ----------------------------------------------
+
+	@Override
+	public void filterByYear(IntRange range) {
+		this.filter.filterByYear(range);
+	}
+
+	@Override
+	public void filterByCluster(List<Integer> sel) {
+		this.filterByCluster(sel);
+	}
+
+	@Override
+	public void setShowNull(boolean showNull) {
+		this.filter.setShowNull(showNull);
+	}
+
+	@Override
+	public void showAll() {
+		this.filter.showAll();
+	}
+
+	// #endregion
 
 }
 

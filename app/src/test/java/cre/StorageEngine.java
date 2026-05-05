@@ -80,11 +80,11 @@ public class StorageEngine {
 
 								System.out.println(String.format("Data Modifier %s %s %.2f %b", removeCRByYear, removeCRByYear, threshold, merge));
 								if (removeCRByYear != null) {
-									CRTable.get().getRemover().removeCRByYear(removeCRByYear);
+									CRTable.get().removeCRByYear(removeCRByYear);
 								}
 				
 								if (removeCRByN_CR != null) {
-									CRTable.get().getRemover().removeCRByN_CR(removeCRByN_CR);
+									CRTable.get().removeCRByN_CR(removeCRByN_CR);
 								}
 				
 								if (threshold != null) {

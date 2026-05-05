@@ -8,14 +8,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cre.CRELogger;
+import cre.Timestamp;
 import cre.data.type.abs.CRTable;
-import cre.data.type.abs.Filter;
-import cre.data.type.abs.Loader;
-import cre.data.type.abs.Remover;
+import cre.data.type.abs.Clustering;
 import cre.data.type.abs.Statistics;
 import cre.data.type.abs.Statistics.IntRange;
 import cre.store.mm.CRType_MM;
@@ -57,15 +55,8 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	
 	
 	
-	@Override
-	public Remover getRemover() {
-		return this.remover;
-	}
 
-	@Override
-	public Filter getFilter() {
-		return this.filter;
-	}
+
 
 	@Override
 	public Statistics getStatistics() {
@@ -216,11 +207,17 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	}
 
 	@Override
-	public void updateData() throws OutOfMemoryError {
+	protected void onNpctRangeChanged () {
+		updateData();
+	} 
+	
+	private void updateData() throws OutOfMemoryError {
 		
 		
 		try {
 			
+			Timestamp.ts("updateData start");
+
 			Statement stmt = dbCon.createStatement();
 
 			IntRange range_RPY  = statistics.getMaxRangeRPY();
@@ -238,10 +235,18 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 			}
 			rs.close();
 
+			Timestamp.ts("updateData for compute");
+
 			computeForAllCRs (range_RPY, range_PY, NCR_ALL, NCR_RPY, CNT_RPY);
+
+			Timestamp.ts("updateData nach compute");
+
 			updateObservableCRList();
 			
 			getChartData().updateChartData(range_RPY, NCR_RPY, CNT_RPY);
+
+			Timestamp.ts("updateData ende");
+
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -379,9 +384,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	}
 
 
-	/** 
-	 * -------------------- Loader -------------------------
-	 */
+	// #region Loader ---------------------------------------------------------------------
 
 	@Override
 	public void onBeforeLoad() {
@@ -391,6 +394,9 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	@Override
 	public void onAfterLoad() {
 		this.loader.onAfterLoad();
+		updateData();
+		getClustering().updateClustering(Clustering.ClusteringType.INIT, null, Clustering.min_threshold, false, false, false, false);
+
 	}
 
 	@Override
@@ -408,10 +414,9 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 		this.loader.onNewMatchPair(crId1, crId2, sim, isManual);
 	}
 	
+	// #endregion
 
-	/**
-	 * ----------------------- Importer ----------------------------------------
-	 */
+	// #region Importer --------------------------------------------------------------
 
 	@Override
 	public void onBeforeImport () {
@@ -426,7 +431,95 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	@Override
 	public void onAfterImport () {
 		this.importer.onAfterImport ();
+
+		long ts2 = System.currentTimeMillis();
+		long ms2 = Runtime.getRuntime().totalMemory();
+
+		updateData();
+
+		long ts3 = System.currentTimeMillis();
+		long ms3 = Runtime.getRuntime().totalMemory();
+
+		CRELogger.get().logInfo("Update time is " + ((ts3-ts2)/1000d) + " seconds");
+		CRELogger.get().logInfo("Update Memory usage " + ((ms3-ms2)/1024d/1024d) + " MBytes");
 	}
 
+	// #endregion
+
+	// #region Remover --------------------------------------------------------------
+
+	@Override
+	public void removeCR(List<Integer> toDelete) {
+		this.remover.removeCR(toDelete);
+		this.updateData();
+	}
+
+	@Override
+	public void retainCR(List<Integer> toRetain) {
+		this.remover.retainCR(toRetain);
+		this.updateData();
+	}
+
+	@Override
+	public void removeCRWithoutYear() {
+		this.remover.removeCRWithoutYear();
+		this.updateData();
+	}
+
+	@Override
+	public void removeCRByYear(IntRange range) {
+		this.remover.removeCRByYear(range);
+		this.updateData();
+	}
+
+	@Override
+	public void removeCRByN_CR(IntRange range) {
+		this.remover.removeCRByN_CR(range);	
+		this.updateData();
+	}
+
+	@Override
+	public void removeCRByPERC_YR(String comp, double threshold) {
+		this.remover.removeCRByPERC_YR(comp, threshold);
+		this.updateData();
+	}
+
+	@Override
+	public void removePubByCR(List<Integer> selCR) {
+		this.remover.removePubByCR(selCR);
+		this.updateData();
+	}
+
+	@Override
+	public void retainPubByCitingYear(IntRange range) {
+		this.remover.retainPubByCitingYear(range);
+		this.updateData();
+	}
+
+	// #endregion
+
+	// #region Filter --------------------------------------------------------------
+
+	@Override
+	public void filterByYear(IntRange range) {
+		this.filter.filterByYear(range);
+	}
+
+	@Override
+	public void filterByCluster(List<Integer> sel) {
+		this.filterByCluster(sel);
+	}
+
+	@Override
+	public void setShowNull(boolean showNull) {
+		this.setShowNull(showNull);
+	}
+
+	@Override
+	public void showAll() {
+		this.showAll();
+	}
+
+	// #endregion
 
 }

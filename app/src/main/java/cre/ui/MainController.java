@@ -252,7 +252,7 @@ public class MainController {
 
 	private void filterByRPY(IntRange range, boolean fromChart) {
 		UISettings.get().setRange(RangeType.FilterByRPYRange, range);
-		crTable.getFilter().filterByYear(range);
+		crTable.filterByYear(range);
 		updateTableCRList(fromChart);
 	}
 
@@ -682,7 +682,6 @@ public class MainController {
 
 			if (old_NPCTRange != UISettings.get().getNPCTRange()) {
 				crTable.setNpctRange(UISettings.get().getNPCTRange());
-				crTable.updateData();
 			} 
 			if (old_MedianRange != UISettings.get().getMedianRange()) {
 				crTable.getChartData().setMedianRange(UISettings.get().getMedianRange());
@@ -738,7 +737,7 @@ public class MainController {
 
 	@FXML
 	public void OnMenuViewShowCRsWOYears(ActionEvent event) {
-		crTable.getFilter().setShowNull(((CheckMenuItem) event.getSource()).isSelected());
+		crTable.setShowNull(((CheckMenuItem) event.getSource()).isSelected());
 		updateTableCRList();
 	}
 
@@ -753,7 +752,7 @@ public class MainController {
 	public void OnMenuViewShowCluster() {
 		List<Integer> sel = getSelectedCRs();
 		if (sel.size() > 0) {
-			crTable.getFilter().filterByCluster(sel);
+			crTable.filterByCluster(sel);
 			updateTableCRList();
 		} else {
 			new ConfirmAlert("Filter Cited References by Cluster", true, new String[] { "No Cited References selected." }).showAndWait();
@@ -800,7 +799,7 @@ public class MainController {
 	@FXML
 	public void OnMenuViewShowAll() {
 		showWOYear.setSelected(true);
-		crTable.getFilter().showAll();
+		crTable.showAll();
 		updateTableCRList();
 	}
 
@@ -825,7 +824,7 @@ public class MainController {
 		int n = toDelete.size();
 		new ConfirmAlert("Remove Cited References", n == 0, new String[] { "No Cited References selected.", String.format("Would you like to remove all %d selected Cited References?", n) }).showAndWait().ifPresent(btn -> {
 			if (btn == ButtonType.YES) {
-				crTable.getRemover().removeCR(toDelete);
+				crTable.removeCR(toDelete);
 				updateTableCRList();
 			}
 		});
@@ -868,7 +867,7 @@ public class MainController {
 		int n = CRTable.get().getStatistics().getNumberOfCRsWithoutRPY();
 		new ConfirmAlert("Remove Cited References", n == 0, new String[] { "No Cited References w/o Year.", String.format("Would you like to remove all %d Cited References w/o Year?", n) }).showAndWait().ifPresent(btn -> {
 			if (btn == ButtonType.YES) {
-				crTable.getRemover().removeCRWithoutYear();
+				crTable.removeCRWithoutYear();
 				updateTableCRList();
 			}
 		});
@@ -883,7 +882,7 @@ public class MainController {
 			new ConfirmAlert(header, n == 0, new String[] { String.format("No Cited References with Cited Reference Year between %d and %d.", range.getMin(), range.getMax()),
 					String.format("Would you like to remove all %d Cited References with Cited Reference Year between %d and %d?", n, range.getMin(), range.getMax()) }).showAndWait().ifPresent(btn -> {
 						if (btn == ButtonType.YES) {
-							crTable.getRemover().removeCRByYear(range);
+							crTable.removeCRByYear(range);
 							updateTableCRList();
 						}
 					});
@@ -899,7 +898,7 @@ public class MainController {
 			new ConfirmAlert(header, n == 0, new String[] { String.format("No Cited References with Number of Cited References between %d and %d.", range.getMin(), range.getMax()),
 					String.format("Would you like to remove all %d Cited References with Number of Cited References between %d and %d?", n, range.getMin(), range.getMax()) }).showAndWait().ifPresent(btn -> {
 						if (btn == ButtonType.YES) {
-							crTable.getRemover().removeCRByN_CR(range);
+							crTable.removeCRByN_CR(range);
 							updateTableCRList();
 						}
 					});
@@ -917,7 +916,7 @@ public class MainController {
 			new ConfirmAlert(header, n == 0, new String[] { String.format("No Cited References with Percent in Year %s %.1f%%.", comp, 100 * threshold),
 					String.format("Would you like to remove all %d Cited References with Percent in Year %s %.1f%%?", n, comp, 100 * threshold) }).showAndWait().ifPresent(btn -> {
 						if (btn == ButtonType.YES) {
-							crTable.getRemover().removeCRByPERC_YR(comp, threshold);
+							crTable.removeCRByPERC_YR(comp, threshold);
 							updateTableCRList();
 						}
 					});
@@ -930,7 +929,7 @@ public class MainController {
 		new TextInput("Retain Cited References By Id", "Specify list if CR Ids").showAndWait().ifPresent(list -> {
 			if (list != null) {
 				List<Integer> toRetain = Arrays.stream(list.split("\\D")).map(Integer::valueOf).collect (Collectors.toList());
-				crTable.getRemover().retainCR(toRetain);
+				crTable.retainCR(toRetain);
 			}
 		});
 	}
@@ -943,7 +942,7 @@ public class MainController {
 		new ConfirmAlert("Remove Publications", n == 0, new String[] { "No Cited References selected.", String.format("Would you like to remove all citing publications that do not cite any of the selected %d Cited References?", n) }).showAndWait()
 				.ifPresent(btn -> {
 					if (btn == ButtonType.YES) {
-						crTable.getRemover().removePubByCR(toRetain);
+						crTable.removePubByCR(toRetain);
 						updateTableCRList();
 					}
 				});
@@ -957,7 +956,7 @@ public class MainController {
 			new ConfirmAlert("Remove Publications", n == 0, new String[] { String.format("All Citing Publication Years are between between %d and %d.", range.getMin(), range.getMax()),
 					String.format("Would you like to remove all %d citing publications with publication year lower than %d or higher than %d?", n, range.getMin(), range.getMax()) }).showAndWait().ifPresent(btn -> {
 						if (btn == ButtonType.YES) {
-							crTable.getRemover().retainPubByCitingYear(range);
+							crTable.retainPubByCitingYear(range);
 							updateTableCRList();
 						}
 					});

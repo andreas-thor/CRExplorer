@@ -97,8 +97,6 @@ public class CRE {
 
 			CRTable.get().onAfterLoad();
 
-			CRTable.get().updateData();
-			CRTable.get().getClustering().updateClustering(Clustering.ClusteringType.INIT, null, Clustering.min_threshold, false, false, false, false);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
