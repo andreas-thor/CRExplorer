@@ -20,6 +20,6 @@ pdf: false
 
 ## Datasets
 
-* <a href="/data/savedrecs_JOI1.txt" download>Example Dataset #1</a> (Web of Science, ~2MB)
+* <a href="../data/savedrecs_JOI1.txt" download>Example Dataset #1</a> (Web of Science, ~2MB)
 * [Example Dataset #2](data/savedrecs_JOI2.txt) (Web of Science, ~150kB)
 * [Scientometrics Dataset](data/sciento_bearb.cre) (CRE file as used in [4], ~5MB)
