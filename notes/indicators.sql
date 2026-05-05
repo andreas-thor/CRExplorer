@@ -39,7 +39,9 @@ CR_Indicators1 AS (
     LEFT OUTER JOIN CountPY USING (CR_RPY)
     GROUP BY CR_ID
 )
-SELECT * FROM CR_Indicators1
+
+
+
 
 ,
 -- Ergänzung um PY-Jahre, in denen keine Zitierung vorkam mit N_CR = 0
@@ -56,6 +58,9 @@ PubYearRange AS (
     JOIN PubYearComplete P2 ON (P1.CR_ID = P2.CR_ID AND ABS (P1.PUB_PY - P2.PUB_PY) <= 0)
     GROUP BY P1.CR_ID, P1.PUB_PY
 )
+
+
+
 
 
 , 
@@ -93,7 +98,11 @@ CR_Indicators2 AS (
         SUM (CASE WHEN P>=0.999 THEN 1 ELSE 0 END) AS P999
     FROM RankPerCent
     GROUP BY CR_ID
-),
+)
+
+SELECT * FROM CR_Indicators2
+
+,
 CR_New AS (
     SELECT * 
     FROM CR_Indicators1
