@@ -25,9 +25,15 @@
 /*.log
 CRE.log
 CRE.log.*
+
+# Idea
 /.idea/.gitignore
 /.idea/.name
 /.idea/compiler.xml
 /.idea/gradle.xml
 /.idea/misc.xml
 /.idea/vcs.xml
+
+
+# Build report
+/build
