@@ -34,7 +34,7 @@ public class Queries {
 			if (line instanceof String) {
 				result.add((String) line);
 			} else if (line instanceof Map) {
-				String value = (String) ((Map) line).get(sqlDialect);
+				String value = (String) ((Map<String, String>) line).get(sqlDialect);
 				if (value != null) {
 					result.add(value);
 				}

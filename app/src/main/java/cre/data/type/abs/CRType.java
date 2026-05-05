@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cre.data.type.extern.CRType_ColumnView;
+import cre.store.mm.PubType_MM;
 import javafx.beans.value.ObservableValue;
 
 public abstract class CRType<P extends PubType<?>> implements Comparable<CRType<P>> {
@@ -105,6 +106,8 @@ public abstract class CRType<P extends PubType<?>> implements Comparable<CRType<
 	public abstract int getN_CR();
 	
 	
+
+
 	
 //	public abstract CRCluster getCID2();
 	

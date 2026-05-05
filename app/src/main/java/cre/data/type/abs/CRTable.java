@@ -1,17 +1,14 @@
 package cre.data.type.abs;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Stream;
 
 import cre.data.type.abs.CRType.PERCENTAGE;
-import cre.data.type.abs.Statistics.IntRange;
 import cre.store.db.CRTable_DB;
 import cre.store.mm.CRTable_MM;
-import cre.store.mm.PubType_MM;
 import cre.ui.CRTableView;
 
-public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> {
+public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> implements Importer, Loader {
  
 	public static enum COMPARATOR { LT, LTE, EQ, GTE, GT };
 	
@@ -51,9 +48,9 @@ public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> {
 	}
 	
 	
-	
+	public abstract Remover getRemover();
 
-	public abstract Loader getLoader();
+	public abstract Filter getFilter();
 	
 	public abstract Statistics getStatistics();
 	
@@ -102,9 +99,6 @@ public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> {
 
 
 	
-	
-	
-	
 	/*
 	 * We additionally store all pubs in allPubs
 	 * This is later only used for export (to Scopus, WoS, CSV_Pub) when the user setting "include pubs without CRs" is set
@@ -112,7 +106,17 @@ public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> {
 	
 //	public abstract PubType addPub (PubType pub, boolean addCRs);
 	
-	public abstract P addPub (PubType_MM pub);
+
+	/**
+	 * Methods for importing data files, i.e., publication lists
+	 */
+
+	// public abstract void onBeforeImport ();
+	// public abstract void addPub (PubType_MM pub);		
+	// public abstract void onAfterImport ();
+	
+	
+
 	
 
 	
@@ -138,89 +142,9 @@ public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> {
 	
 
 	
-	
-	
-	/**
-	 * Remove list of CRs
-	 * @param toDelete list of CRs to be deleted
-	 */
-	public abstract void removeCR (List<Integer> toDelete);
-	
-
-	/**
-	 * Remove all but the given list of CRs
-	 * @param toRetain list of CRs to be retained
-	 */
-	public abstract void retainCR (List<Integer> toRetain);
-	
-	
-	/**
-	 * Remove all CRs without year (RPY)
-	 */
-	public abstract void removeCRWithoutYear ();
+		
 
 	
-	/**
-	 * Remove all CRS within a given RPY range
-	 * @param range
-	 */
-	public abstract void removeCRByYear (IntRange range);
-
-	
-	/**
-	 * Remove all CRs within a given N_CR range
-	 * @param range
-	 */
-	public abstract void removeCRByN_CR(IntRange range);
-	
-	
-	/**
-	 * Remove all CRs < / <= / = / >= / > PERC_YR
-	 * @param comp comparator (as string); TODO: ENUMERATION
-	 * @param threshold
-	 */
-	
-	public abstract void removeCRByPERC_YR (String comp, double threshold);
-	
-	
-	/**
-	 * Remove all citing publications, that do *not* reference any of the given CRs 
-	 * @param selCR list of CRs
-	 */
-	public abstract void removePubByCR (List<Integer> selCR);
-	
-	
-	
-	
-	/**
-	 * Retail all citing publications within given citiny year (PY) range, 
-	 * i.e., remove all citing publications OUTSIDE the given citing year (PY) range
-	 * @param range
-	 */
-	public abstract void retainPubByCitingYear (IntRange range);
-	
-
-	
-	
-	/**
-	 * Filter publications by year range
-	 * Filtering = set VI property to 1 or 0
-	 * @param from
-	 * @param to
-	 */
-	public abstract void filterByYear (IntRange range);
-	
-
-	
-	public abstract void filterByCluster (List<Integer> sel);
-	
-	
-
-	
-	
-	public abstract void setShowNull (boolean showNull);
-	
-	public abstract void showAll();
 	
 	
 

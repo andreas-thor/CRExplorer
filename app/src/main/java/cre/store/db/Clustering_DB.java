@@ -370,7 +370,7 @@ public class Clustering_DB extends Clustering<CRType_DB, PubType_DB> {
 			if (type == Clustering.ClusteringType.REFRESH) {
 				// reset clusterId2 only 
 				Statement stmt = dbCon.createStatement();
-				for (String s: Queries.getQuery("clustering", "init")) {		// we execute the same script as for init!!!
+				for (String s: Queries.getQuery("clustering", "refresh")) {		
 					stmt.execute(String.format(Locale.US, s, threshold, changeCRIds==null ? "" : String.format("WHERE CR_ID IN (%s)", changeCRIds)));
 				}
 			}

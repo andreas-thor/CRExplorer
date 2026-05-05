@@ -12,8 +12,8 @@ public class CRChartData  {
 	public static enum SERIESTYPE { 
 		NCR, 	// Sum of Cited References
 		MEDIANDIFF, 	// Difference to Median
-		CNT		// Count the number of CRs 
-	};
+		CNT				//  Count the number of CRs 
+	}
 
 	
 	private IntRange rangeRPY;
