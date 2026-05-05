@@ -10,6 +10,23 @@ Es gibt zwei Implementationen von ``CRTable``:
 ``CRTable`` stellt Methoden bzgl. unterschiedlicher Aspekte zur Verfügung.
 Diese werden durch Interfaces definiert. In der Implementation werden sie größtenteils in Subkomponenten ausgelagert.
 
+
+## Indikatoren
+
+Gegeben ist eine Menge $$ C = (cr, pub, rpy, py) $$  mit folgender Bedeutung: Die Publikation $pub$ aus dem Jahr $py$ zitiert eine Cited Reference $cr$ aus dem Jahr $rpy$.
+
+* ``N_PYEARS``: Anzahl der PYs, in denen eine CR zitiert wird. $ N\_PYEARS (cr) = | \{ rpy | (cr, \_, rpy, py) \in C \} | $ mit  $ py \ge rpy $
+
+* ``PERC_PYEARS``: in prozentual wievielen Jahren (py) wurde die cr ziterit bezogen auf alle JAhre (py), in denen es mindestens eine Zitierung einer cr aus dem gleichen rpy gab.
+
+
+$$
+a + b
+
+$$
+
+
+
 ## Berechnung der Indikatoren
 
 Nach Veränderung des Datenbestands durch 
@@ -27,6 +44,8 @@ DSL und MainController nach Setzen von NPCT_RANGE --> in setNPCT-Range verschobe
 
 CRTable_DB und CRTable_MM nach dem Merge
 Remover_DB und CRTable_MM nach dem Löschen von CR's
+
+
 
 
 
