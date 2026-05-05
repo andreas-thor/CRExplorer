@@ -14,8 +14,11 @@ public class Indicators_DB implements Indicators{
 
 	private Connection dbCon;
 	
-	public Indicators_DB(Connection dbCon) {
+	public Indicators_DB(Connection dbCon)  {
 		this.dbCon = dbCon;
+
+
+
 	}
 
     @Override
@@ -30,7 +33,14 @@ public class Indicators_DB implements Indicators{
 				unionNPTCRange += " " + String.format(unionParam, i);
 			}
 
-			Statement stmt = dbCon.createStatement();
+			Statement stmt = this.dbCon.createStatement();
+			for (String s: Queries.getQuery("Indicators_DB", "create_views")) {
+				System.out.println(String.format (s, unionNPTCRange));
+
+				stmt.execute(String.format (s, unionNPTCRange));
+			}
+			dbCon.commit();	
+
 			String s = String.format(Queries.getQuery("Indicators_DB", "npyears").get(0), unionNPTCRange);
 			stmt.execute (s);
 			dbCon.commit();	

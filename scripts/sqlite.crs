@@ -1,6 +1,13 @@
-importFile (file: "C:\\Dev\\CRExplorer\\data\\wos_py_2021_uts_ptaa_wos_b_202301_export - Kopie copy.txt", type: "WOS")
+// importFile (file: "C:\\Dev\\CRExplorer\\data\\wos_gross\\wos_py_2021_uts_ptaa_wos_b_202301_export - Kopie copy.txt", type: "WOS")
 
 // importFile (file: "C:\\Dev\\CRExplorer\\data\\savedrecs_JOI1.txt", type: "WOS")
+
+
+def scriptDir = new File(getClass().protectionDomain.codeSource.location.path).parent
+
+// openFile (file: scriptDir + "/data/CREDAT_Typen.cre")
+importFile (file: scriptDir + "/../data/wos_gross/wos_py_2021_uts_ptaa_wos_b_202301_export - Kopie copy.txt", type: "WOS")
+
 
 info()
 print (getCRById (id: [2]))

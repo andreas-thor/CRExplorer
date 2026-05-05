@@ -163,3 +163,56 @@ select * from cr limit 1
 -- AND  N_CR_VALID > 0
 -- AND CR_ID IN (
 -- SELECT CR_ID FROM CR WHERE CR_RPY=2006)
+
+
+SELECT *,
+	substr (
+		concat (
+			CASE WHEN Type_1 >= 2 AND Type_2>=1 THEN ' + Sleeping beauty' ELSE '' END ,
+			CASE WHEN (1.0*Type_0/Type_10) > 0.8 AND (1.0*Type_7/Type_10) > 0.8 THEN ' + Constant performer' ELSE '' END ,
+			CASE WHEN Type_3 >=2 THEN ' + Hot paper' ELSE '' END,
+			CASE WHEN Type_4 >=2 AND Type_5 >= 2 AND Type_6 > 1 THEN ' + Life Cycle' ELSE '' END
+			), 4) AS Label -- substring entfernt führendes ' + '
+
+FROM (
+
+	SELECT *,
+		group_concat (Symbol,''),
+		SUM (CASE WHEN                       ZValue<-1 THEN 0 ELSE 1 END) AS Type_0,
+		SUM (CASE WHEN PY_IDX< 3         AND ZValue<-1 THEN 1 ELSE 0 END) AS Type_1,
+		SUM (CASE WHEN PY_IDX>=3         AND ZValue> 1 THEN 1 ELSE 0 END) AS Type_2,
+		SUM (CASE WHEN PY_IDX< 3         AND ZValue> 1 THEN 1 ELSE 0 END) AS Type_3,
+		SUM (CASE WHEN PY_IDX< 4         AND ZValue<=1 THEN 1 ELSE 0 END) AS Type_4,
+		SUM (CASE WHEN PY_IDX>=4         AND ZValue> 1 THEN 1 ELSE 0 END) AS Type_5,
+		SUM (CASE WHEN PY_SIZE-PY_IDX<=3 AND ZValue<=1 THEN 1 ELSE 0 END) AS Type_6,
+		SUM (CASE WHEN N_CR_VALID > 0                  THEN 1 ELSE 0 END) AS Type_7,
+		-- SUM (CASE WHEN PY_IDX==0 OR Symbol_PREVIOUS='-' OR Symbol='+' OR (Symbol_PREVIOUS='o' AND Symbol='o') THEN 1 ELSE 0 END) AS Type_8,
+		-- SUM (CASE WHEN                       ZValue> 1 THEN 0 ELSE 1 END) AS Type_9,
+		SUM (1) AS Type_10
+		
+	FROM (
+		SELECT *,
+			CASE WHEN ZValue<-1 THEN '-' WHEN ZValue>+1 THEN '+' ELSE 'o' END AS Symbol
+			-- CASE WHEN ZValue_PREVIOUS<-1 THEN '-' WHEN ZValue_PREVIOUS>+1 THEN '+' ELSE 'o' END AS Symbol_PREVIOUS
+		FROM (
+			SELECT *, 
+				CASE WHEN Expected = 0 THEN 0 ELSE (N_CR_VALID - Expected)/sqrt(Expected) END AS ZValue
+				-- CASE WHEN Expected = 0 THEN 0 ELSE (N_CR_VALID_PREVIOUS - Expected)/sqrt(Expected) END AS ZValue_PREVIOUS			
+			FROM (
+				SELECT *, (1.0*SUM_PY*SUM_CR/OVERALL) AS Expected
+				 FROM (
+				 SELECT *, 
+					SUM (N_CR_VALID) OVER (PARTITION BY PUB_PY) AS SUM_PY,
+					SUM (N_CR_VALID) OVER (PARTITION BY CR_ID) AS SUM_CR,
+					SUM (N_CR_VALID) OVER () AS OVERALL, 
+					RANK () OVER (PARTITION BY CR_ID ORDER BY PUB_PY)-1 AS PY_IDX,
+					COUNT(PUB_PY) OVER (PARTITION BY CR_ID) AS PY_SIZE
+					-- LAG(N_CR_VALID) OVER (PARTITION BY CR_ID ORDER BY PUB_PY) AS N_CR_VALID_PREVIOUS
+				 FROM PubYearRange
+				) AS T1
+			) AS T2
+		) AS T3
+	) AS T4
+	GROUP BY CR_ID
+	ORDER BY PUB_PY
+) AS T5

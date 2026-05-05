@@ -1,0 +1,179 @@
+DROP VIEW IF EXISTS PubYear;
+CREATE VIEW PubYear AS 
+SELECT 
+    CR_ID, 
+    CR_RPY , 
+    (CASE WHEN CR_RPY > PUB_PY THEN NULL ELSE PUB_PY END) AS PUB_PY, 
+    COUNT(*) AS N_CR,
+    COUNT (CASE WHEN CR_RPY > PUB_PY THEN NULL ELSE PUB_PY END) AS N_CR_VALID 
+FROM PUB_CR
+GROUP BY CR_ID, CR_RPY, PUB_PY;
+
+
+/* Anzahl der PUB_PYs pro CR_RPY, d.h. in wie vielen Jahren (pub_py) wurden CRs auf dem Jahr cr_rpy zitiert */
+DROP VIEW IF EXISTS CountPY;
+CREATE VIEW CountPY AS 
+SELECT 
+    CR_RPY,
+    COUNT (DISTINCT PUB_PY) AS CNT_PY,
+    SUM (N_CR) AS N_CR_RPY, 
+    SUM (N_CR_VALID) AS N_CR_VALID_RPY
+FROM PubYear
+GROUP BY CR_RPY;
+
+
+/* Berechnung der PYears inkl. prozentualem Anteil */
+DROP VIEW IF EXISTS CR_Indicators1;
+CREATE VIEW CR_Indicators1 AS 
+SELECT 
+    CR_ID, 
+    PubYear.CR_RPY, 
+    SUM(N_CR) AS N_CR, 
+    COUNT (PUB_PY) AS N_PYEARS, 
+    COALESCE (1.0*COUNT (PUB_PY) /( CountPY.CNT_PY), 0) AS PERC_PYEARS,
+    COALESCE (1.0*SUM(N_CR_VALID) / CountPY.N_CR_RPY, 0) AS PERC_YR,
+    COALESCE (1.0*SUM(N_CR_VALID) / (SELECT SUM (N_CR) FROM PubYear), 0) AS PERC_ALL /* hier VALID geteilt durch ALL */
+FROM PubYear 
+LEFT OUTER JOIN CountPY USING (CR_RPY)
+GROUP BY CR_ID;
+
+
+/* Ergänzung um PY-Jahre, in denen keine Zitierung vorkam mit N_CR = 0 */
+DROP VIEW IF EXISTS PubYearComplete;
+CREATE VIEW PubYearComplete AS 
+SELECT C.CR_ID, C.CR_RPY, S.PUB_PY, COALESCE (N_CR_VALID, 0) AS N_CR_VALID
+FROM (SELECT DISTINCT PUB_PY FROM PubYear) AS S
+JOIN (SELECT CR_ID, CR_RPY FROM CR_Indicators1) AS C ON (1=1)
+LEFT OUTER JOIN PubYear ON (S.PUB_PY = PubYear.PUB_PY AND C.CR_ID = PubYear.CR_ID);
+
+
+/* Bildung der Zitierungszahlen unter Berücksichtigung von NPCT_RANGE (in Join-Bedingung <= ...) */
+DROP VIEW IF EXISTS PubYearRange;
+CREATE VIEW PubYearRange AS 
+SELECT CR_ID, CR_RPY, PUB_PY, N_CR_VALID, 1 AS Valid
+FROM PubYearComplete;    
+
+SELECT *,
+  (N_CR_VALID - 1.0*SUM_PY*SUM_CR/OVERALL) / (1.0*SUM_PY*SUM_CR/OVERALL) AS Expected
+ FROM (
+ SELECT *, 
+	SUM (N_CR_VALID) OVER (PARTITION BY PUB_PY) AS SUM_PY,
+	SUM (N_CR_VALID) OVER (PARTITION BY CR_ID) AS SUM_CR,
+	SUM (N_CR_VALID) OVER () AS OVERALL
+ FROM PubYearRange
+) AS T
+
+
+
+/* Bildung der prozentualen Ranking-Werte */
+DROP VIEW IF EXISTS RankPerCent;
+CREATE VIEW RankPerCent AS 
+SELECT 
+    CR_ID, 
+    N_CR_VALID, 
+    Valid, 
+    (CASE WHEN CR_RPY IS NULL OR PUB_PY IS NULL THEN 0 ELSE 1 END) AS HASYEAR, 
+    RANK() OVER ( PARTITION BY CR_RPY, PUB_PY ORDER BY N_CR_VALID ASC ) AS R, 
+    COUNT(*) OVER ( PARTITION BY CR_RPY, PUB_PY ORDER BY N_CR_VALID ASC RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS C
+FROM PubYearRange;
+
+
+/* Zählen, wie häufig jeweils in den Top-x %% (zwei Prozentzeichen wegen Java-String-Format Escape) */
+DROP VIEW IF EXISTS CR_Indicators2;
+CREATE VIEW CR_Indicators2 AS 
+SELECT CR_ID, 
+    SUM (CASE WHEN HASYEAR = 0 OR C=1 OR 1.0*R/C<=0.5   THEN 0 ELSE 1 END) AS P50,
+    SUM (CASE WHEN HASYEAR = 0 OR C=1 OR 1.0*R/C<=0.75  THEN 0 ELSE 1 END) AS P75,
+    SUM (CASE WHEN HASYEAR = 0 OR C=1 OR 1.0*R/C<=0.9   THEN 0 ELSE 1 END) AS P90,
+    SUM (CASE WHEN HASYEAR = 0 OR C=1 OR 1.0*R/C<=0.99  THEN 0 ELSE 1 END) AS P99,
+    SUM (CASE WHEN HASYEAR = 0 OR C=1 OR 1.0*R/C<=0.999 THEN 0 ELSE 1 END) AS P999
+FROM RankPerCent
+WHERE Valid=1
+GROUP BY CR_ID;
+
+
+    ),
+    CR_New AS (
+        SELECT * 
+        FROM CR_Indicators1
+        JOIN CR_Indicators2 USING (CR_ID)
+    ) 
+    UPDATE CR 
+    SET
+        CR_N_CR = CR_New.N_CR,
+        CR_N_PYEARS = CR_New.N_PYEARS,
+        CR_PYEAR_PERC = CR_New.PERC_PYEARS,
+        CR_PERC_YR = CR_New.PERC_YR,
+        CR_PERC_ALL = CR_New.PERC_ALL,
+        CR_N_PCT_P50 = CR_New.P50,
+        CR_N_PCT_P75 = CR_New.P75,
+        CR_N_PCT_P90 = CR_New.P90,
+        CR_N_PCT_P99 = CR_New.P99,
+        CR_N_PCT_P999 = CR_New.P999
+    FROM CR_New
+    WHERE CR.CR_ID = CR_New.CR_ID
+
+
+npctrange:
+  - UNION ALL 
+    SELECT CR_ID, CR_RPY, PUB_PY - %1$d , N_CR_VALID, 0 AS Valid /* Parameter $1 durchläuft alle Werte von 1 bis NPCTRANGE */
+    FROM PubYearComplete 
+    WHERE PUB_PY - %1$d IN (SELECT DISTINCT PUB_PY FROM PubYear)
+    UNION ALL 
+    SELECT CR_ID, CR_RPY, PUB_PY + %1$d , N_CR_VALID, 0 AS Valid
+    FROM PubYearComplete  
+    WHERE PUB_PY + %1$d IN (SELECT DISTINCT PUB_PY FROM PubYear) 
+
+
+
+SELECT *,
+	substr (
+		concat (
+			CASE WHEN Type_1 >= 2 AND Type_2>=1 THEN ' + Sleeping beauty' ELSE '' END ,
+			CASE WHEN (1.0*Type_0/Type_10) > 0.8 AND (1.0*Type_7/Type_10) > 0.8 THEN ' + Constant performer' ELSE '' END ,
+			CASE WHEN Type_3 >=2 THEN ' + Hot paper' ELSE '' END,
+			CASE WHEN Type_4 >=2 AND Type_5 >= 2 AND Type_6 > 1 THEN ' + Life Cycle' ELSE '' END
+			), 4) AS Label -- substring entfernt führendes ' + '
+
+FROM (
+
+	SELECT *,
+		group_concat (Symbol,''),
+		SUM (CASE WHEN                       ZValue<-1 THEN 0 ELSE 1 END) AS Type_0,
+		SUM (CASE WHEN PY_IDX< 3         AND ZValue<-1 THEN 1 ELSE 0 END) AS Type_1,
+		SUM (CASE WHEN PY_IDX>=3         AND ZValue> 1 THEN 1 ELSE 0 END) AS Type_2,
+		SUM (CASE WHEN PY_IDX< 3         AND ZValue> 1 THEN 1 ELSE 0 END) AS Type_3,
+		SUM (CASE WHEN PY_IDX< 4         AND ZValue<=1 THEN 1 ELSE 0 END) AS Type_4,
+		SUM (CASE WHEN PY_IDX>=4         AND ZValue> 1 THEN 1 ELSE 0 END) AS Type_5,
+		SUM (CASE WHEN PY_SIZE-PY_IDX<=3 AND ZValue<=1 THEN 1 ELSE 0 END) AS Type_6,
+		SUM (CASE WHEN N_CR_VALID > 0                  THEN 1 ELSE 0 END) AS Type_7,
+		-- SUM (CASE WHEN PY_IDX==0 OR Symbol_PREVIOUS='-' OR Symbol='+' OR (Symbol_PREVIOUS='o' AND Symbol='o') THEN 1 ELSE 0 END) AS Type_8,
+		-- SUM (CASE WHEN                       ZValue> 1 THEN 0 ELSE 1 END) AS Type_9,
+		SUM (1) AS Type_10
+		
+	FROM (
+		SELECT *,
+			CASE WHEN ZValue<-1 THEN '-' WHEN ZValue>+1 THEN '+' ELSE 'o' END AS Symbol
+			-- CASE WHEN ZValue_PREVIOUS<-1 THEN '-' WHEN ZValue_PREVIOUS>+1 THEN '+' ELSE 'o' END AS Symbol_PREVIOUS
+		FROM (
+			SELECT *, 
+				CASE WHEN Expected = 0 THEN 0 ELSE (N_CR_VALID - Expected)/sqrt(Expected) END AS ZValue
+				-- CASE WHEN Expected = 0 THEN 0 ELSE (N_CR_VALID_PREVIOUS - Expected)/sqrt(Expected) END AS ZValue_PREVIOUS			
+			FROM (
+				SELECT *, (1.0*SUM_PY*SUM_CR/OVERALL) AS Expected
+				 FROM (
+				 SELECT *, 
+					SUM (N_CR_VALID) OVER (PARTITION BY PUB_PY) AS SUM_PY,
+					SUM (N_CR_VALID) OVER (PARTITION BY CR_ID) AS SUM_CR,
+					SUM (N_CR_VALID) OVER () AS OVERALL, 
+					RANK () OVER (PARTITION BY CR_ID ORDER BY PUB_PY)-1 AS PY_IDX,
+					COUNT(PUB_PY) OVER (PARTITION BY CR_ID) AS PY_SIZE
+					-- LAG(N_CR_VALID) OVER (PARTITION BY CR_ID ORDER BY PUB_PY) AS N_CR_VALID_PREVIOUS
+				 FROM PubYearRange
+				) AS T1
+			) AS T2
+		) AS T3
+	) AS T4
+	GROUP BY CR_ID
+	ORDER BY PUB_PY
+) AS T5

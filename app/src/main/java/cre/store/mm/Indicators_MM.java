@@ -98,6 +98,8 @@ public class Indicators_MM implements Indicators {
 			final int crIdx = x;
 			CRType<?> cr = crList.get(crIdx);
 			
+			if (cr.getID()==64) System.out.println(rpy);
+			
 			NCR_CR_all[crIdx] = cr.getN_CR();
 			
 //			int[] NPYEARS = new int[1];

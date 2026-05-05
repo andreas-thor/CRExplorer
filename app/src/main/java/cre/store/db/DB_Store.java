@@ -33,15 +33,8 @@ class DB_Store {
 	
 	DB_Store(Connection dbCon) throws SQLException, URISyntaxException, IOException {
 		
-		
-		
 		this.dbCon = dbCon;
-		
-
-		
-
 		this.dbCon.setAutoCommit(false);
-		
 
 		/* create tables */
 		if (CRTable_DB.createSchemaOnStartup) {
