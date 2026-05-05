@@ -33,4 +33,4 @@ jobs:
         run: playwright install
 
       - name: Deploy docs
-        run: mkdocs gh-deploy --force 
+        run: mkdocs gh-deploy -f website/mkdocs.yml --force 
