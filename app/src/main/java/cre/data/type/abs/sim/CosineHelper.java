@@ -1,22 +1,28 @@
-package cre.data.type.abs;
+package cre.data.type.abs.sim;
 
 import java.text.Normalizer;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class CosineHelper {
 
-    public enum Mode { WORD, CHAR }
+public class CosineHelper extends StringComparator {
 
-    private final Mode mode;
+    private final CosineJaccardMode mode;
     private final int n; // n-Gramm-Größe (für WORD: Wort-n-Gramme/Shingles, für CHAR: Zeichen-n-Gramme)
 
-    public CosineHelper(Mode mode, int n) {
+    public CosineHelper(CosineJaccardMode mode, int n) {
         if (n < 1) throw new IllegalArgumentException("n must be >= 1");
         this.mode = Objects.requireNonNull(mode);
         this.n = n;
     }
 
+    @Override
+    public SimAlgorithm getAlgorithm() {
+        return SimAlgorithm.COS;
+    }
+
+
+    @Override
     public double compare(String s1, String s2) {
         if (s1 == null) s1 = "";
         if (s2 == null) s2 = "";
@@ -52,8 +58,8 @@ public class CosineHelper {
 
     private Map<String, Integer> tfVector(String text) {
         return switch (mode) {
-            case WORD -> tfShingles(wordTokens(text), n);
-            case CHAR -> tfCharNGrams(normalize(text), n);
+            case CosineJaccardMode.WORD -> tfShingles(wordTokens(text), n);
+            case CosineJaccardMode.CHAR -> tfCharNGrams(normalize(text), n);
         };
     }
 

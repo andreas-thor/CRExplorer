@@ -10,8 +10,11 @@ import java.util.stream.Stream;
 import org.simmetrics.StringMetric;
 
 import cre.CRELogger;
+import cre.data.type.abs.sim.CosineHelper;
+import cre.data.type.abs.sim.JaccardHelper;
+import cre.data.type.abs.sim.StringComparator;
+import cre.data.type.abs.sim.StringComparator.SimAlgorithm;
 
-// import org.simmetrics.StringMetric;
 
 
 
@@ -28,21 +31,22 @@ public interface Clustering<C extends CRType<?>> {
 	static final double weight_title = 5.0;
 	static final double weight_doi = 1.0;
 	public static final double min_threshold = 0.5;
-	// int algorithm = 2;
 	
+
+
+
 	public static enum ManualMatchType { SAME, DIFFERENT, EXTRACT }
 
 	public static enum ClusteringType { INIT, REFRESH }
 
-	public abstract void setBlockingRPY(String s);
 	
-	public abstract int getAlgorithm();
-	public abstract void setAlgorithm(int algorithm);
 
 
 	
-	default void  crossCompareCR(List<C> crlist, StringMetric l, NewMatchingPair<C> onNewPair, String alg) {
+	default void  crossCompareCR(List<C> crlist, StringComparator alg, NewMatchingPair<C> onNewPair) {
 		
+		StringComparator lev = StringComparator.get(SimAlgorithm.LEV, null, 0);
+
 		// allX = List of all AU_L values; compareY = List of compare string 
 		List<String> allX = crlist.stream().map ( cr -> cr.getAU_L().toLowerCase()).collect (Collectors.toList());
 		ArrayList<String> compareY = new ArrayList<String>(allX);
@@ -57,7 +61,7 @@ public interface Clustering<C extends CRType<?>> {
 			// int yIndx = 0;
 			
 			for (int yIndx=0; yIndx<compareY.size(); yIndx++) {
-				double s1 = l.compare(compareY.get(yIndx), x);
+				double s1 = lev.compare(compareY.get(yIndx), x);
 				if(Objects.equals(x, "[anonymous]") && Objects.equals(compareY.get(yIndx), "[anonymous]")) {
 					s1 *= 0.1;
 				}
@@ -68,7 +72,7 @@ public interface Clustering<C extends CRType<?>> {
 					// the two CRs to be compared
 					C cr1 = crlist.get(xIndx);
 					C cr2 = crlist.get(xIndx+yIndx+1);
-					double s = simCR (cr1, cr2, s1, l, new JaccardHelper(JaccardHelper.Mode.WORD, 2), new CosineHelper(CosineHelper.Mode.CHAR, 2), alg);
+					double s = simCR (cr1, cr2, s1, alg);
 					if (s >= min_threshold) {
 						onNewPair.accept(cr1, cr2, s);
 					}
@@ -87,13 +91,8 @@ public interface Clustering<C extends CRType<?>> {
 	 * @return
 	 */
 	
-	default double simCR (C cr1, C cr2, double sim_author, StringMetric l, JaccardHelper j, CosineHelper c, String alg) {
+	default double simCR (C cr1, C cr2, double sim_author, StringComparator alg) {
 
-		switch(alg) {
-            case "jacc" -> setAlgorithm(1);
-			case "cos" -> setAlgorithm(2);
-			default -> setAlgorithm(0);
-		}
 		// increasing sim + weight if data is available; weight for author is 2
 		double sim = weight_author*sim_author;
 		double weight = weight_author;
@@ -101,18 +100,7 @@ public interface Clustering<C extends CRType<?>> {
 		// compare Journal name (weight=1)
 		String[] comp_J = new String[] { cr1.getJ_N() == null ? "" : cr1.getJ_N(), cr2.getJ_N() == null ? "" : cr2.getJ_N() };
 		if ((!comp_J[0].isEmpty()) && (!comp_J[1].isEmpty())) {
-			sim += weight_journal*
-					switch(getAlgorithm()) {
-						case 1 -> {
-							//System.out.println("JACCARD");
-							yield j.compare(comp_J[0].toLowerCase(), comp_J[1].toLowerCase());
-						}
-						case 2 -> {
-							//System.out.println("COSINE");
-							yield c.compare(comp_J[0].toLowerCase(), comp_J[1].toLowerCase());
-						}
-                        default -> l.compare(comp_J[0].toLowerCase(), comp_J[1].toLowerCase());
-                    };
+			sim += weight_journal*alg.compare(comp_J[0].toLowerCase(), comp_J[1].toLowerCase());
 			weight += weight_journal;
 		}
 
@@ -120,54 +108,37 @@ public interface Clustering<C extends CRType<?>> {
 		// ignore if both titles are empty; set sim=0 if just one is emtpy; compute similarity otherwise
 		String[] comp_T = new String[] { cr1.getTI() == null ? "" : cr1.getTI(), cr2.getTI() == null ? "" : cr2.getTI() };
 		if ((!comp_T[0].isEmpty()) || (!comp_T[1].isEmpty())) {
-			sim += weight_title * (((!comp_T[0].isEmpty()) && (!comp_T[1].isEmpty())) ? switch(getAlgorithm()) {
-				case 1 -> {
-					//System.out.println("JACCARD");
-					yield j.compare(comp_T[0].toLowerCase(), comp_T[1].toLowerCase());
-				}
-				case 2 -> {
-					//System.out.println("COSINE");
-					yield c.compare(comp_T[0].toLowerCase(), comp_T[1].toLowerCase());
-				}
-				default -> l.compare(comp_T[0].toLowerCase(), comp_T[1].toLowerCase());
-			} : 0.0);
+			sim += weight_title * (((!comp_T[0].isEmpty()) && (!comp_T[1].isEmpty())) ? alg.compare (comp_T[0].toLowerCase(), comp_T[1].toLowerCase()) : 0.0);
 			weight += weight_title;
 		}
 
-		if(getAlgorithm() != 0) {
+		if(alg.getAlgorithm() != SimAlgorithm.LEV) {
 			String[] comp_DOI = new String[] {cr1.getDOI() == null ? "" : cr1.getDOI(), cr2.getDOI() == null ? "" : cr2.getDOI()};
 			if((!comp_DOI[0].isEmpty()) || (!comp_DOI[1].isEmpty())) {
-				sim += weight_doi * (((!comp_DOI[0].isEmpty()) && (!comp_DOI[1].isEmpty())) ? switch(getAlgorithm()) {
-					case 1 -> j.compare(comp_DOI[0].toLowerCase(), comp_DOI[1].toLowerCase());
-					case 2 -> c.compare(comp_DOI[0].toLowerCase(), comp_DOI[1].toLowerCase());
-					default -> l.compare(comp_DOI[0].toLowerCase(), comp_DOI[1].toLowerCase());
-				} : 0.0);
+				sim += weight_doi * (((!comp_DOI[0].isEmpty()) && (!comp_DOI[1].isEmpty())) ? alg.compare(comp_DOI[0].toLowerCase(), comp_DOI[1].toLowerCase()) : 0.0);
 				weight += weight_doi;
 			}
 		}
 
-		if(getAlgorithm() != 0) {
+		if(alg.getAlgorithm() != SimAlgorithm.LEV) {
 			String[] comp_CR = new String[] {cr1.getCR() == null ? "" : cr1.getCR(), cr2.getCR() == null ? "" : cr2.getCR()};
 			if((!comp_CR[0].isEmpty()) || (!comp_CR[1].isEmpty())) {
-				sim += weight_doi * (((!comp_CR[0].isEmpty()) && (!comp_CR[1].isEmpty())) ? switch(getAlgorithm()) {
-					case 1 -> j.compare(comp_CR[0].toLowerCase(), comp_CR[1].toLowerCase());
-					case 2 -> c.compare(comp_CR[0].toLowerCase(), comp_CR[1].toLowerCase());
-					default -> l.compare(comp_CR[0].toLowerCase(), comp_CR[1].toLowerCase());
-				} : 0.0);
+				sim += weight_doi * (((!comp_CR[0].isEmpty()) && (!comp_CR[1].isEmpty())) ? alg.compare(comp_CR[0].toLowerCase(), comp_CR[1].toLowerCase()) : 0.0);
 				weight += weight_doi;
 			}
 		}
 		//System.out.println((sim/weight > 0.90) ? sim/weight : "");
-		setAlgorithm(0);
 		return sim/weight;		// weighted average of AU_L, J_N, and TI
 	}
 	
+
 	
 
-	default void generateInitialClustering (String alg) {
+	default void generateInitialClustering (StringComparator alg, boolean useRPYForBlocking) {
 		Long stop1 = System.currentTimeMillis();
 
-		generateAutoMatching(alg);
+		generateAutoMatching(alg, useRPYForBlocking);
+
 
 		Long stop2 = System.currentTimeMillis();
 		CRELogger.get().logInfo(String.format("generateInitialClustering > generateAutoMatching > Time is %.1f seconds", (stop2-stop1)/1000.0));
@@ -179,7 +150,7 @@ public interface Clustering<C extends CRType<?>> {
 	}
 	
 	
-	public abstract void generateAutoMatching (String alg);
+	public abstract void generateAutoMatching (StringComparator alg, boolean useRPYForBlocking);
 	
 	
 	public abstract Set<C> addManuMatching (List<Integer> selCR, ManualMatchType matchType);

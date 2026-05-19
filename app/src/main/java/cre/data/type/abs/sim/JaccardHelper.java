@@ -1,22 +1,30 @@
-package cre.data.type.abs;
+package cre.data.type.abs.sim;
 
 import java.text.Normalizer;
 import java.util.*;
 
-public final class JaccardHelper {
 
-    public enum Mode { CHAR, WORD }
 
-    private final Mode mode;
+public final class JaccardHelper extends StringComparator {
+
+
+    private final CosineJaccardMode mode;
     private final int k; // Shingle-Größe (bei CHAR: k>=2 empfohlen; bei WORD: k>=1)
     int k2;
 
-    public JaccardHelper(Mode mode, int k) {
+    public JaccardHelper(CosineJaccardMode mode, int k) {
         this.mode = Objects.requireNonNull(mode);
-        this.k = Math.max(k, mode == Mode.CHAR ? 2 : 1);
-        this.k2 = Math.max(k, mode == Mode.CHAR ? 2 : 1);
+        this.k = Math.max(k, mode == CosineJaccardMode.CHAR ? 2 : 1);
+        this.k2 = Math.max(k, mode == CosineJaccardMode.CHAR ? 2 : 1);
     }
 
+    @Override
+    public SimAlgorithm getAlgorithm() {
+        return SimAlgorithm.JACC;
+    }
+
+
+    @Override
     public double compare(String a, String b) {
         String na = normalize(a);
         String nb = normalize(b);
@@ -57,7 +65,7 @@ public final class JaccardHelper {
         Set<String> res = new HashSet<>();
         if (normalized.isEmpty()) return res;
 
-        if (mode == Mode.CHAR) {
+        if (mode == CosineJaccardMode.CHAR) {
             String s = " " + normalized + " ";
             for (int i = 0; i <= s.length() - k2; i++) {
                 res.add(s.substring(i, i + k2));

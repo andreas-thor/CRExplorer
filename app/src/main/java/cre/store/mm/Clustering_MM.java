@@ -18,22 +18,13 @@ import org.simmetrics.metrics.StringMetrics;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.Clustering;
 import cre.data.type.abs.MatchPairGroup;
+import cre.data.type.abs.sim.StringComparator;
 import cre.ui.statusbar.StatusBar;
 
 public class Clustering_MM implements Clustering<CRType_MM> {
 
-	String blockingRPY = "";
-	private int algorithm = 2;
-	
-	@Override
-	public void setAlgorithm(int algorithm) {
-		this.algorithm = algorithm;
-	}
+	// String blockingRPY = "";
 
-	@Override
-	public int getAlgorithm() {
-		return this.algorithm;
-	}
 
 
 	private class CRPair {
@@ -91,42 +82,27 @@ public class Clustering_MM implements Clustering<CRType_MM> {
 		timestampedPairs = new TreeMap<Long, ArrayList<CRPair>>();
 	}
 
-	@Override
-	public void setBlockingRPY(String s) {
-		blockingRPY = s;
-	}
+
 	
 	@Override
-	public void generateAutoMatching (String alg) {
+	public void generateAutoMatching (StringComparator alg, boolean useRPYForBlocking) {
 	
 		// standard blocking: year + first letter of last name
 		StatusBar.get().setValue(String.format("Blocking of %d objects...", CRTable.get().getNumberOfCRs()));
-		// temp replaced by blocks for testing
-		Map<String, List<CRType_MM>> blocks2 = crTab.getCR().collect(Collectors.groupingBy(
-			cr -> ((cr.getRPY() != null) && (cr.getAU_L() != null) && (cr.getAU_L().length() > 0)) ? cr.getRPY() + cr.getAU_L().substring(0,1).toLowerCase() : "", 
-			Collectors.toList()
-		));
 
 		Map<String, List<CRType_MM>> blocks =
 				crTab.getCR().collect(Collectors.groupingBy(cr -> {
 
 					// Author muss vorhanden sein
-					if (cr.getAU_L() == null || cr.getAU_L().isEmpty()) {
-						return "";
-					}
+					if (cr.getAU_L() == null || cr.getAU_L().isEmpty()) return "";
+					
+					String firstLetter = cr.getAU_L().substring(0,1).toLowerCase();
 
-					String firstLetter =
-							cr.getAU_L().toLowerCase();
-
-					// noauth → nur Author-Initial
-					if ("noauth".equals(blockingRPY)) {
-						return firstLetter;
-					}
-
+					// not useRPYForBlocking → nur Author-Initial
+					if (!useRPYForBlocking) return firstLetter;
+					
 					// Default → RPY + Author-Initial
-					if (cr.getRPY() != null) {
-						return cr.getRPY() + firstLetter;
-					}
+					if (cr.getRPY() != null) return cr.getRPY() + firstLetter;
 
 					return "";
 
@@ -134,7 +110,6 @@ public class Clustering_MM implements Clustering<CRType_MM> {
 
 		StatusBar.get().initProgressbar(blocks.entrySet().stream().mapToInt(entry -> (entry.getValue().size()*(entry.getValue().size()-1))/2).sum(), String.format("Matching %d objects in %d blocks", CRTable.get().getNumberOfCRs(), blocks.size()));
 		matchResult.put(false, new HashMap<CRType_MM,Map<CRType_MM,Double>>());		// remove automatic match result, but preserve manual matching
-		StringMetric l = StringMetrics.levenshtein();
 		
 		AtomicLong testCount = new AtomicLong(0);
 		
@@ -152,10 +127,10 @@ public class Clustering_MM implements Clustering<CRType_MM> {
 
 			List<CRType_MM> crlist = entry.getValue();
 			
-			crossCompareCR(crlist, l, (CRType_MM cr1, CRType_MM cr2, double sim) -> {
+			crossCompareCR(crlist, alg, (CRType_MM cr1, CRType_MM cr2, double sim) -> {
 				result.add(new CRPair (cr1, cr2, sim));
 				testCount.incrementAndGet();
-			}, alg);
+			});
 		
 			return result;
 		})

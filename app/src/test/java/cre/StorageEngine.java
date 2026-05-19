@@ -20,6 +20,8 @@ import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRTable.TABLE_IMPL_TYPES;
 import cre.data.type.abs.Clustering;
 import cre.data.type.abs.Statistics.IntRange;
+import cre.data.type.abs.sim.StringComparator;
+import cre.data.type.abs.sim.StringComparator.SimAlgorithm;
 import cre.format.exporter.ExportFormat;
 import cre.format.importer.ImportFormat;
 import cre.ui.UISettings;
@@ -98,7 +100,7 @@ public class StorageEngine {
 								}
 				
 								if (threshold != null) {
-									CRTable.get().generateInitialClustering("lev");
+									CRTable.get().generateInitialClustering(StringComparator.get (SimAlgorithm.LEV, null, 0), false);
 									CRTable.get().updateClustering(Clustering.ClusteringType.REFRESH, null, threshold, false, false, false, false);
 								}
 				

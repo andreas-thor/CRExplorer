@@ -14,6 +14,7 @@ import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRType;
 import cre.data.type.abs.Clustering;
 import cre.data.type.abs.MatchPairGroup;
+import cre.data.type.abs.sim.StringComparator;
 import cre.ui.statusbar.StatusBar;
 
 public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
@@ -592,8 +593,8 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 
 
 	@Override
-	public void generateAutoMatching(String alg) {
-		this.clustering.generateAutoMatching(alg);
+	public void generateAutoMatching(StringComparator alg, boolean useRPYForBlocking) {
+		this.clustering.generateAutoMatching(alg, useRPYForBlocking);
 	}
 
 	@Override
@@ -635,20 +636,8 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 		this.clustering.addPair(cr1, cr2, s, isManual);
 	}
 
-	@Override
-	public void setBlockingRPY(String s) {
-		this.clustering.setBlockingRPY(s);
-	}
 
-	@Override
-	public int getAlgorithm() {
-		return this.clustering.getAlgorithm();
-	}
 
-	@Override
-	public void setAlgorithm(int algorithm) {
-		this.clustering.setAlgorithm(algorithm);
-	}
 
 
 	// #endregion

@@ -21,6 +21,9 @@ import cre.data.type.abs.CRType;
 import cre.data.type.abs.Clustering;
 import cre.data.type.abs.PubType;
 import cre.data.type.abs.Statistics.IntRange;
+import cre.data.type.abs.sim.StringComparator;
+import cre.data.type.abs.sim.StringComparator.CosineJaccardMode;
+import cre.data.type.abs.sim.StringComparator.SimAlgorithm;
 import cre.format.exporter.ExportFormat;
 import cre.format.importer.Crossref;
 import cre.format.importer.ImportFormat;
@@ -971,7 +974,8 @@ public class MainController {
 	public void OnMenuStdCluster() {
 
 		new Thread(() -> {
-			crTable.generateInitialClustering("lev");
+			
+			crTable.generateInitialClustering(StringComparator.get(SimAlgorithm.LEV, null, 0), useRPYMenuItem.isSelected());
 			matchView.setVisible(true);
 			tablePane.requestLayout();
 			matchView.updateClustering();
@@ -980,24 +984,11 @@ public class MainController {
 		}).start();
 	}
 
-	// old - kept for reference
-	@FXML
-	public void OnMenuCosClusterOLD() {
 
-		new Thread(() -> {
-			crTable.generateInitialClustering("cos");
-			matchView.setVisible(true);
-			tablePane.requestLayout();
-			matchView.updateClustering();
-			updateTableCRList();
-
-		}).start();
-	}
-
-	public void OnMenuCosJaccCluster(String algorithm) {
+	public void OnMenuCosJaccCluster(SimAlgorithm algorithm) {
 
 		// Dialog erstellen
-		Dialog<Pair<Integer, String>> dialog = new Dialog<>();
+		Dialog<Pair<Integer, CosineJaccardMode>> dialog = new Dialog<>();
 		dialog.setTitle("Clustering Parameter");
 		//dialog.setHeaderText("Choose the clustering parameters");
 
@@ -1043,21 +1034,21 @@ public class MainController {
 		// Ergebnis zurückgeben
 		dialog.setResultConverter(dialogButton -> {
 			if (dialogButton == okButtonType) {
-				return new Pair<>(Integer.parseInt(numberField.getText()), choiceBox.getValue());
+				return new Pair<Integer, CosineJaccardMode>(Integer.parseInt(numberField.getText()), CosineJaccardMode.valueOf(choiceBox.getValue().toUpperCase()));
 			}
 			return null;
 		});
 
-		Optional<Pair<Integer, String>> result = dialog.showAndWait();
+		Optional<Pair<Integer, CosineJaccardMode>> result = dialog.showAndWait();
 
 		result.ifPresent(pair -> {
 			int userNumber = pair.getKey();
-			String mode = pair.getValue();
+			CosineJaccardMode mode = pair.getValue();
 			System.out.println("Zahl: " + userNumber + ", Modus: " + mode);
 
 			new Thread(() -> {
 				// Clustering mit beiden Parametern starten
-				crTable.generateInitialClustering(algorithm);
+				crTable.generateInitialClustering(StringComparator.get(algorithm, mode, userNumber), useRPYMenuItem.isSelected());
 
 				// UI-Updates auf JavaFX Thread
 				Platform.runLater(() -> {
@@ -1072,18 +1063,14 @@ public class MainController {
 
 	@FXML
 	public void OnMenuCosCluster() {
-		OnMenuCosJaccCluster("cos");
+		OnMenuCosJaccCluster(SimAlgorithm.COS);
 	}
 
 	@FXML
 	public void OnMenuJaccCluster() {
-		OnMenuCosJaccCluster("jacc");
+		OnMenuCosJaccCluster(SimAlgorithm.JACC);
 	}
 
-	@FXML
-	public void toggleRPYblocking() {
-		crTable.setBlockingRPY(useRPYMenuItem.isSelected() ? "" : "noauth");
-	}
 
 	@FXML
 	public void OnMenuStdMerge() {

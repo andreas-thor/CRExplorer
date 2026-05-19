@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Scanner;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -17,9 +18,13 @@ import org.junit.Test;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRTable.TABLE_IMPL_TYPES;
 import cre.data.type.abs.Clustering;
+import cre.data.type.abs.sim.StringComparator;
+import cre.data.type.abs.sim.StringComparator.SimAlgorithm;
 import cre.format.exporter.ExportFormat;
 import cre.format.importer.ImportFormat;
 import cre.ui.UISettings;
+import cre.ui.statusbar.StatusBar;
+import cre.ui.statusbar.StatusBarText;
 
 public class StorageEngineShort {
 
@@ -33,6 +38,7 @@ public class StorageEngineShort {
 	 */
 
 	public static void main(String[] args) throws Exception {
+		
 		new StorageEngineShort().test_DB_vs_MM();
 	}
 
@@ -43,7 +49,7 @@ public class StorageEngineShort {
 		for (Consumer<Void> f: generateDataModifiers()) {
 			System.out.println(i++);
 			checkForEqualOutputFiles_DB_vs_MM(
-				TestData.getImportDataLoader.apply(ImportFormat.WOS, Stream.of("savedrecs_JOI1.txt"/* , "savedrecs_JOI2.txt",  "data_climate_500t.txt"*/ ).map(TestData::getFile).toArray(File[]::new)), 
+				TestData.getImportDataLoader.apply(ImportFormat.WOS, Stream.of(/*"savedrecs_JOI1.txt" ,*/ "savedrecs_JOI2.txt"/*,  "data_climate_500t.txt"*/ ).map(TestData::getFile).toArray(File[]::new)), 
 				f);
 		}
 		
@@ -70,9 +76,14 @@ public class StorageEngineShort {
 			// $ -> CRTable.get().removePubByCR(List.of(1,3,9)),
 			// $ -> CRTable.get().retainPubByCitingYear(new IntRange(2014, 2099)),
 			$ -> {
-				CRTable.get().generateInitialClustering("lev");
+				CRTable.get().generateInitialClustering(StringComparator.get(SimAlgorithm.LEV, null, 0), true);
 				CRTable.get().updateClustering(Clustering.ClusteringType.REFRESH, null, 0.8, false, false, false, false);
-				// CRTable.get().merge();
+				CRTable.get().merge();
+				
+				
+				StatusBarText status = new StatusBarText();
+				StatusBar.get().setUI(status);
+				StatusBar.get().updateInfo();
 			}
 		);
 

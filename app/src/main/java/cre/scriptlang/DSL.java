@@ -17,6 +17,9 @@ import cre.data.type.abs.CRTable;
 import cre.data.type.abs.CRType;
 import cre.data.type.abs.Clustering.ClusteringType;
 import cre.data.type.abs.Statistics.IntRange;
+import cre.data.type.abs.sim.StringComparator;
+import cre.data.type.abs.sim.StringComparator.CosineJaccardMode;
+import cre.data.type.abs.sim.StringComparator.SimAlgorithm;
 import cre.format.exporter.ExportFormat;
 import cre.format.importer.ImportFormat;
 import cre.ui.statusbar.StatusBar;
@@ -251,7 +254,12 @@ public class DSL extends Script {
 		boolean useDOI = (boolean) params.getOrDefault ("DOI", false);
 		boolean nullEqualsNull = (boolean) params.getOrDefault ("MISSING_EQUAL", false);
 
-		CRTable.get().generateInitialClustering("lev");
+		String algorithm = ((String) params.getOrDefault ("ALGORITHM", "LEV")).toUpperCase();
+		String mode = ((String) params.getOrDefault ("MODE", "WORD")).toUpperCase();
+		int n = Integer.valueOf (params.getOrDefault ("N", 0).toString()).intValue();
+		boolean useRPYForBlocking = (boolean) params.getOrDefault ("USERPY", false);
+
+		CRTable.get().generateInitialClustering(StringComparator.get (SimAlgorithm.valueOf(algorithm), CosineJaccardMode.valueOf(mode), n ), useRPYForBlocking);
 		CRTable.get().updateClustering(ClusteringType.REFRESH, null, threshold, useVol, usePag, useDOI, nullEqualsNull);	
 	}
 

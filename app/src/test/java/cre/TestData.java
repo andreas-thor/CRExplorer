@@ -19,13 +19,14 @@ import cre.ui.dialog.Sampling;
 public class TestData {
 
 
-    private final static String testDataDir = new File(TestData.class.getResource("/testdata/").getFile()).getAbsolutePath();
+    private final static String testDataDir = "C:/Dev/CRExplorer/app/src/test/resources/testdata"; // new File(TestData.class.getResource("/testdata/").getFile()).getAbsolutePath();
 
     /**
      * Get file from file name
      */
     public static Function<String, File> getTestFile = fileName -> 
-        new File(TestData.class.getResource("/testdata/" + fileName).getFile());
+        new File (testDataDir + "/" + fileName);
+        // new File(TestData.class.getResource("/testdata/" + fileName).getFile());
 
 
 

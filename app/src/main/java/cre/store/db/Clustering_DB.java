@@ -23,22 +23,13 @@ import cre.CRELogger;
 import cre.data.type.abs.CRTable;
 import cre.data.type.abs.Clustering;
 import cre.data.type.abs.MatchPairGroup;
+import cre.data.type.abs.sim.StringComparator;
 import cre.ui.statusbar.StatusBar;
 
 public class Clustering_DB implements Clustering<CRType_DB> {
 
 	String blockingRPY = "";
-	private int algorithm = 2;
-	
-	@Override
-	public void setAlgorithm(int algorithm) {
-		this.algorithm = algorithm;
-	}
 
-	@Override
-	public int getAlgorithm() {
-		return this.algorithm;
-	}
 
 	private class CRPair {
 		
@@ -134,14 +125,11 @@ public class Clustering_DB implements Clustering<CRType_DB> {
 		return CRTable_DB.get().getDBStore().selectCR(String.format("WHERE (CR_ClusterId1, CR_ClusterId2) IN (SELECT CR_ClusterId1, CR_ClusterId2 FROM CR WHERE CR.CR_ID IN (%s))", crIds)).collect(Collectors.toSet());
 	}
 
-	@Override
-	public void setBlockingRPY(String s) {
-		blockingRPY = s;
-	}
+
 	
 
 	@Override
-	public void generateAutoMatching(String alg) {
+	public void generateAutoMatching(StringComparator alg, boolean useRPYForBlocking) {
 
 		
 		// standard blocking: year + first letter of last name
@@ -150,16 +138,16 @@ public class Clustering_DB implements Clustering<CRType_DB> {
 		try {
 
 			// Option to remove the RPY from the blocking key to allow the user to choose what it chooses
-			String blockingKey = switch(blockingRPY) {
-				case "noauth" ->
-								"UPDATE CR SET CR_BLOCKINGKEY = " +
-								"CASE WHEN (cr_AU_L is not null) AND (length(cr_AU_L)>0) " +
-								"THEN lower (substring(cr_AU_L,1,1)) ELSE NULL END";
-				default ->
-								"UPDATE CR SET CR_BLOCKINGKEY = " +
-								"CASE WHEN (cr_RPY is not null) AND (cr_AU_L is not null) AND (length(cr_AU_L)>0) " +
-								"THEN concat (cr_rpy, lower (substring(cr_AU_L,1,1))) ELSE NULL END";
-			};
+			String blockingKey = useRPYForBlocking ? """
+				UPDATE CR SET CR_BLOCKINGKEY = 
+				CASE WHEN (cr_RPY is not null) AND (cr_AU_L is not null) AND (length(cr_AU_L)>0) 
+				THEN concat (cr_rpy, lower (substring(cr_AU_L,1,1))) ELSE NULL END
+				""" : """
+				UPDATE CR SET CR_BLOCKINGKEY = 
+				CASE WHEN (cr_AU_L is not null) AND (length(cr_AU_L)>0) 
+				THEN lower (substring(cr_AU_L,1,1)) ELSE NULL END
+				""";
+				
 			dbCon.createStatement().execute(blockingKey);
 			System.out.println(blockingKey);
 
@@ -191,7 +179,7 @@ public class Clustering_DB implements Clustering<CRType_DB> {
 				CRTable.get().getNumberOfCRs(), noOfBlocks, noOfComparisons));
 
 			StringMetric l = StringMetrics.levenshtein();
-			String alg1 = alg;
+			// SimAlgorithm alg1 = alg;
 			
 			
 			// TODO: handle missing values
@@ -271,7 +259,7 @@ public class Clustering_DB implements Clustering<CRType_DB> {
 					StatusBar.get().incProgressbar(crlist.size()*(crlist.size()-1)/2);
 
 					List<CRPair> result = new ArrayList<>();
-					crossCompareCR(crlist, l, (CRType_DB cr1, CRType_DB cr2, double sim) -> {
+					crossCompareCR(crlist, alg, (CRType_DB cr1, CRType_DB cr2, double sim) -> {
 						// result.add(new CRPair(cr1, cr2, sim));
 
 						try {
@@ -296,7 +284,7 @@ public class Clustering_DB implements Clustering<CRType_DB> {
 							e.printStackTrace();
 						}	
 						
-					}, alg);
+					});
 					
 	
 						
