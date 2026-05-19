@@ -52,7 +52,7 @@ jobs:
       uses: dev-drprasad/delete-tag-and-release@v0.2.1
       with:
         delete_release: true # default: false
-        tag_name: 2,1 # tag name to delete
+        tag_name: 2.1 # tag name to delete
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
