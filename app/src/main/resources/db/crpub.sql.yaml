@@ -109,6 +109,12 @@ create_schema:
       PUB_PY int, 
       PRIMARY KEY (PUB_ID, CR_ID)  
     )
+
+  - DROP TABLE IF EXISTS PUB_CR2
+  - CREATE TABLE PUB_CR2 ( 
+      PUB_ID	int, 
+      CR_ID 	int
+    )
   
   - DROP TABLE IF EXISTS CR_MATCH
   - CREATE TABLE CR_MATCH ( 
@@ -151,12 +157,14 @@ delete_all:
   - postgres: TRUNCATE TABLE CR_Temp
   - postgres: TRUNCATE TABLE PUB
   - postgres: TRUNCATE TABLE PUB_CR
+  - postgres: TRUNCATE TABLE PUB_CR2
   - postgres: TRUNCATE TABLE CR_MATCH_AUTO
   - postgres: TRUNCATE TABLE CR_MATCH_MANU
   - sqlite: DELETE FROM CR
   - sqlite: DELETE FROM CR_Temp
   - sqlite: DELETE FROM PUB
   - sqlite: DELETE FROM PUB_CR
+  - sqlite: DELETE FROM PUB_CR2
   - sqlite: DELETE FROM CR_MATCH_AUTO
   - sqlite: DELETE FROM CR_MATCH_MANU
 
@@ -175,7 +183,9 @@ merge_cr:
     WHERE CR.CR_ID = CRWITHMERGE.CR_ID
 
   # add new pub_id/cr_id pairs and remove stale pub_id/cr_id pars 
-  - CREATE TEMP TABLE PUB_CR2 AS
+  - postgres: TRUNCATE TABLE PUB_CR2
+  - sqlite: DELETE FROM PUB_CR2
+  - INSERT INTO PUB_CR2 (PUB_ID, CR_ID)
       SELECT DISTINCT PUB_ID, CR_MERGED_INTO AS CR_ID
       FROM PUB_CR JOIN CR ON (PUB_CR.CR_ID = CR.CR_ID)
   - postgres: TRUNCATE TABLE PUB_CR
@@ -183,7 +193,6 @@ merge_cr:
   - INSERT INTO PUB_CR (PUB_ID, CR_ID)
       SELECT PUB_ID, CR_ID
       FROM PUB_CR2
-  - DROP TABLE PUB_CR2
 
   # remove CRs that are merged into other CR 
   - DELETE FROM CR WHERE CR_ID != CR_MERGED_INTO

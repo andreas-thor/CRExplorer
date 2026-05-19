@@ -59,6 +59,11 @@ public class FileFormats {
 
     // final BiFunction<String, String, File> exportFile = (dir, filename) -> {
 
+
+    public static void main(String[] args) throws IOException {
+        new FileFormats().checkFileFormatEquivalence();        
+    }
+
     @Test
     public void checkFileFormatEquivalence() throws IOException {
 
@@ -125,6 +130,8 @@ public class FileFormats {
         System.out.println(String.format("allCRs_orig_string size = %d", allCRs_orig_String.size()));
         System.out.println(String.format("allCRs_copy_string size = %d", allCRs_copy_String.size()));
 
+
+        /* 
         allCRs_orig.stream().forEach(cr1 -> {
 
             allCRs_orig.stream()
@@ -140,7 +147,7 @@ public class FileFormats {
                     )));
 
         });
-
+        */
 
 
         allCRs_orig_String.removeAll(allCRs_copy_String);

@@ -28,7 +28,13 @@ public class StorageEngineShort {
 	 * (database) are equivalent. To this end, several files are imported, some data
 	 * manipulation is done (remove CRs, clustering, merging) and the resulting
 	 * export files are checked if they are byte-wise equivalent.
+	 * @throws Exception 
+	 * @throws OutOfMemoryError 
 	 */
+
+	public static void main(String[] args) throws Exception {
+		new StorageEngineShort().test_DB_vs_MM();
+	}
 
 	@Test
 	public void test_DB_vs_MM() throws OutOfMemoryError, Exception {
@@ -66,7 +72,7 @@ public class StorageEngineShort {
 			$ -> {
 				CRTable.get().generateInitialClustering("lev");
 				CRTable.get().updateClustering(Clustering.ClusteringType.REFRESH, null, 0.8, false, false, false, false);
-				CRTable.get().merge();
+				// CRTable.get().merge();
 			}
 		);
 

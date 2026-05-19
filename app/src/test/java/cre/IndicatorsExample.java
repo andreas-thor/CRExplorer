@@ -23,6 +23,12 @@ public class IndicatorsExample {
 
 	private final static String DATAFOLDER = "/testdata";
 
+
+	public static void main(String[] args) throws OutOfMemoryError, Exception {
+		new IndicatorsExample().checkIndicatorsExample();
+	}
+
+
 	@Test
 	public void checkIndicatorsExample() throws OutOfMemoryError, Exception {
 

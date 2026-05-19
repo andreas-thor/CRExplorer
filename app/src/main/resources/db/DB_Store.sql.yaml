@@ -110,6 +110,12 @@ create_schema:
       PRIMARY KEY (PUB_ID, CR_ID)  
     )
   
+  - DROP TABLE IF EXISTS PUB_CR2
+  - CREATE TABLE PUB_CR2 ( 
+      PUB_ID	int, 
+      CR_ID 	int
+    )
+
   - DROP TABLE IF EXISTS CR_MATCH
   - CREATE TABLE CR_MATCH ( 
       CR_ID1 	int, 
@@ -152,6 +158,7 @@ delete_all:
   - postgres: TRUNCATE TABLE CR_Temp
   - postgres: TRUNCATE TABLE PUB
   - postgres: TRUNCATE TABLE PUB_CR
+  - postgres: TRUNCATE TABLE PUB_CR2
   - postgres: TRUNCATE TABLE CR_MATCH
   - postgres: TRUNCATE TABLE CR_MATCH_AUTO
   - postgres: TRUNCATE TABLE CR_MATCH_MANU
@@ -160,6 +167,7 @@ delete_all:
   - sqlite: DELETE FROM CR_Temp
   - sqlite: DELETE FROM PUB
   - sqlite: DELETE FROM PUB_CR
+  - sqlite: DELETE FROM PUB_CR2
   - sqlite: DELETE FROM CR_MATCH
   - sqlite: DELETE FROM CR_MATCH_AUTO
   - sqlite: DELETE FROM CR_MATCH_MANU

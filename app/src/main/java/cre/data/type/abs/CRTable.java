@@ -1,11 +1,13 @@
 package cre.data.type.abs;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 import cre.data.type.abs.CRType.PERCENTAGE;
 import cre.store.db.CRTable_DB;
 import cre.store.mm.CRTable_MM;
+import cre.store.mm.CRType_MM;
 import cre.ui.CRTableView;
 
 public abstract class CRTable <C extends CRType<P>, P extends PubType<C>> 
@@ -158,6 +160,41 @@ public abstract class CRTable <C extends CRType<P>, P extends PubType<C>>
 	
 	protected abstract void onNpctRangeChanged (); 
 
+
+
+	// In CRTable.java - Hilfsklassen
+	private static class RPYStatistics {
+		int[] NCR_RPY;
+		int[] CNT_RPY;
+		int NCR_ALL;
+	}
+
+	private static class CRYearData {
+		int[][] NCR_CR_PY;      // Citations pro CR und Jahr
+		int[] NCR_CR;           // Summe pro CR
+		int[] NCR_CR_all;       // Gesamt pro CR
+		int[] NPYEARS_CR;       // Zitierjahre pro CR
+		int[] NCR_PY;           // Summe pro Jahr
+		int NCR_total;          // Gesamt
+		List<CRType_MM> crList;
+	}
+
+	private static class PercentileResult {
+		int[][] borders;
+		long[][] cumulativeSums;
+		double[][] cumulativePct;
+	}
+
+	private static class CRIndicatorValues {
+		int nPyears;
+		double pyearPerc;
+		double percYr;
+		double percAll;
+		int[] nPct;
+		int[] nPctAboveAverage;
+		String sequence;
+		String type;
+	}	
 	
 	protected void computeCRIndicators (int rpyIdx, int crSize, int pySize, int NCR_ALL, int[] NCR_RPY, int[][] NCR_CR_PY, int[] NCR_CR, int[] NCR_CR_all, int[] NPYEARS_CR, int[] NCR_PY, int[] NCR, CRIndicatorsUpdate updateCR) {
 

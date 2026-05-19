@@ -28,7 +28,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
 	private Connection dbCon;
 	private DB_Store dbStore;
-	public static String url = "localhost:5455/cre";	// default database url; can be overwritten by main program
+	public static String url = "jdbc:sqlite:db/default.db";	// default database url; can be overwritten by main program
 	public static boolean createSchemaOnStartup = true;
 	
 	 
@@ -111,6 +111,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
     			Class.forName("org.sqlite.JDBC");				
 				Queries.sqlDialect = "sqlite";
 			}
+			System.out.println(CRTable_DB.url);
 			dbCon = DriverManager.getConnection(CRTable_DB.url);
 
 			dbStore = new DB_Store(dbCon);

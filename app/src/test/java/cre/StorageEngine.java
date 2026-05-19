@@ -31,13 +31,23 @@ public class StorageEngine {
 	 * (database) are equivalent. To this end, several files are imported, some data
 	 * manipulation is done (remove CRs, clustering, merging) and the resulting
 	 * export files are checked if they are byte-wise equivalent.
+	 * @throws Exception 
+	 * @throws OutOfMemoryError 
 	 */
 
+
+	public static void main(String[] args) throws OutOfMemoryError, Exception {
+		new StorageEngine().test_DB_vs_MM();
+	}
+
+	
 	@Test
 	public void test_DB_vs_MM() throws OutOfMemoryError, Exception {
 
 		for (Consumer<Void> dataModifier: generateDataModifiers()) {
 
+
+			
 			checkForEqualOutputFiles_DB_vs_MM(
 				TestData.getImportDataLoader.apply(ImportFormat.WOS, 
 					Stream.of("savedrecs_JOI1.txt", "savedrecs_JOI2.txt").map(TestData::getFile).toArray(File[]::new)), 

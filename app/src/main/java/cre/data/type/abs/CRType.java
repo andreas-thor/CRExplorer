@@ -58,6 +58,7 @@ public abstract class CRType<P extends PubType<?>> implements Comparable<CRType<
 	
 	private Double PERC_YR;
 	private Double PERC_ALL;
+	private Double CP_IN;       // Cumulative Percentile for Individual CR
 	
 	private Integer N_PYEARS;	
 	private Double PYEAR_PERC;
@@ -77,6 +78,7 @@ public abstract class CRType<P extends PubType<?>> implements Comparable<CRType<
 		
 		PERC_YR = 0d;
 		PERC_ALL = 0d;
+		CP_IN = 0d;
 		
 		N_PYEARS = 0;
 		PYEAR_PERC = 0d;
@@ -272,6 +274,13 @@ public abstract class CRType<P extends PubType<?>> implements Comparable<CRType<
 	}
 	public void setPERC_ALL(Double pERC_ALL) {
 		PERC_ALL = pERC_ALL;
+	}
+	
+	public Double getCP_IN() {
+		return CP_IN;
+	}
+	public void setCP_IN(Double cP_IN) {
+		CP_IN = cP_IN;
 	}
 	
 		
