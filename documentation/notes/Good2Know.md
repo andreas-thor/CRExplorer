@@ -13,6 +13,7 @@ Programm "DBBrowser for SQLite" verwenden
     - bei "Create release"
  
  
+ 
 - Build wird aktiviert, wenn push in Repo und commit message beinhalt "[build]"
 
 - bei dev: vorher in GitHub tags/releases löschen
