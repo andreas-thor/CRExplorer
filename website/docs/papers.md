@@ -11,19 +11,19 @@ pdf: false
 
 * [Tracing the origin of a scientific legend by reference publication year spectroscopy (RPYS): The legend of the Darwin finches ](https://doi.org/10.1007/s11192-013-1200-8)<br />by Werner Marx and Lutz Bornmann ([arXiv](http://arxiv.org/abs/1311.5665))
 
-* [Referenced publication years spectroscopy applied to iMetrics: Scientometrics, Journal of Informetrics, and a relevant subset of JASIST ](https://doi.org/10.1016/j.joi.2013.11.006)<br />by Loet Leydesdorff, Lutz Bornmann, Werner Marx, and Sta&#353;a Milojevic ([arXiv](http://arxiv.org/abs/1309.5706))
+* [Referenced publication years spectroscopy applied to iMetrics: *Scientometrics*, *Journal of Informetrics*, and a relevant subset of JASIST ](https://doi.org/10.1016/j.joi.2013.11.006)<br />by Loet Leydesdorff, Lutz Bornmann, Werner Marx, and Sta&#353;a Milojevic ([arXiv](http://arxiv.org/abs/1309.5706))
 
-* [Identifying seminal works most important for research fields: Software for the Reference Publication Year Spectroscopy (RPYS) ](https://doi.org/10.1080/09737766.2016.1177948)<br />by Lutz Bornmann, Andreas Thor, Werner Marx, and Loet Leydesdorff ([figshare](https://dx.doi.org/10.6084/m9.figshare.1422015))
+* [Identifying seminal works most important for research fields: Software for the reference publication year spectroscopy (RPYS) ](https://doi.org/10.1080/09737766.2016.1177948)<br />by Lutz Bornmann, Andreas Thor, Werner Marx, and Loet Leydesdorff ([figshare](https://dx.doi.org/10.6084/m9.figshare.1422015))
 
 * [On the origins and the historical roots of the Higgs boson research from a bibliometric perspective ](https://doi.org/10.1140/epjp/i2014-14111-6)<br />by Andreas Barth, Werner Marx, Lutz Bornmann, and Ruediger Mutz ([arXiv](http://arxiv.org/abs/1402.4223))
 
 * [Identification of long-term concept-symbols among citations: Can documents be clustered in terms of common intellectual histories?](https://doi.org/10.1002/asi.23769)<br />by Jordan A. Comins and Loet Leydesdorff ([arXiv](http://arxiv.org/abs/1601.00288))
 
-* [Detecting the historical roots of tribology research: a bibliometric analysis](https://doi.org/10.1007/s11192-016-1877-6)<br />by Bakthavachalam Elango, Lutz Bornmann, and Govindaraju Kannan ([arXiv](http://arxiv.org/abs/1601.00141))
+* [Detecting the historical roots of tribology research: A bibliometric analysis](https://doi.org/10.1007/s11192-016-1877-6)<br />by Bakthavachalam Elango, Lutz Bornmann, and Govindaraju Kannan ([arXiv](http://arxiv.org/abs/1601.00141))
 
-* [Which early works are cited most frequently in climate change research literature? A bibliometric approach based on Reference Publication Year Spectroscopy](https://doi.org/10.1007/s11192-016-2177-x) <br />by Werner Marx, Robin Haunschild, Andreas Thor, and Lutz Bornmann ([arXiv](http://arxiv.org/abs/1608.07960))
+* [Which early works are cited most frequently in climate change research literature? A bibliometric approach based on reference publication year spectroscopy](https://doi.org/10.1007/s11192-016-2177-x) <br />by Werner Marx, Robin Haunschild, Andreas Thor, and Lutz Bornmann ([arXiv](http://arxiv.org/abs/1608.07960))
 
-* [Tracing the historical origins of knowledge management issues through Referenced Publication Years Spectroscopy (RPYS).](https://doi.org/10.1108/JKM-01-2016-0019) <br />by Ali Akbar Khasseh and Reza Mokhtarpour
+* [Tracing the historical origins of knowledge management issues through referenced publication years spectroscopy (RPYS).](https://doi.org/10.1108/JKM-01-2016-0019) <br />by Ali Akbar Khasseh and Reza Mokhtarpour
 
 * [ Exploration into the evolution and historical roots of citation analysis by referenced publication year spectroscopy ](https://doi.org/10.1007/s11192-016-2206-9) <br />by Jianhua Hou
 
