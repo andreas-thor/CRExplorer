@@ -4,9 +4,9 @@ pdf: false
 
 # Introduction
 
-Which are the most important papers in the history of a field? On whose shoulders of giants does an author stand? Where to look for the intellectual roots of a research topic? These questions can be answered by using the program CitedReferencesExplorer (CRExplorer).
+Which are the most important papers in the history of a field? On whose shoulders of giants does an author stand? Where to look for the intellectual roots of a research topic? These questions can be answered by using the program CRExplorer.
 
-The CRExplorer uses data from Web of Science (Clarivate Analytics) or Scopus (Elsevier) as input. Publication sets have to be downloaded including the references cited. The program focusses on the analysis of the cited references, in particular on the referenced publication years. Over time, "citation classics" of a field become more pronounced. When the aggregated citations are plotted along the time axis, one obtains a "spectrogram" with distinct peaks. CRExplorer visualizes this spectrogram, cleans the cited references (disambiguation), and uses a smoothing algorithm to suppress the noise. 
+The CRExplorer uses data from Web of Science (Clarivate) or other sources as input. Publication sets have to be downloaded including the references cited. The program focusses on the analysis of the cited references, in particular on the referenced publication years. Over time, "citation classics" of a field become more pronounced. When the aggregated citations are plotted along the time axis, one obtains a "spectrogram" with distinct peaks. CRExplorer visualizes this spectrogram, cleans the cited references (disambiguation), and uses a smoothing algorithm to suppress the noise. 
 
 ## Example study: Greenhouse Effect
 
