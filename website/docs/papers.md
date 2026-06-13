@@ -3,11 +3,11 @@ pdf: false
 ---
 
 
-# Papers 
+# Example Papers 
 
 * [Detecting the historical roots of research fields by reference publication year spectroscopy (RPYS)](http://dx.doi.org/10.1002/asi.23089) <br />by Werner Marx, Lutz Bornmann, Andreas Barth, and Loet Leydesdorff ([arXiv](http://arxiv.org/abs/1307.8239))
 
-* [Philosophy of science viewed through the lense of "References Publication Years spectrosopy" (RPYS)](https://doi.org/10.1007/s11192-014-1465-6)<br />by K. Brad Wray and Lutz Bornmann ([arXiv](http://arxiv.org/abs/1410.3461))
+* [Philosophy of science viewed through the lense of "Referenced Publication Year Spectrosopy" (RPYS)](https://doi.org/10.1007/s11192-014-1465-6)<br />by K. Brad Wray and Lutz Bornmann ([arXiv](http://arxiv.org/abs/1410.3461))
 
 * [Tracing the origin of a scientific legend by Reference Publication Year Spectroscopy (RPYS): the legend of the Darwin finches ](https://doi.org/10.1007/s11192-013-1200-8)<br />by Werner Marx and Lutz Bornmann ([arXiv](http://arxiv.org/abs/1311.5665))
 
