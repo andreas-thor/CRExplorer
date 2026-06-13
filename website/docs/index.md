@@ -4,9 +4,9 @@ pdf: false
 
 # Introduction
 
-Which are the most important papers in the history of a field? On whose shoulders of giants does an author stand? Where to look for the intellectual roots of a research topic? These questions can be answered by conducting Reference Publication Year Spectroscopy (RPYS) using CRExplorer.
+Which are the most important papers in the history of a field? On whose shoulders of giants does an author stand? Where to look for the intellectual roots of a research topic? These questions can be answered by conducting Reference Publication Year Spectroscopy (RPYS) with CRExplorer.
 
-CRExplorer uses data from the Web of Science (Clarivate) or other sources as input. Publication sets have to be downloaded including the references cited. The program focusses on the analysis of the cited references (CRs), in particular on the referenced publication years (RPYs). Over time, "citation classics" of a field become more pronounced. When the aggregated citations are plotted along the time axis, one obtains a "spectrogram" with distinct peaks. CRExplorer visualizes this spectrogram, cleans the CRs (disambiguation), and uses a smoothing algorithm to suppress the noise. 
+CRExplorer uses data from the Web of Science (Clarivate) or other sources as input. Publication sets have to be downloaded (or retrieved) including the references cited. The program focusses on the analysis of the cited references (CRs), in particular on the referenced publication years (RPYs). Over time, "citation classics" of a field become more pronounced. When the aggregated citations are plotted along the time axis, one obtains a "spectrogram" with distinct peaks. CRExplorer visualizes this spectrogram, cleans the CRs (disambiguation), and uses a smoothing algorithm to suppress the noise. 
 
 ## Example study: Greenhouse Effect
 
