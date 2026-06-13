@@ -5,17 +5,17 @@
 
 ### Open
 
-The program uses an internal file format "*.cre", which can be used as a "working format" and for the exchange of working files. The file contains all data including changes by the user. Using Microsoft Windows, one can double click on any *.cre file and thus run CRExplorer automatically. Note that the available memory on the computer decreases the more datasets have been opened and without terminating CRExplorer in-between. Thus, memory is not freed when a new dataset is loaded.
+CRExplorer uses an internal file format "*.cre", which can be used as a "working format" and for the exchange of working files. The file contains all data including changes by the user. Using Microsoft Windows, one can double click on any *.cre file and thus run CRExplorer automatically. Note that the available memory on the computer decreases the more datasets have been opened and without terminating CRExplorer in-between. Thus, memory is not freed when a new dataset is loaded.
 
 ### Import
 
-**Web of Science**: CRExplorer opens one or several datasets from WoS. The datasets should be downloaded using the option **Save to Other File Formats**. As **Record Content** select **Full Record and Cited References** and as File Format select **Other Reference Software**. The records have to be searched in the WoS Core Collection in order to be able to save full records including the CRs.
+**Web of Science**: CRExplorer opens one or several datasets from Web of Science (WoS). The datasets should be downloaded using the option **Save to Other File Formats**. As **Record Content** select **Full Record and Cited References** and as File Format select **Other Reference Software**. The records have to be searched in the WoS Core Collection in order to be able to save full records including the cited references (CRs).
 
 **Scopus**: CRExplorer opens one or several datasets from Scopus. The file format **CSV** (including citations, abstracts, and references) should be chosen for downloading records.
 
-Before loading the WoS or Scopus data into CRExplorer, the program analyses the file(s) which the user would like to import. When the analyses are finished, some basic information on the full dataset (we would like to call it “population”) are presented to the user in a window (in fields with grey background): number of non-distinct CRs, minimum/maximum RPY, number of (citing) publications, minimum/maximum publication year (of the citing publication), number of CRs without RPYs, and number of (citing) publications without publication year.
+Before loading the WoS or Scopus data into CRExplorer, the program analyses the file(s) which the user would like to import. When the analyses are finished, some basic information on the full dataset (we would like to call it “population”) are presented to the user in a window (in fields with grey background): number of non-distinct CRs, minimum/maximum reference publication year (RPY), number of (citing) publications, minimum/maximum publication year (of the citing publication), number of CRs without RPYs, and number of (citing) publications without publication year.
 
-**Crossref file**: CRExplorer opens one or several datasets from Crossref (see [https://www.crossref.org/]()). In addition, cited references data can be directly imported into CRExplorer by using the search interface for Crossref data (**Crossref search**). The search can be run based on (1) a list of DOIs provided by the user (whitespace-separated) or (2) an ISSN (e.g., 0138-9130 for the journal Scientometrics). The range of cited references years can be set to restrict the set of imported data.
+**Crossref file**: CRExplorer opens one or several datasets from Crossref (see [https://www.crossref.org/]()). In addition, cited references data can be directly imported into CRExplorer by using the search interface for Crossref data (**Crossref search**). The search can be run based on (1) a list of DOIs provided by the user (whitespace-separated) or (2) an ISSN (e.g., 0138-9130 for the journal *Scientometrics*). The range of RPYs can be set to restrict the set of imported data.
 
 **CSV-file**: Datasets in csv format can be imported. The format is the same as for the csv export. The same column header names must be used. However, not all columns need to be provided in the csv-file to be imported: At least, the columns **CR**, **RPY**, and **N_CR** should be provided. If no column **N_CR** is provided, the program assumes that each provided reference occurs once. The column **ID** is ignored (even if it is provided) and a new unique ID will be assigned. 
 
@@ -30,19 +30,19 @@ In this mode, the processed data is stored in a local database on the computer o
 
 DB_URL is to be used as documented at [https://jdbc.postgresql.org/documentation/use](). An example DB_URL is ``jdbc:postgresql://localhost:5432/db_name?user=db_user``. Here, ``db_name`` and ``db_user`` are the database name and database user. Further information can be found at [https://github.com/andreas-thor/CRExplorer/blob/main/README.md]()
 
-(2) The user has the option to reduce the dataset by loading only a sample from the population. The sample can be defined by importing CRs from specific RPYs and/or citing publication years. The range of the desired years can be included in the fields with the white background in the window. Additionally, the publications/CRs without year/RPYs can be excluded (by unmarking the corresponding ticks in the window).
+(2) The user has the option to reduce the dataset by loading only a sample from the population of publications. The sample can be defined by importing CRs from specific RPYs and/or citing publication years. The range of the desired years can be included in the fields with the white background in the window. Additionally, the publications/CRs without year/RPYs can be excluded (by unmarking the corresponding ticks in the window).
 
 Another possibility is to draw one of the following three types of samples from the population (see the examples and suggestions in [Haunschild et al., 2020](references.md#Haunschild2020)):
 
 * **Random Sampling**: The number of CRs included by the user in the field with white background are randomly selected. For example, if the user wants to import 100 CRs out of 400 overall CRs, CRExplorer randomly selects 25% of all CRs.
-* **Systematic sampling**: The number of CRs filled in by the user is used to select the sample uniformly distributed over the list of all CRs of the citing publications. For example, if the user wants to import 100 CRs out of 400 overall CRs, CRExplorer systematically selects 25% of the list of all CRs by picking the 1st, 5th, 9th, and so on cited reference.
+* **Systematic sampling**: The number of CRs filled in by the user is used to select the sample uniformly distributed over the list of all CRs of the citing publications. For example, if the user wants to import 100 CRs out of 400 overall CRs, CRExplorer systematically selects 25% of the list of all CRs by picking the 1st, 5th, 9th, and so on CR.
 * **Cluster sampling**: From the years which are in-between the minimum and maximum publication years (see above) one citing year is randomly selected. Then, all CRs in the papers published in this year are selected as sample and imported. The results of [Bornmann and Mutz (2015)](references.md#Bornmann2015) reveal that the restriction on all CRs from a recent citing year leads to very similar results as the consideration of all CRs from several citing years in references analysis. Note that the selection of one citing year in CRExplorer implicates that citation distributions over many citing years cannot be analyzed (see section 3.2).
 
 Of course, the three sampling options can be combined with the selection of citing and/or cited years. Furthermore, many samples instead of one sample can be drawn from the population to optimize the RPYS results ([Haunschild et al., 2020](references.md#Haunschild2020)).
 
 CRExplorer recommends a sample size to the user based on the available memory on the computer. This number is shown after **Estimated maximal Number which can be loaded in Memory**. If the user wants to draw a random or systematic sample, the user can decide which number of CRs is tried to be imported. This number can be filled in the corresponding white field in the window. In case of selecting the cluster sample option, the user cannot enter any number. The program undertakes the corresponding selections. If the user tries to import a number of CRs (sample or population), which is too large for the available memory on the computer (independent of the selected sampling strategy), an error message appears and the import is stopped.
 
-The analysis of a sample instead of the population is only an opportunity to handle the restrictions, which are given by the computer of the user. It is always the best way in the cited references analysis to analyze the population (by running CRExplorer with the database option). If the user, however, has to work with a sample instead of the population, inference statistics can be applied to draw conclusions from the sample to the population. For using inference statistics, the user can download the sample data as csv-file from CRExplorer (see section 4.1.5). Using statistics programs, such as Stata (see [www.stata.com]()) or R (see [www.r-project.org]()), the user can apply inference statics to the exported (random) sample ([Cumming, 2012](references.md#Cumming2012)). In the SSC Archive, the user finds the Stata command “plotrpys” which produces monochrome and colored graphs including 95% confidence intervals. These graphs can be used in connection with sample data (see section 4.1.5).
+The analysis of a sample instead of the population is only an opportunity to handle the restrictions, which are given by the computer of the user. It is always the best way in the cited references analysis to analyze the population (by running CRExplorer with the database option). If the user, however, decides to work with a sample instead of the population, inference statistics can be applied to draw conclusions from the sample to the population. For using inference statistics, the user can download the sample data as csv-file from CRExplorer (see section 4.1.5). Using statistics programs, such as Stata (see [www.stata.com]()) or R (see [www.r-project.org]()), the user can apply inference statics to the exported (random) sample ([Cumming, 2012](references.md#Cumming2012)). In the SSC Archive, the user finds the Stata command “plotrpys” which produces monochrome and colored graphs including 95% confidence intervals. These graphs can be used in connection with sample data (see section 4.1.5).
 
 The number of CRs which are shown to the user in the info window after the analyses of the WoS files (or files from another source) refers to non-distinctive counting. Thus, CRs have been multiply counted, if CRs existed multiply in the dataset. In most of the cases, the user will observe a reduced number of CRs after importing the population or sample. The reason is that the CRs are distinctly counted after importing.
 
@@ -61,9 +61,9 @@ The program saves the dataset in the internal file format “*.cre” and asks f
 
 ### Export
 
-**Web of Science**: The dataset is exported in the WoS format as specified in the import section . (see section 4.1.2).
+**Web of Science**: The dataset is exported in the WoS format as specified in the import section (see section 4.1.2).
 
-**Scopus**: The dataset is exported in the Scopus format as specified in the import section . (see section 4.1.2).
+**Scopus**: The dataset is exported in the Scopus format as specified in the import section (see section 4.1.2).
 
 Note that the export can only contain data from the import, when one transfers from Scopus to WoS. WoS files, for example, only consider the first authors while Scopus files include all authors in the CR field. If one transfers from WoS to Scopus, not all information can be provided, since this information is not available in downloads from WoS.
 
@@ -71,7 +71,7 @@ Note that the export can only contain data from the import, when one transfers f
 
 **CSV (Cited References)**: A table with CRs data is saved as a csv-file.
 
-**CSV (Citing publications)**: A table with data on the citing publications is saved as a csv-file.
+**CSV (Citing publications)**: A table with data on the citing publications is saved as csv-file.
 
 **CSV (Cited References + Citing publications)**: A table with both CRs data and data on the citing publications is saved as a csv-file.
 
@@ -101,7 +101,7 @@ Leave CRExplorer.
 
 ## Edit
 
-The user may often to restrict the CR analysis to a certain time period. Very early and most recent years are frequently not very helpful for the identification of the most frequently cited publications in the history. Although CRExplorer allows for the selection of periods in on-screen visualization, this selection does not lead to changes in the dataset. However, there are several ways of removing data from a dataset.
+The user may restrict the CR analysis to a certain time period. Very early and most recent years are frequently not very helpful for the identification of the most frequently cited publications in the history. Although CRExplorer allows for the selection of periods in on-screen visualization, this selection does not lead to changes in the dataset. However, there are several ways of removing data from a dataset.
 
 ### Remove selected Cited References
 
@@ -117,7 +117,7 @@ The user can remove the data for specific RPYs.
 
 ### Remove by Number of Cited References
 
-All CRs with a number of reference counts (column **N_CR**) within the specified range are deleted. This kind of restriction is helpful in identifying publications from early RPYs with a substantial impact (and to suppress the noise of less cited publications). Furthermore, in RPYs with many sparsely cited publications the publications with substantial impact can be easier identified then.
+All CRs with a number of CR counts (column **N_CR**) within the specified range are deleted. This kind of restriction is helpful in identifying publications from early RPYs with a substantial impact (and to suppress the noise of less cited publications). Furthermore, in RPYs with many sparsely cited publications the publications with substantial impact can be easier identified then.
 
 ### Remove by Percent in Year
 
@@ -169,7 +169,7 @@ Restrict the CRs to only those which are in the same cluster(s) (used for disamb
 
 ### Search Cited References
 
-CRs including the search string are sorted to the first positions in the tabular list of CRs. The column Search_Score in the table contains the value 1 for CRs including the search string and the value 0 otherwise. The column Search_Score itself can be used for sorting the data.
+CRs including the search string are sorted to the first positions in the tabular list of CRs. The column **Search_Score** in the table contains the value 1 for CRs including the search string and the value 0 otherwise. The column **Search_Score** itself can be used for sorting the data.
 
 ### Show all Cited References (currently X of Y)
 
@@ -179,7 +179,7 @@ All filters set by the user for filtering CRs are deactivated. If X in the menu 
 
 The **JFreeChart** or **HighCharts** axes are reset to their maximum range.
 
-##	Disambiguation
+###	Disambiguation
 
 The user has the possibility to detect variants of the same CR, cluster them, and merge their occurrences (number of CRs). The clustering uses the table with the list of CRs as input file. Three algorithms are available for clustering cited references: Levenshtein distance, cosine similarity, and Jaccard similarity. Since the clustering (and merging) is a complex process which needs a lot of computer resources, the user is advised to cluster only those data which is of interest. 
 
