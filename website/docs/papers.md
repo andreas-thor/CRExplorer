@@ -9,9 +9,9 @@ pdf: false
 
 * [Philosophy of science viewed through the lense of "Referenced Publication Year Spectrosopy" (RPYS)](https://doi.org/10.1007/s11192-014-1465-6)<br />by K. Brad Wray and Lutz Bornmann ([arXiv](http://arxiv.org/abs/1410.3461))
 
-* [Tracing the origin of a scientific legend by Reference Publication Year Spectroscopy (RPYS): the legend of the Darwin finches ](https://doi.org/10.1007/s11192-013-1200-8)<br />by Werner Marx and Lutz Bornmann ([arXiv](http://arxiv.org/abs/1311.5665))
+* [Tracing the origin of a scientific legend by reference publication year spectroscopy (RPYS): The legend of the Darwin finches ](https://doi.org/10.1007/s11192-013-1200-8)<br />by Werner Marx and Lutz Bornmann ([arXiv](http://arxiv.org/abs/1311.5665))
 
-* [Referenced Publication Years Spectroscopy applied to iMetrics: Scientometrics, Journal of Informetrics, and a relevant subset of JASIST ](https://doi.org/10.1016/j.joi.2013.11.006)<br />by Loet Leydesdorff, Lutz Bornmann, Werner Marx, and Sta&#353;a Milojevic ([arXiv](http://arxiv.org/abs/1309.5706))
+* [Referenced publication years spectroscopy applied to iMetrics: Scientometrics, Journal of Informetrics, and a relevant subset of JASIST ](https://doi.org/10.1016/j.joi.2013.11.006)<br />by Loet Leydesdorff, Lutz Bornmann, Werner Marx, and Sta&#353;a Milojevic ([arXiv](http://arxiv.org/abs/1309.5706))
 
 * [Identifying seminal works most important for research fields: Software for the Reference Publication Year Spectroscopy (RPYS) ](https://doi.org/10.1080/09737766.2016.1177948)<br />by Lutz Bornmann, Andreas Thor, Werner Marx, and Loet Leydesdorff ([figshare](https://dx.doi.org/10.6084/m9.figshare.1422015))
 
