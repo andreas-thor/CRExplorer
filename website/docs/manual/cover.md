@@ -22,7 +22,7 @@ Email: marc@indelen.de
 
 **Content Development**
 
-Lutz Bornmann<br /> Division for Science and Innovation Studies<br />
+Lutz Bornmann<br /> Science Policy and Strategy Department<br />
 Administrative Headquarters of the Max Planck Society<br />
 Hofgartenstr. 8<br /> 80539 Munich, Germany<br /> Email:
 bornmann@gv.mpg.de<br />
@@ -46,5 +46,5 @@ Werner Marx<br /> Max Planck Institute for Solid State Research<br />
 Information Service<br /> Heisenbergstrasse 1<br /> 70506
 Stuttgart, Germany<br /> Email: w.marx@fkf.mpg.de
 
-Rüdiger Mutz<br /> ETH Zürich<br /> Mühlegasse 21<br /> 8001
-Zurich, Switzerland<br /> Email: mutz@gess.ethz.ch<br />
+Rüdiger Mutz<br /> Universität Zürich<br /> Center for Higher Education and Science Studies<br /> Plattenstrasse 54<br /> 8032
+Zurich, Switzerland<br /> Email: ruediger.mutz@uzh.ch<br />
