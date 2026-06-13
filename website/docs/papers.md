@@ -15,7 +15,7 @@ pdf: false
 
 * [Identifying seminal works most important for research fields: Software for the reference publication year spectroscopy (RPYS) ](https://doi.org/10.1080/09737766.2016.1177948)<br />by Lutz Bornmann, Andreas Thor, Werner Marx, and Loet Leydesdorff ([figshare](https://dx.doi.org/10.6084/m9.figshare.1422015))
 
-* [On the origins and the historical roots of the Higgs boson research from a bibliometric perspective ](https://doi.org/10.1140/epjp/i2014-14111-6)<br />by Andreas Barth, Werner Marx, Lutz Bornmann, and Ruediger Mutz ([arXiv](http://arxiv.org/abs/1402.4223))
+* [On the origins and the historical roots of the Higgs boson research from a bibliometric perspective ](https://doi.org/10.1140/epjp/i2014-14111-6)<br />by Andreas Barth, Werner Marx, Lutz Bornmann, and Rüdiger Mutz ([arXiv](http://arxiv.org/abs/1402.4223))
 
 * [Identification of long-term concept-symbols among citations: Can documents be clustered in terms of common intellectual histories?](https://doi.org/10.1002/asi.23769)<br />by Jordan A. Comins and Loet Leydesdorff ([arXiv](http://arxiv.org/abs/1601.00288))
 
