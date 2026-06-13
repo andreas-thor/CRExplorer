@@ -16,15 +16,15 @@ To produce the figure, we downloaded 3,244 publications from the Web of Science 
 
 <figure style="display: table; float: left;">
     <a href="fig1.png"><img src="fig1.png" width="350px" alt="Figure 1"></a>
-    <figcaption style="display: table-caption; caption-side: bottom;">
+    <figcaption style="display: table-caption; caption-side: bottom;"><br>
         <i>Figure 1: Citation classics concerning the discovery of the <i>Greenhouse Effect</i> and appearing as peaks in the spectrogram provided by the CRExplorer.</i>
     </figcaption>
 </figure>
 
 
-The first three pronounced peaks go back to the following cited publications:
+<br>The first three pronounced peaks go back to the following cited publications:
 
-* Fourier's 1827 paper, entitled *Mémoire sur les températures du globe terrestre et des espaces planétaires*, can be seen as the first decisive publication. Fourier found that the earth is warmer than expected. He attributed this to the phenomenon that the earth's atmosphere is transparent for solar radiation but not for the infrared radiation from the ground. Thus, he discovered the (natural) greenhouse effect.
+* Fourier's (1827) paper, entitled *Mémoire sur les températures du globe terrestre et des espaces planétaires*, can be seen as the first decisive publication. Fourier found that the earth is warmer than expected. He attributed this to the phenomenon that the earth's atmosphere is transparent for solar radiation but not for the infrared radiation from the ground. Thus, he discovered the (natural) greenhouse effect.
 * Tyndall's (1861) study, entitled *On the absorption and radiation of heat by gases and vapours*, and on the physical connexion of radiation, absorption, and conduction, proved that the earth's atmosphere has a greenhouse effect. He concluded that water vapour is the principal gas controlling air temperature.
 * Arrhenius (1896, entitled *On the influence of carbonic acid in the air upon the temperature of the ground*) published the first study with a calculation of how changes in the levels of carbon dioxide in the atmosphere can alter the surface temperature through the greenhouse effect.
 
