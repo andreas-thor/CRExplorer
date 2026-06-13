@@ -35,8 +35,8 @@ DB_URL is to be used as documented at [https://jdbc.postgresql.org/documentation
 Another possibility is to draw one of the following three types of samples from the population (see the examples and suggestions in [Haunschild et al., 2020](references.md#Haunschild2020)):
 
 * **Random Sampling**: The number of CRs included by the user in the field with white background are randomly selected. For example, if the user wants to import 100 CRs out of 400 overall CRs, CRExplorer randomly selects 25% of all CRs.
-* **Systematic sampling**: The number of CRs filled in by the user is used to select the sample uniformly distributed over the list of all CRs of the citing publications. For example, if the user wants to import 100 CRs out of 400 overall CRs, CRExplorer systematically selects 25% of the list of all CRs by picking the 1st, 5th, 9th, and so on CR.
-* **Cluster sampling**: From the years which are in-between the minimum and maximum publication years (see above) one citing year is randomly selected. Then, all CRs in the papers published in this year are selected as sample and imported. The results of [Bornmann and Mutz (2015)](references.md#Bornmann2015) reveal that the restriction on all CRs from a recent citing year leads to very similar results as the consideration of all CRs from several citing years in references analysis. Note that the selection of one citing year in CRExplorer implicates that citation distributions over many citing years cannot be analyzed (see section 3.2).
+* **Systematic Sampling**: The number of CRs filled in by the user is used to select the sample uniformly distributed over the list of all CRs of the citing publications. For example, if the user wants to import 100 CRs out of 400 overall CRs, CRExplorer systematically selects 25% of the list of all CRs by picking the 1st, 5th, 9th, and so on CR.
+* **Cluster Sampling**: From the years which are in-between the minimum and maximum publication years (see above) one citing year is randomly selected. Then, all CRs in the papers published in this year are selected as sample and imported. The results of [Bornmann and Mutz (2015)](references.md#Bornmann2015) reveal that the restriction on all CRs from a recent citing year leads to very similar results as the consideration of all CRs from several citing years in references analysis. Note that the selection of one citing year in CRExplorer implicates that citation distributions over many citing years cannot be analyzed (see section 3.2).
 
 Of course, the three sampling options can be combined with the selection of citing and/or cited years. Furthermore, many samples instead of one sample can be drawn from the population to optimize the RPYS results ([Haunschild et al., 2020](references.md#Haunschild2020)).
 
@@ -71,9 +71,9 @@ Note that the export can only contain data from the import, when one transfers f
 
 **CSV (Cited References)**: A table with CRs data is saved as a csv-file.
 
-**CSV (Citing publications)**: A table with data on the citing publications is saved as csv-file.
+**CSV (Citing Publications)**: A table with data on the citing publications is saved as csv-file.
 
-**CSV (Cited References + Citing publications)**: A table with both CRs data and data on the citing publications is saved as a csv-file.
+**CSV (Cited References + Citing Publications)**: A table with both CRs data and data on the citing publications is saved as a csv-file.
 
 
 ### Settings
