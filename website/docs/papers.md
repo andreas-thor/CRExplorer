@@ -29,8 +29,8 @@ pdf: false
 
 * [ Identification of seminal works that built the foundation for functional magnetic resonance imaging studies of taste and food ](https://www.researchgate.net/publication/320296535_Identification_of_seminal_works_that_built_the_foundation_for_functional_magnetic_resonance_imaging_studies_of_taste_and_food) <br />by Andy Wai Kan Yeung
 
-* [ Reference Publication Year Spectroscopy (RPYS) with publications in the area of academic efficiency studies: what are the historical roots of this research topic? ](https://doi.org/10.1080/00036846.2017.1363865) <br />by Mehdi Rhaiem and Lutz Bornmann
+* [ Reference publication year spectroscopy (RPYS) with publications in the area of academic efficiency studies: What are the historical roots of this research topic? ](https://doi.org/10.1080/00036846.2017.1363865) <br />by Mehdi Rhaiem and Lutz Bornmann
 
 * [ "Sleeping beauty" and her restless sleep: Charles Dotter and the birth of interventional radiology ](https://doi.org/10.1007/s11192-016-1859-8) <br />by Philippe Gorry and Pascal Ragouet
 
-* [ The Historical Roots of Recent Contributions to Ecological Economics: A Note Using Reference Publication Year Spectroscopy ](https://ssrn.com/abstract=3106759) <br />by Matthieu Ballandonne
+* [ The historical roots of recent contributions to ecological economics: A note using reference publication year spectroscopy ](https://ssrn.com/abstract=3106759) <br />by Matthieu Ballandonne
