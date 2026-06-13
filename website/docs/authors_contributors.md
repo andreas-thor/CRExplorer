@@ -41,13 +41,10 @@ R.Haunschild@fkf.mpg.de<br />
 
 
 Loet Leydesdorff<br /> Amsterdam School of Communication Research
-(ASCoR)<br /> University of Amsterdam<br /> P.O. Box 15793<br />
-1001 NG Amsterdam, The Netherlands
-
+(ASCoR)<br /> University of Amsterdam
 
 Werner Marx<br /> Max Planck Institute for Solid State Research<br />
 Information Service<br /> Heisenbergstrasse 1<br /> 70506
 Stuttgart, Germany<br /> Email: w.marx@fkf.mpg.de
 
-Rüdiger Mutz<br /> Universität Zürich<br /> Center for Higher Education Studies /> Mühlegasse 21<br /> 8032
-Zurich, Switzerland<br /> Email: mutz@gess.ethz.ch<br />
+Rüdiger Mutz<br /> Universität Zürich<br /> Center for Higher Education and Science Studies<br /> Mühlegasse 21<br /> 8032 Zurich, Switzerland<br /> Email: ruediger.mutz@uzh.ch
