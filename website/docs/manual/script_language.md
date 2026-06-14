@@ -1,6 +1,6 @@
 # Script Language
 
-CRExplorer can be operated by using the menus (see section 3) or by using a tailored script language (see the explanations and examples in [Haunschild et al., 2020](references.md#Haunschild2020)). If a user wants to run a user-defined script name “myscript.crs”, it is necessary that the program is downloaded and started from the command line via the following command (Windows users might replace ``java`` by ``javaw``):
+CRExplorer can be operated by using the menus (see section 3) or by using a tailored script language (see the explanations and examples in [Haunschild et al., 2020](https://doi.org/10.1177/0165551519837175)). If a user wants to run a user-defined script name “myscript.crs”, it is necessary that the program is downloaded and started from the command line via the following command (Windows users might replace ``java`` by ``javaw``):
 
 ```
 java -cp crexplorer.jar cre.Script myscript.crs (or java -cp crexplorer.jar cre.Script –db… in the database mode)
@@ -130,7 +130,7 @@ set (
 
 ## Loops
 
-Users can expand the capabilities of CRExplorer by writing extensions ([Haunschild et al., 2020](references.md#Haunschild2020)). One CRExplorer extension is available at [https://github.com/andreas-thor/cre/blob/master/crs/packages/Loop.crs](). This extension simplifies loop programming in the CRExplorer script language by introducing the forEach und forEachUnion operators. The number of cycles is provided as the value of count or as range (from, to). The functions differ in their behavior after each loop cycle: forEach performs no further action whereas forEachUnion merges the CR data of each cycle to a final CR dataset.
+Users can expand the capabilities of CRExplorer by writing extensions ([Haunschild et al., 2020](https://doi.org/10.1177/0165551519837175)). One CRExplorer extension is available at [https://github.com/andreas-thor/cre/blob/master/crs/packages/Loop.crs](). This extension simplifies loop programming in the CRExplorer script language by introducing the forEach und forEachUnion operators. The number of cycles is provided as the value of count or as range (from, to). The functions differ in their behavior after each loop cycle: forEach performs no further action whereas forEachUnion merges the CR data of each cycle to a final CR dataset.
 
 ```
 forEach (
@@ -150,4 +150,4 @@ forEachUnion (
 
 If the ``count`` parameter is provided, the script is executed ``count`` times. If the from and to parameters are provided, the script is executed (``to-from+1``) times and the script can use the internal variable index that contains the current loop number (``from, from+1, ..., to``).
 
-The loop operators are especially useful for sampling the same publication set multiple times and merging the results. An application of the script language with the three different sampling techniques for the publication set of climate change research (more than 200,000 publications and approximately 11 million CRs) has been performed by ([Haunschild et al., 2020](references.md#Haunschild2020)).
+The loop operators are especially useful for sampling the same publication set multiple times and merging the results. An application of the script language with the three different sampling techniques for the publication set of climate change research (more than 200,000 publications and approximately 11 million CRs) has been performed by ([https://doi.org/10.1177/0165551519837175](references.md#Haunschild2020)).
