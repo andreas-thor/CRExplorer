@@ -150,4 +150,4 @@ forEachUnion (
 
 If the ``count`` parameter is provided, the script is executed ``count`` times. If the from and to parameters are provided, the script is executed (``to-from+1``) times and the script can use the internal variable index that contains the current loop number (``from, from+1, ..., to``).
 
-The loop operators are especially useful for sampling the same publication set multiple times and merging the results. An application of the script language with the three different sampling techniques for the publication set of climate change research (more than 200,000 publications and approximately 11 million CRs) has been performed by ([https://doi.org/10.1177/0165551519837175](references.md#Haunschild2020)).
+The loop operators are especially useful for sampling the same publication set multiple times and merging the results. An application of the script language with the three different sampling techniques for the publication set of climate change research (more than 200,000 publications and approximately 11 million CRs) has been performed by ([Haunschild et al., 2020](https://doi.org/10.1177/0165551519837175)).
