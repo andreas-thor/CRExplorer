@@ -24,9 +24,7 @@ where ``myscript.crs`` should be replaced by the user's script filename.
 
 ## Releases
 
-CRExplorer version 2.1 was released on June XX, 2026. This version includes the following new features and improvements:
-
-* 
+CRExplorer version 2.1 was released on June XX, 2026.
 
 CRExplorer version 1.9 was released on July 16, 2018. This version includes the following new features and improvements:
 
