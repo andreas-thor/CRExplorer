@@ -400,7 +400,7 @@
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
 <h1 id="script-language"><span class="enumerate-headings-plugin enumerate-heading-plugin">5.</span> Script Language</h1>
-<p>CRExplorer can be operated by using the menus (see section 3) or by using a tailored script language (see the explanations and examples in <a href="../references/#Haunschild2020">Haunschild et al., 2020</a>). If a user wants to run a user-defined script name “myscript.crs”, it is necessary that the program is downloaded and started from the command line via the following command (Windows users might replace <code>java</code> by <code>javaw</code>):</p>
+<p>CRExplorer can be operated by using the menus (see section 3) or by using a tailored script language (see the explanations and examples in <a href="https://doi.org/10.1177/0165551519837175">Haunschild et al., 2020</a>). If a user wants to run a user-defined script name “myscript.crs”, it is necessary that the program is downloaded and started from the command line via the following command (Windows users might replace <code>java</code> by <code>javaw</code>):</p>
 <div class="highlight"><pre><span></span><code>java -cp crexplorer.jar cre.Script myscript.crs (or java -cp crexplorer.jar cre.Script –db… in the database mode)
 </code></pre></div>
 <p>The script language allows the application of important program functions, which are exemplified as follows:</p>
@@ -480,7 +480,7 @@ MISSING_IS_EQUAL: true or false
   median_range: 2)
 </code></pre></div>
 <h2 id="loops"><span class="enumerate-headings-plugin enumerate-heading-plugin">5.11</span> Loops</h2>
-<p>Users can expand the capabilities of CRExplorer by writing extensions (<a href="../references/#Haunschild2020">Haunschild et al., 2020</a>). One CRExplorer extension is available at <a href="">https://github.com/andreas-thor/cre/blob/master/crs/packages/Loop.crs</a>. This extension simplifies loop programming in the CRExplorer script language by introducing the forEach und forEachUnion operators. The number of cycles is provided as the value of count or as range (from, to). The functions differ in their behavior after each loop cycle: forEach performs no further action whereas forEachUnion merges the CR data of each cycle to a final CR dataset.</p>
+<p>Users can expand the capabilities of CRExplorer by writing extensions (<a href="https://doi.org/10.1177/0165551519837175">Haunschild et al., 2020</a>). One CRExplorer extension is available at <a href="">https://github.com/andreas-thor/cre/blob/master/crs/packages/Loop.crs</a>. This extension simplifies loop programming in the CRExplorer script language by introducing the forEach und forEachUnion operators. The number of cycles is provided as the value of count or as range (from, to). The functions differ in their behavior after each loop cycle: forEach performs no further action whereas forEachUnion merges the CR data of each cycle to a final CR dataset.</p>
 <div class="highlight"><pre><span></span><code>forEach (
   count: 10 or 
   from: 1, to: 10) {
@@ -496,7 +496,7 @@ forEachUnion (
 }
 </code></pre></div>
 <p>If the <code>count</code> parameter is provided, the script is executed <code>count</code> times. If the from and to parameters are provided, the script is executed (<code>to-from+1</code>) times and the script can use the internal variable index that contains the current loop number (<code>from, from+1, ..., to</code>).</p>
-<p>The loop operators are especially useful for sampling the same publication set multiple times and merging the results. An application of the script language with the three different sampling techniques for the publication set of climate change research (more than 200,000 publications and approximately 11 million CRs) has been performed by (<a href="../references/#Haunschild2020">Haunschild et al., 2020</a>).</p>
+<p>The loop operators are especially useful for sampling the same publication set multiple times and merging the results. An application of the script language with the three different sampling techniques for the publication set of climate change research (more than 200,000 publications and approximately 11 million CRs) has been performed by (<a href="../references/#Haunschild2020">https://doi.org/10.1177/0165551519837175</a>).</p>
 </article>
 </div>
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
