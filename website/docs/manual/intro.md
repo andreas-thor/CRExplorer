@@ -1,7 +1,7 @@
 
 # Introduction 
 
-CRExplorer can be used to analyse the cited references (CRs) data in a publication set retrieved from Web of Science (WoS) or other data sources. The program produces empirical results in a graphical or table format that can be included in papers or presentations ([Thor et al., 2016](https://doi.org/10.1016/j.joi.2016.02.005), [2016](https://doi.org/10.1007/s11192-016-2082-3)). It is written in the Java programming language and, thus, runs on most hardware and operating system platforms. A Java variant with JavaFX (e.g., Oracle Java) is needed. The minimum required Java version is 21. The program can be used free of charge.
+CRExplorer can be used to analyse the cited references (CRs) data in a publication set retrieved from Web of Science (WoS) or other data sources. The program produces empirical results in a graphical or table format that can be included in papers or presentations Thor et al. ([2016](https://doi.org/10.1016/j.joi.2016.02.005), [2016](https://doi.org/10.1007/s11192-016-2082-3)). It is written in the Java programming language and, thus, runs on most hardware and operating system platforms. A Java variant with JavaFX (e.g., Oracle Java) is needed. The minimum required Java version is 21. The program can be used free of charge.
 
 
 The program can be started from the command line. The user should go to the folder where the downloaded file ``crexplorer.jar`` is located and run:
