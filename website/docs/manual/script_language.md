@@ -61,7 +61,7 @@ saveFile (
 )
 ```
 
-## Export data in different file formats 
+## Export data in different File Formats 
 
 See [Section Options-File-Export](options.md#export)
 
@@ -85,7 +85,7 @@ removeCR (
 )
 ```
 
-## Retain citing publications within PY
+## Retain Citing Publications within PY
 
 
 See [Section Options-Edit-Retain Publications within Citing Publication Year](options.md#retain-publications-within-citing-publication-year)
