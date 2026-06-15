@@ -1,7 +1,7 @@
 # User Interface
 
 
-The screen of CRExplorer has two parts (see Figure 2): **data visualization** on the left side of the screen and **table view** on the right side. The **status bar** informs continuously about the number of (shown) cited references (CRs), the number of clusters, and the range of reference publication years (RPYs) (cited publications) and publication years (PYs) (citing publications).
+The screen of CRExplorer has two parts (see Figure 1): **data visualization** on the left side of the screen and **table view** on the right side. The **status bar** informs continuously about the number of (shown) cited references (CRs), the number of clusters, and the range of reference publication years (RPYs) (cited publications) and publication years (PYs) (citing publications).
 
  
 ![Screenshot of CRExplorer](user_interface.png)
