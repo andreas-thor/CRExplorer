@@ -34,7 +34,7 @@ ID | Reference variant | N
 70088 | ARRHENIUS S, 1996, PHIL MAG J SCI   APR, P237 | 1
 80494 | ARRHENIUS S, 1896, INFLUENCE CARBONIC A | 1
 /// caption 
-Table 1. Reference variants of the Arrhenius (1896) paper with the number of occurrences.
+Table 1. Reference variants of the [Arrhenius (1896)](https://doi.org/10.1080/14786449608620846) paper with the number of occurrences.
 ///
 
 
