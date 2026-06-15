@@ -1,8 +1,8 @@
-# A practically oriented short guide to use CRExplorer
+# A practically oriented short Guide to use CRExplorer
 
 The following hints and rules of thumb may be helpful for the use of CRExplorer.
 
-## Establishing a publication set
+## Establishing a Publication Set
 
 The publication set to be analysed may comprise the publications of specific authors, journals, research fields or any other publication corpora of interest. Based on our experience hitherto, we recommend that the size of the relevant publication set should not be much less than 100 papers for a meaningful cited references (CRs) analysis. On the other hand, a typical research field normally comprises much larger publication sets. Here, the size of the publication set used for the CRs analysis is limited by more practical considerations; memory requirements increase with the number of CRs.
 
@@ -45,7 +45,7 @@ As an example for reference variants in the data, we show in Table 1 a list of C
 
 If manual cleaning-up is applied, we suggest ordering the table items by the number of references per cluster (**ClusterSize**). In a first step, the items of larger clusters (which usually comprise the majority of CRs) should be checked and cleaned-up. If the dataset contains a manageable number of clusters and the user needs a (more or less) completely cleaned-up dataset, clusters with a smaller cluster size (or even with cluster size one) should also be investigated. The items with cluster size one can best be checked after ordering the references alphabetically (second ordering criterion in the program after cluster size). If the referenced authors in the dataset are cited more or less correctly, the variants of the CR to be checked appear one after another. In order to cope with a large number of CRs when using CRExplorer, a substantial cut may be necessary to master the flood of references extracted from the publication set. In the case of very large reference sets it is helpful to exclude all references with reference count one. These references are usually the majority of the CR items within a given publication set, but are only a small fraction of the total of CR counts. These references should be excluded before one checks for reference variants and inspects the spectrogram. However, the best strategy for manual cleaning depends on the publication set and the intended analysis.
 
-## Inspection of the spectrogram
+## Inspection of the Spectrogram
 
 In many publication sets, the references to be analysed have been published over a long period with quite different publication and citation cultures: the average number of references per RPY increases substantially in the course of time. We may distinguish between the period of “little science” (prior to 1950) and the period of “big science” (since 1950) ([Marx, 2011](https://doi.org/10.1002/asi.21479 )). In particular, the reference counts before the RPY 1900 are comparatively low. Whereas the average (and maximum) reference count (**Number of Cited References**) increases with the passage of time, the share of reference counts accounting for a specific reference in a single year (**Percent in Year**) tends to decrease. This is the result of the continuously increasing number of papers and CRs, respectively, leading to increasingly less pronounced peaks in the spectrogram.
 
@@ -57,7 +57,7 @@ For the identification of the peaks and the corresponding top references, both t
 
 If one would like to analyse the recent evolution of a research field and focus on the more recent decades of the RPY, the spectrogram is less informative. The peaks are less pronounced, because each reference, although highly cited, comprises an increasingly smaller share of the reference counts of a RPY. This kind of analysis can best be performed via the table of references ordered concurrently by the RPY (**Reference Publication Year**) and the reference counts (**Number of Cited References**) (with the most CRs at the top).
 
-## The RPYS-CO approach
+## The RPYS-CO Approach
 
 CRExplorer allows the restriction of the CRs to only those which are co-cited with at least one selected CR using the menu items **Edit – Retain Publications citing Selected Cited References**. This restriction takes advantage of the fact that concurrently cited (co-cited) papers are more or less closely related to each other. One can select the citation environment of a specific reference (or of two or even more references) in the form of all co-cited references and analyse these references applying RPYS-CO. The specific reference should be a prominent and seminal work which is used as a kind of marker or tracer reference for a specific topic in a field. We assume that papers which cite the selected reference(s) are potential candidates for citing also many other references relevant in a specific historical context.
 
