@@ -56,7 +56,7 @@ CRExplorer version 1.7.5 was released on May 31, 2017. This version includes the
 
 CRExplorer version 1.6.8 was released on August 29, 2016. This version includes the following new features and improvements:
 
-* **Co-Citation**: If the user marks at least one cited reference in the table and selects "Data" – "Retain Publications Citing Selected Cited References", all cited references which are co-cited with the marked cited reference in citing publications are kept (all other cited references are dropped). [Marx et al., 2017](http://dx.doi.org/10.1007/s11192-016-2177-x) provide a use case.
+* **Co-Citation**: If the user marks at least one cited reference in the table and selects "Data" – "Retain Publications Citing Selected Cited References", all cited references which are co-cited with the marked cited reference in citing publications are kept (all other cited references are dropped). [Marx et al. (2017)](http://dx.doi.org/10.1007/s11192-016-2177-x) provide a use case.
 * **Performance**: Performance improvements (e.g., for data clustering) using multiple threads on multi-core machines.
 * **Java 8**: CRExplorer requires a Java 8 run-time.
 
