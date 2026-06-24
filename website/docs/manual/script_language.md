@@ -1,6 +1,6 @@
 # Script Language
 
-CRExplorer can be operated by using the menus (see section 3) or by using a tailored script language (see the explanations and examples in [Haunschild et al., 2020](https://doi.org/10.1177/0165551519837175)). If a user wants to run a user-defined script name “myscript.crs”, it is necessary that the program is downloaded and started from the command line via the following command (Windows users might replace ``java`` by ``javaw``):
+CRExplorer can be operated by using the menus (see [Section User Interface](user_interface.md)) or by using a tailored script language (see the explanations and examples in [Haunschild et al., 2020](https://doi.org/10.1177/0165551519837175)). If a user wants to run a user-defined script name “myscript.crs”, it is necessary that the program is started from the command line via the following command (Windows users might replace ``java`` by ``javaw``):
 
 ```
 java -cp crexplorer.jar cre.Script myscript.crs (or java -cp crexplorer.jar cre.Script –db… in the database mode)
@@ -150,4 +150,4 @@ forEachUnion (
 
 If the ``count`` parameter is provided, the script is executed ``count`` times. If the from and to parameters are provided, the script is executed (``to-from+1``) times and the script can use the internal variable index that contains the current loop number (``from, from+1, ..., to``).
 
-The loop operators are especially useful for sampling the same publication set multiple times and merging the results. An application of the script language with the three different sampling techniques for the publication set of climate change research (more than 200,000 publications and approximately 11 million CRs) has been performed by ([Haunschild et al., 2020](https://doi.org/10.1177/0165551519837175)).
+The loop operators are especially useful for sampling the same publication set multiple times and merging the results. An application of the script language with the three different sampling techniques for the publication set of climate change research (more than 200,000 publications and approximately 11 million CRs) has been performed by [Haunschild et al. (2020](https://doi.org/10.1177/0165551519837175)).
