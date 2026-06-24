@@ -10,7 +10,7 @@ CRExplorer uses data from the Web of Science (Clarivate) or other sources as inp
 
 ## Example Study: Greenhouse Effect
 
-RPYS was developed by Werner Marx, who used it for the first time in the field of meteorology ([see his study on page 11](https://github.com/andreas-thor/CRExplorer/blob/main/documentation/papers/RMetS-Newsletter-2010.pdf)). For demonstration of the potential of the method, Figure 1 shows the citation classics concerning the discovery of the greenhouse effect, a basic component of climate change. 
+RPYS was developed by Werner Marx, who used it for the first time in the field of meteorology ([see his study](https://github.com/andreas-thor/CRExplorer/blob/main/documentation/papers/RMetS-Newsletter-2010.pdf)). For demonstration of the potential of the method, Figure 1 shows the citation classics concerning the discovery of the greenhouse effect, a basic component of climate change. 
 
 To produce the figure, we downloaded 3,244 publications from the Web of Science containing the term *Greenhouse Effect* in the title or in the abstract or as a keyword. These papers contain 81,126 CRs to publications published over 379 RPYs. The graph produced by the CRExplorer shows three distinct peaks during the 19<sup>th</sup> century and a few others during the first half of the 20<sup>th</sup> century.
 
