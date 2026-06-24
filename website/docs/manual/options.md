@@ -67,7 +67,7 @@ The program saves the dataset in the internal file format “*.cre” and asks f
 
 Note that the export can only contain data from the import, when one transfers from Scopus to WoS. WoS files, for example, only consider the first authors while Scopus files include all authors in the CR field. If one transfers from WoS to Scopus, not all information can be provided, since this information is not available in downloads from WoS.
 
-**CSV (Graph)**: The graph data are exported for further processing in programs such as Excel, R, Stata, or GnuPlot. The export does not only include the sum of CRs per RPY (as presented in CRExplorer), but also the average. We provide Stata [plotrpys](https://EconPapers.repec.org/RePEc:boc:bocode:s458378) and R (BibPlots) commands which produce monochrome and colored graphs. Both can be found in SSC Archive (Stata) and CRAN (Comprehensive R Archive Network, in the case of R), respectively.
+**CSV (Graph)**: The graph data are exported for further processing in programs such as Excel, R, Stata, or GnuPlot. The export does not only include the sum of CRs per RPY (as presented in CRExplorer), but also the average. We provided the Stata command [plotrpys](https://EconPapers.repec.org/RePEc:boc:bocode:s458378) and the R package [BibPlots](https://cran.r-project.org/web/packages/BibPlots/index.html) which produce monochrome and colored graphs. Both can be found in SSC Archive (Stata) and CRAN (Comprehensive R Archive Network, in the case of R), respectively.
 
 **CSV (Cited References)**: A table with CRs data is saved as a csv-file.
 
