@@ -24,10 +24,12 @@ where ``myscript.crs`` should be replaced by the user's script filename.
 
 ## Releases
 
+CRExplorer version 2.1 was released on June XX, 2026.
+
 CRExplorer version 1.9 was released on July 16, 2018. This version includes the following new features and improvements:
 
 * **CrossRef**: CRExplorer opens one or several datasets from [CrossRef](https://www.crossref.org/). In addition, cited references data can be directly imported into the CRExplorer by using the search interface for CrossRef data.
-* **Drawing several samples**: Since the introduction of the reference publication year spectroscopy (RPYS) method and the corresponding program CRExplorer, many studies have been published revealing the historical roots of topics, fields, and researchers. The application of the method was restricted up to now by the available memory of the computer used for running the CRExplorer. Thus, many users could not perform RPYS for broader research fields or topics. Now, the script language of the CRExplorer can be used to draw many samples from the full population dataset. First empirical explorations (see [The introduction of RPYS sampling using the example of climate change research](https://arxiv.org/abs/1807.04673)) have shown, that the RPYS based on many samples can lead to very similar results as the results based on the full population dataset.
+* **Drawing several samples**: Since the introduction of the reference publication year spectroscopy (RPYS) method and the corresponding program CRExplorer, many studies have been published revealing the historical roots of topics, fields, and researchers. The application of the method was restricted up to now by the available memory of the computer used for running the CRExplorer. Thus, many users could not perform RPYS for broader research fields or topics. Now, the script language of the CRExplorer can be used to draw many samples from the full population dataset. First empirical explorations (see [Haunschild et al., 2020](https://doi.org/10.1177/0165551519837175)) have shown, that the RPYS based on many samples can lead to very similar results as the results based on the full population dataset.
 
 CRExplorer version 1.8.2 was released on February 1, 2018. This version includes the following new features and improvements:
 
@@ -54,11 +56,11 @@ CRExplorer version 1.7.5 was released on May 31, 2017. This version includes the
 
 CRExplorer version 1.6.8 was released on August 29, 2016. This version includes the following new features and improvements:
 
-* **Co-Citation**: If the user marks at least one cited reference in the table and selects "Data" – "Retain Publications Citing Selected Cited References", all cited references which are co-cited with the marked cited reference in citing publications are kept (all other cited references are dropped). See [Which early works are cited most frequently in climate change research literature? A bibliometric approach based on Reference Publication Year Spectroscopy](http://arxiv.org/abs/1608.07960) for a first use case.
+* **Co-Citation**: If the user marks at least one cited reference in the table and selects "Data" – "Retain Publications Citing Selected Cited References", all cited references which are co-cited with the marked cited reference in citing publications are kept (all other cited references are dropped). [Marx et al. (2017)](http://dx.doi.org/10.1007/s11192-016-2177-x) provide a use case.
 * **Performance**: Performance improvements (e.g., for data clustering) using multiple threads on multi-core machines.
 * **Java 8**: CRExplorer requires a Java 8 run-time.
 
-CRExplorer version 1.6.7 was released on July 5, 2016. This version includes the following new features and improvements (see [New features of CRExplorer for a detailed description](http://arxiv.org/abs/1607.01266)):
+CRExplorer version 1.6.7 was released on July 5, 2016. This version includes the following new features and improvements (see [Thor et al., 2016](https://doi.org/10.1007/s11192-016-2082-3)):
 
 * **Scopus**: Using "File" – "Import" – "Scopus", CRExplorer reads files from Scopus. The file format "CSV" (including citations, abstracts and references) should be chosen in Scopus for downloading records.
 * **Export facilities**: Using "File" – "Export" – "Scopus", CRExplorer exports files in the Scopus format. Using "File" – "Export" – "Web of Science", CRExplorer exports files in the Web of Science format. These files can be imported in other bibliometric programs (e.g. VOSviewer).

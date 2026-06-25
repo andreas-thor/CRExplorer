@@ -15,8 +15,6 @@ Zschochersche Str. 69<br />
 04299 Leipzig, Germany<br />
 Email: andreas.thor@htwk-leipzig.de
 
-
-
 Marc Indelen<br/>
 Sudetenstr. 31<br/>
 85586 Poing, Germany<br/>
@@ -27,7 +25,7 @@ Questions? Bugs? Feature wishes? <a href='mailto:andreas.thor@htwk-leipzig.de?su
 
 ## Content Development
 
-Lutz Bornmann<br /> Division for Science and Innovation Studies<br />
+Lutz Bornmann<br /> Science Policy and Strategy Department<br />
 Administrative Headquarters of the Max Planck Society<br />
 Hofgartenstr. 8<br /> 80539 Munich, Germany<br /> Email:
 bornmann@gv.mpg.de<br />
@@ -43,13 +41,10 @@ R.Haunschild@fkf.mpg.de<br />
 
 
 Loet Leydesdorff<br /> Amsterdam School of Communication Research
-(ASCoR)<br /> University of Amsterdam<br /> P.O. Box 15793<br />
-1001 NG Amsterdam, The Netherlands<br /> Email: loet@leydesdorff.net
-
+(ASCoR)<br /> University of Amsterdam
 
 Werner Marx<br /> Max Planck Institute for Solid State Research<br />
 Information Service<br /> Heisenbergstrasse 1<br /> 70506
 Stuttgart, Germany<br /> Email: w.marx@fkf.mpg.de
 
-Rüdiger Mutz<br /> ETH Zürich<br /> Mühlegasse 21<br /> 8001
-Zurich, Switzerland<br /> Email: mutz@gess.ethz.ch<br />
+Rüdiger Mutz<br /> Universität Zürich<br /> Center for Higher Education and Science Studies<br /> Mühlegasse 21<br /> 8032 Zurich, Switzerland<br /> Email: ruediger.mutz@uzh.ch
