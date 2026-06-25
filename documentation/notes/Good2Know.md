@@ -1,6 +1,8 @@
 
 
 
+
+
 ## mit sqlite arbeiten
 
 Programm "DBBrowser for SQLite" verwenden
