@@ -13,7 +13,6 @@ nav:
     - "Options Panel": manual/options.md
     - "Script Language": manual/script_language.md
     - "Practical Short Guide": manual/short_guide.md
-    - "References": manual/references.md
   - "Papers": papers.md
   - "Authors & Contributors": authors_contributors.md
   - "Legal Notice": legal_notice.md
