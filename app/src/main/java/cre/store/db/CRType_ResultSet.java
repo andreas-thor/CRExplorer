@@ -83,6 +83,8 @@ class CRType_ResultSet implements Iterator<CRType_DB> {
 
 			cr.setPERC_YR(readDouble("CR_PERC_YR", 0d));
 			cr.setPERC_ALL(readDouble("CR_PERC_ALL", 0d));
+			cr.setCP_IN(readDouble("CR_CP_IN", 0d));
+			cr.setCP_EX(readDouble("CR_CP_EX", 0d));
 			cr.setN_PYEARS(readInt("CR_N_PYEARS", 0));
 			cr.setPYEAR_PERC(readDouble("CR_PYEAR_PERC", 0d));
 

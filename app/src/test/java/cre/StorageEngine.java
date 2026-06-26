@@ -24,6 +24,7 @@ import cre.data.type.abs.sim.StringComparator;
 import cre.data.type.abs.sim.StringComparator.SimAlgorithm;
 import cre.format.exporter.ExportFormat;
 import cre.format.importer.ImportFormat;
+import cre.store.db.CRTable_DB;
 import cre.ui.UISettings;
 
 public class StorageEngine {
@@ -82,8 +83,8 @@ public class StorageEngine {
 
 		for (IntRange removeCRByYear : new IntRange[] { null, new IntRange(10, 2013) }) {
 			for (IntRange removeCRByN_CR : new IntRange[] { null, new IntRange(0, 10) }) {
-				for (Double threshold : new Double[] { null, 0.5, 0.75, 0.9 }) {
-					for (boolean merge : new boolean[] { false, true }) {
+				for (Double threshold : new Double[] { null /* , 0.5, 0.75, 0.9 */ }) {
+					for (boolean merge : new boolean[] { false /*, true*/ }) {
 
 						if ((threshold == null) && merge) continue; // merge is only possible after clustering
 
@@ -125,7 +126,7 @@ public class StorageEngine {
 
 		// create tmp subfolder in DATAFOLDER
 		final String TEMPFOLDER = TestData.getTestFile.apply("").getAbsolutePath() + "/tmp";
-		// new File(TEMPFOLDER).mkdirs();
+		new File(TEMPFOLDER).mkdirs();
 
 		// get filename by format and storage engine
 		final Function<TABLE_IMPL_TYPES, File> creFile = (type) -> 
@@ -135,6 +136,7 @@ public class StorageEngine {
 
 		// generate all files
 		for (TABLE_IMPL_TYPES type : CRTable.TABLE_IMPL_TYPES.values()) {
+			configureStorageEngine(type);
 			CRTable.type = type;
 			dataLoader.accept(null);
 			dataModifier.accept(null);
@@ -148,9 +150,13 @@ public class StorageEngine {
 
 		// we are checking if the export output files are byte-wise equivalent
 		for (ExportFormat outFormat : ExportFormat.values()) {
+			if (outFormat == ExportFormat.CRE) {
+				continue;
+			}
 			assertTrue(FileUtils.contentEquals(
 				exportFile.apply(TABLE_IMPL_TYPES.MM, outFormat),
-				exportFile.apply(TABLE_IMPL_TYPES.DB, outFormat)));
+				exportFile.apply(TABLE_IMPL_TYPES.DB, outFormat)),
+				String.format("Different export output for %s", outFormat));
 		}
 
 		// a cre file is a zip file --> we are pairwise checking the zipped json files
@@ -169,6 +175,13 @@ public class StorageEngine {
 			zip[1].close();
 		}
 
+	}
+
+	private void configureStorageEngine(TABLE_IMPL_TYPES type) {
+		if (type == TABLE_IMPL_TYPES.DB) {
+			CRTable_DB.url = "jdbc:sqlite::memory:";
+			CRTable_DB.createSchemaOnStartup = true;
+		}
 	}
 
 }

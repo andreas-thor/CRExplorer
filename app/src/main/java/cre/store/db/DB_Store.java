@@ -81,7 +81,7 @@ class DB_Store {
 	
 	
 	
-	void updateCRIndicators (int crId, int N_PYEARS, double PYEAR_PERC, double PERC_YR, double PERC_ALL, int[] N_PCT, int[] N_PCT_AboveAverage, String SEQUENCE, String TYPE)  {
+	void updateCRIndicators (int crId, int N_PYEARS, double PYEAR_PERC, double PERC_YR, double PERC_ALL, double CP_IN, double CP_EX, int[] N_PCT, int[] N_PCT_AboveAverage, String SEQUENCE, String TYPE)  {
 		
 		try {
 			updateCRIndicators_PrepStmt.clearParameters();
@@ -89,19 +89,21 @@ class DB_Store {
 			updateCRIndicators_PrepStmt.setDouble 	( 2, PYEAR_PERC); 
 			updateCRIndicators_PrepStmt.setDouble 	( 3, PERC_YR); 
 			updateCRIndicators_PrepStmt.setDouble 	( 4, PERC_ALL); 
-			updateCRIndicators_PrepStmt.setInt		( 5, N_PCT[PERCENTAGE.P50.ordinal()]); 
-			updateCRIndicators_PrepStmt.setInt		( 6, N_PCT[PERCENTAGE.P75.ordinal()]); 
-			updateCRIndicators_PrepStmt.setInt		( 7, N_PCT[PERCENTAGE.P90.ordinal()]); 
-			updateCRIndicators_PrepStmt.setInt		( 8, N_PCT[PERCENTAGE.P99.ordinal()]); 
-			updateCRIndicators_PrepStmt.setInt		( 9, N_PCT[PERCENTAGE.P999.ordinal()]); 
-			updateCRIndicators_PrepStmt.setInt		(10, N_PCT_AboveAverage[PERCENTAGE.P50.ordinal()]); 
-			updateCRIndicators_PrepStmt.setInt		(11, N_PCT_AboveAverage[PERCENTAGE.P75.ordinal()]); 
-			updateCRIndicators_PrepStmt.setInt		(12, N_PCT_AboveAverage[PERCENTAGE.P90.ordinal()]); 
-			updateCRIndicators_PrepStmt.setInt		(13, N_PCT_AboveAverage[PERCENTAGE.P99.ordinal()]); 
-			updateCRIndicators_PrepStmt.setInt		(14, N_PCT_AboveAverage[PERCENTAGE.P999.ordinal()]); 
-			updateCRIndicators_PrepStmt.setString	(15, SEQUENCE); 
-			updateCRIndicators_PrepStmt.setString	(16, TYPE); 
-			updateCRIndicators_PrepStmt.setInt		(17, crId); 
+			updateCRIndicators_PrepStmt.setDouble 	( 5, CP_IN); 
+			updateCRIndicators_PrepStmt.setDouble 	( 6, CP_EX); 
+			updateCRIndicators_PrepStmt.setInt		( 7, N_PCT[PERCENTAGE.P50.ordinal()]); 
+			updateCRIndicators_PrepStmt.setInt		( 8, N_PCT[PERCENTAGE.P75.ordinal()]); 
+			updateCRIndicators_PrepStmt.setInt		( 9, N_PCT[PERCENTAGE.P90.ordinal()]); 
+			updateCRIndicators_PrepStmt.setInt		(10, N_PCT[PERCENTAGE.P99.ordinal()]); 
+			updateCRIndicators_PrepStmt.setInt		(11, N_PCT[PERCENTAGE.P999.ordinal()]); 
+			updateCRIndicators_PrepStmt.setInt		(12, N_PCT_AboveAverage[PERCENTAGE.P50.ordinal()]); 
+			updateCRIndicators_PrepStmt.setInt		(13, N_PCT_AboveAverage[PERCENTAGE.P75.ordinal()]); 
+			updateCRIndicators_PrepStmt.setInt		(14, N_PCT_AboveAverage[PERCENTAGE.P90.ordinal()]); 
+			updateCRIndicators_PrepStmt.setInt		(15, N_PCT_AboveAverage[PERCENTAGE.P99.ordinal()]); 
+			updateCRIndicators_PrepStmt.setInt		(16, N_PCT_AboveAverage[PERCENTAGE.P999.ordinal()]); 
+			updateCRIndicators_PrepStmt.setString	(17, SEQUENCE); 
+			updateCRIndicators_PrepStmt.setString	(18, TYPE); 
+			updateCRIndicators_PrepStmt.setInt		(19, crId); 
 			updateCRIndicators_PrepStmt.addBatch();
 			
 			if (++updateCRIndicators_Counter>=BATCH_SIZE_MAX) {

@@ -26,6 +26,8 @@ create_schema:
       CR_Format varchar, 
       CR_PERC_YR double precision, 
       CR_PERC_ALL double precision, 
+      CR_CP_IN double precision,
+      CR_CP_EX double precision,
       CR_N_PYEARS int,	
       CR_PYEAR_PERC double precision,
       CR_N_PCT_P50 int,

@@ -40,6 +40,8 @@ public class CRType_ColumnView {
 			
 			N_PYEARS ("N_PYEARS", "Number of Citing Years", "CR_N_PYEARS", ColGroup.INDICATOR, ColDataType.INT, cr -> new SimpleIntegerProperty(cr.getN_PYEARS())),
 			PYEAR_PERC ("PERC_PYEARS", "Percentage of Citing Years", "CR_PYEAR_PERC", ColGroup.INDICATOR, ColDataType.DOUBLE, cr -> new SimpleDoubleProperty(cr.getPYEAR_PERC())),
+			CP_IN ("CP_IN", "Cumulative Percentage including Ties", "CR_CP_IN", ColGroup.INDICATOR, ColDataType.DOUBLE, cr -> new SimpleDoubleProperty(cr.getCP_IN())),
+			CP_EX ("CP_EX", "Cumulative Percentage excluding Ties", "CR_CP_EX", ColGroup.INDICATOR, ColDataType.DOUBLE, cr -> new SimpleDoubleProperty(cr.getCP_EX())),
 			
 			N_PCT50 ("N_TOP50", "Top 50% Cited Reference", "CR_N_PCT_P50", ColGroup.INDICATOR, ColDataType.INT, cr -> new SimpleIntegerProperty(cr.getN_PCT(CRType.PERCENTAGE.P50))),
 			N_PCT75 ("N_TOP25", "Top 25% Cited Reference", "CR_N_PCT_P75", ColGroup.INDICATOR, ColDataType.INT, cr -> new SimpleIntegerProperty(cr.getN_PCT(CRType.PERCENTAGE.P75))),

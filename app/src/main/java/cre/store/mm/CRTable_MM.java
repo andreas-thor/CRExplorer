@@ -297,7 +297,7 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 		
 			
 		computeCRIndicators(rpyIdx, crSize, pySize, NCR_ALL, NCR_RPY, NCR_CR_PY, NCR_CR, NCR_CR_all, NPYEARS_CR, NCR_PY, NCR, 
-			(int crIdx, int N_PYEARS, double PYEAR_PERC, double PERC_YR, double PERC_ALL, int[] N_PCT, int[] N_PCT_AboveAverage, String SEQUENCE, String TYPE) -> { 
+			(int crIdx, int N_PYEARS, double PYEAR_PERC, double PERC_YR, double PERC_ALL, double CP_IN, double CP_EX, int[] N_PCT, int[] N_PCT_AboveAverage, String SEQUENCE, String TYPE) -> { 
 				CRType<?> cr = crList.get(crIdx);
 				
 				if (crIdx == 0) {
@@ -308,6 +308,8 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 				cr.setPYEAR_PERC (PYEAR_PERC);
 				cr.setPERC_YR 	 (PERC_YR);
 				cr.setPERC_ALL	 (PERC_ALL);
+				cr.setCP_IN		(CP_IN);
+				cr.setCP_EX		(CP_EX);
 				cr.setN_PCT		(N_PCT);
 				cr.setN_PCT_AboveAverage(N_PCT_AboveAverage);
 				cr.setSEQUENCE(SEQUENCE);

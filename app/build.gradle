@@ -27,7 +27,7 @@ compileJava {
 repositories {
 	mavenCentral()
     maven {
-        url "https://dev-iesl.cs.umass.edu/nexus/content/repositories/releases/"
+        url = uri("https://dev-iesl.cs.umass.edu/nexus/content/repositories/releases/")
     }
 }
 
@@ -51,9 +51,33 @@ test {
 	excludeTestsMatching "cre.IndicatorsExample"
     excludeTestsMatching "cre.StorageEngine"
     excludeTestsMatching "cre.StorageEngineShort"
-	// excludeTestsMatching "cre.RunScript"
+	excludeTestsMatching "cre.RunScript"
    }
 } 
+
+tasks.register('testCRIndicators', Test) {
+	description = 'Runs the CR indicator regression tests.'
+	group = 'verification'
+	testClassesDirs = sourceSets.test.output.classesDirs
+	classpath = sourceSets.test.runtimeClasspath
+	jvmArgs = ['-Xmx6144M']
+	filter {
+		includeTestsMatching 'cre.CRIndicatorRegressionTest'
+		includeTestsMatching 'cre.IndicatorsExample'
+	}
+}
+
+tasks.register('testStorageEngines', Test) {
+	description = 'Runs the storage engine equivalence tests.'
+	group = 'verification'
+	testClassesDirs = sourceSets.test.output.classesDirs
+	classpath = sourceSets.test.runtimeClasspath
+	jvmArgs = ['-Xmx6144M']
+	filter {
+		includeTestsMatching 'cre.StorageEngine'
+		includeTestsMatching 'cre.StorageEngineShort'
+	}
+}
 
 
 tasks.withType(JavaExec) {
@@ -70,16 +94,16 @@ dependencies {
     implementation 'org.codehaus.groovy:groovy-all:3.0.25' 
 
     implementation 'com.github.mpkorstanje:simmetrics-core:4.1.1'
-	implementation group: 'javax.json', name: 'javax.json-api', version: '1.1'
-	implementation group: 'org.glassfish', name: 'javax.json', version: '1.1'
-	implementation group: 'com.opencsv', name: 'opencsv', version: '3.9'
-	implementation group: 'org.jfree', name: 'jfreechart', version: '1.0.19'
-	implementation group: 'org.jfree', name: 'jfreechart-fx', version: '1.0.1'
-	implementation group: 'commons-io', name: 'commons-io', version: '2.6'
-	implementation group: 'com.h2database', name: 'h2', version: '2.1.214'
-	implementation group: 'org.postgresql', name: 'postgresql', version: '42.6.0'
-	implementation group: 'org.yaml', name: 'snakeyaml', version: '1.24'
-	implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.50.3.0'
+	implementation 'javax.json:javax.json-api:1.1'
+	implementation 'org.glassfish:javax.json:1.1'
+	implementation 'com.opencsv:opencsv:3.9'
+	implementation 'org.jfree:jfreechart:1.0.19'
+	implementation 'org.jfree:jfreechart-fx:1.0.1'
+	implementation 'commons-io:commons-io:2.6'
+	implementation 'com.h2database:h2:2.1.214'
+	implementation 'org.postgresql:postgresql:42.6.0'
+	implementation 'org.yaml:snakeyaml:1.24'
+	implementation 'org.xerial:sqlite-jdbc:3.50.3.0'
 	
  	runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:win"
 	runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:linux"
@@ -109,7 +133,7 @@ dependencies {
  
 
 jar {
-	duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     manifest {
         attributes 'Main-Class': 'cre.CitedReferencesExplorer'

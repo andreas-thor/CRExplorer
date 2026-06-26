@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -271,7 +271,7 @@ public class Crossref extends ImportReader {
 			
 			String filename = String.format("%s.crossref", DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss_SSS").format(LocalDateTime.now()));  
 			File file = cachePath.resolve(filename).toFile();
-			org.apache.commons.io.FileUtils.copyURLToFile(new URL(url.toString()), file);
+			org.apache.commons.io.FileUtils.copyURLToFile(URI.create(url.toString()).toURL(), file);
 			result.add(file);
 			
 			

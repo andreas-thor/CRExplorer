@@ -2,6 +2,8 @@ package cre.data.type.abs;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Stream;
 
 import cre.data.type.abs.CRType.PERCENTAGE;
@@ -208,6 +210,19 @@ public abstract class CRTable <C extends CRType<P>, P extends PubType<C>>
 //		}
  
 		int[][] borders = this.getPercentileBorders(NCR_CR_PY, crSize, pySize, NCR_PY);
+		Map<Integer, Double> cpInByNCR = new TreeMap<>();
+		Map<Integer, Double> cpExByNCR = new TreeMap<>();
+		Map<Integer, Integer> ncrFrequency = new TreeMap<>();
+		for (int ncr: NCR_CR_all) {
+			ncrFrequency.merge(ncr, 1, Integer::sum);
+		}
+
+		int cumulativeBelow = 0;
+		for (Map.Entry<Integer, Integer> entry: ncrFrequency.entrySet()) {
+			cpExByNCR.put(entry.getKey(), 1.0d * cumulativeBelow / crSize);
+			cumulativeBelow += entry.getValue();
+			cpInByNCR.put(entry.getKey(), 1.0d * cumulativeBelow / crSize);
+		}
 
 		
 		for (int crIdx=0; crIdx<crSize; crIdx++) {
@@ -284,7 +299,7 @@ public abstract class CRTable <C extends CRType<P>, P extends PubType<C>>
 			
 			
 			updateCR.update(crIdx, NPYEARS_CR[crIdx], ((double)NPYEARS_CR[crIdx]) / (pySize-noPYWithoutCR), ((double)NCR_CR_all[crIdx]) / NCR_RPY[rpyIdx], ((double)NCR_CR_all[crIdx]) / NCR_ALL, 
-					NPCT, NPCT_AboveAverage, new String (sequence), typeLabel.toString());
+					cpInByNCR.get(NCR_CR_all[crIdx]), cpExByNCR.get(NCR_CR_all[crIdx]), NPCT, NPCT_AboveAverage, new String (sequence), typeLabel.toString());
 		}	
 	}
 	
