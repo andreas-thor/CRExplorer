@@ -6,7 +6,6 @@ nav:
   - "WoS Landmark Papers": https://andreas-thor.github.io/CRExplorer/landmark.html
   - "Guide & Datasets": guide_datasets.md
   - "Manual": 
-    - "Cover": manual/cover.md
     - "Introduction": manual/intro.md
     - "Example: Greenhouse Effect": manual/example.md
     - "User Interface": manual/user_interface.md
