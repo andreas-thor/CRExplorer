@@ -9,7 +9,7 @@ name: Build CRExplorer (create jar by Gradle)
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "play-with-chatgpt"]
   # pull_request:
   #   branches: [ "main" ]
 
