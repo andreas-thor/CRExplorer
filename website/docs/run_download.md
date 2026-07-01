@@ -5,6 +5,8 @@ pdf: false
 
 # Running CRExplorer & System Requirements
 
+## Current release
+
 CRExplorer is packaged as a Java Archive (JAR) and requires a system with Java 21 (or higher) support.
 
 [Download Version 2.1](https://github.com/andreas-thor/CRExplorer/releases/download/2.1/crexplorer.jar){ .md-button .md-button--primary }
@@ -22,9 +24,7 @@ where ``myscript.crs`` should be replaced by the user's script filename.
 
 
 
-## Releases
-
-CRExplorer version 2.1 was released on June XX, 2026.
+## Previous releases
 
 CRExplorer version 1.9 was released on July 16, 2018. This version includes the following new features and improvements:
 
