@@ -5,6 +5,8 @@ pdf: false
 
 # Guide and Datasets
 
+## Guide
+
 1. [Introducing CitedReferencesExplorer (CRExplorer): A program for Reference Publication Year Spectroscopy with Cited References Disambiguation](http://dx.doi.org/10.1016/j.joi.2016.02.005)
     <br/>by Andreas Thor, Werner Marx, Loet Leydesdorff, and Lutz Bornmann ([arXiv](http://arxiv.org/abs/1601.01199))
 1. [New features of CitedReferencesExplorer (CRExplorer)](https://doi.org/10.1007/s11192-016-2082-3)
