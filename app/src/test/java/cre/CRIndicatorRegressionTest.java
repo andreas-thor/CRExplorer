@@ -41,9 +41,9 @@ public class CRIndicatorRegressionTest {
 			assertArrayEquals(new double[] { 2d / 3d, 1d, 2d / 3d },
 					CRTable.get().getCR(true).mapToDouble(cr -> cr.getPYEAR_PERC()).toArray(), DELTA);
 
-			assertArrayEquals(new double[] { 1d, 1d, 1d / 3d },
+			assertArrayEquals(new double[] { 1d, 1d, 3d / 11d },
 					CRTable.get().getCR(true).mapToDouble(cr -> cr.getCP_IN()).toArray(), DELTA);
-			assertArrayEquals(new double[] { 1d / 3d, 1d / 3d, 0d },
+			assertArrayEquals(new double[] { 3d / 11d, 3d / 11d, 0d },
 					CRTable.get().getCR(true).mapToDouble(cr -> cr.getCP_EX()).toArray(), DELTA);
 
 			assertArrayEquals(new int[] { 1, 3, 1 },
@@ -75,6 +75,32 @@ public class CRIndicatorRegressionTest {
 		}
 	}
 
+	@Test
+	public void cumulativePercentagesAreWeightedByCitationCounts() throws Exception {
+		for (TABLE_IMPL_TYPES type : CRTable.TABLE_IMPL_TYPES.values()) {
+			CRTable.type = type;
+			if (type == TABLE_IMPL_TYPES.DB) {
+				CRTable_DB.url = "jdbc:sqlite::memory:";
+				CRTable_DB.createSchemaOnStartup = true;
+			}
+
+			AtomicInteger crId = new AtomicInteger(0);
+			CRTable.get().init();
+			CRTable.get().onBeforeImport();
+			addCitingPublications(5, "A", crId);
+			addCitingPublications(7, "B", crId);
+			addCitingPublications(18, "C", crId);
+			CRTable.get().onAfterImport();
+
+			assertArrayEquals(new int[] { 5, 7, 18 },
+					CRTable.get().getCR(true).mapToInt(cr -> cr.getN_CR()).toArray());
+			assertArrayEquals(new double[] { 5d / 30d, 12d / 30d, 1d },
+					CRTable.get().getCR(true).mapToDouble(cr -> cr.getCP_IN()).toArray(), DELTA);
+			assertArrayEquals(new double[] { 0d, 5d / 30d, 12d / 30d },
+					CRTable.get().getCR(true).mapToDouble(cr -> cr.getCP_EX()).toArray(), DELTA);
+		}
+	}
+
 	private void loadReferenceDistribution() {
 		AtomicInteger crId = new AtomicInteger(0);
 		CRTable.get().init();
@@ -102,6 +128,12 @@ public class CRIndicatorRegressionTest {
 		pub.setPY(py);
 		pub.addCR(createCR(citedReference, crId.incrementAndGet()), true);
 		CRTable.get().addPub(pub);
+	}
+
+	private void addCitingPublications(int count, String citedReference, AtomicInteger crId) {
+		for (int i=0; i<count; i++) {
+			addCitingPublication(2000 + i % 3, citedReference, crId);
+		}
 	}
 
 	private CRType_MM createCR(String citedReference, int id) {

@@ -217,11 +217,14 @@ public abstract class CRTable <C extends CRType<P>, P extends PubType<C>>
 			ncrFrequency.merge(ncr, 1, Integer::sum);
 		}
 
-		int cumulativeBelow = 0;
+		long totalNCR = ncrFrequency.entrySet().stream()
+			.mapToLong(entry -> (long) entry.getKey() * entry.getValue())
+			.sum();
+		long cumulativeBelow = 0;
 		for (Map.Entry<Integer, Integer> entry: ncrFrequency.entrySet()) {
-			cpExByNCR.put(entry.getKey(), 1.0d * cumulativeBelow / crSize);
-			cumulativeBelow += entry.getValue();
-			cpInByNCR.put(entry.getKey(), 1.0d * cumulativeBelow / crSize);
+			cpExByNCR.put(entry.getKey(), totalNCR == 0 ? 0d : 1.0d * cumulativeBelow / totalNCR);
+			cumulativeBelow += (long) entry.getKey() * entry.getValue();
+			cpInByNCR.put(entry.getKey(), totalNCR == 0 ? 0d : 1.0d * cumulativeBelow / totalNCR);
 		}
 
 		
