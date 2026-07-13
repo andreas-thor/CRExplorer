@@ -2,20 +2,19 @@ package cre.data.type.abs.sim;
 
 import java.text.Normalizer;
 import java.util.*;
-
-
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class JaccardHelper extends StringComparator {
 
-
     private final CosineJaccardMode mode;
-    private final int k; // Shingle-Größe (bei CHAR: k>=2 empfohlen; bei WORD: k>=1)
-    //int k2;
+    private final int k;
+
+    // Cache: Originalstring -> Shingles
+    private final Map<String, Set<String>> shingleCache = new ConcurrentHashMap<>();
 
     public JaccardHelper(CosineJaccardMode mode, int k) {
         this.mode = Objects.requireNonNull(mode);
         this.k = Math.max(k, mode == CosineJaccardMode.CHAR ? 2 : 1);
-        //this.k2 = Math.max(k, mode == CosineJaccardMode.CHAR ? 2 : 1);
     }
 
     @Override
@@ -23,28 +22,16 @@ public final class JaccardHelper extends StringComparator {
         return SimAlgorithm.JACC;
     }
 
-
     @Override
     public double compare(String a, String b) {
-        String na = normalize(a);
-        String nb = normalize(b);
-        Set<String> A = Collections.emptySet();
-        Set<String> B = Collections.emptySet();
-        int currentK = k;
-        while (A.isEmpty() && B.isEmpty() && currentK > 0) {
-            A = buildShingles(na, currentK);
-            B = buildShingles(nb, currentK);
-            if (!A.isEmpty() || !B.isEmpty()) {
-                break;
-            }
-            currentK--;
-        }
+        Set<String> A = getShingles(a);
+        Set<String> B = getShingles(b);
         if (A.isEmpty() && B.isEmpty()) {
             return 0.0;
         }
         int intersection = 0;
         Set<String> smaller = A.size() <= B.size() ? A : B;
-        Set<String> larger  = A.size() > B.size() ? A : B;
+        Set<String> larger  = A.size() >  B.size() ? A : B;
         for (String s : smaller) {
             if (larger.contains(s)) {
                 intersection++;
@@ -54,8 +41,26 @@ public final class JaccardHelper extends StringComparator {
         return union == 0 ? 0.0 : (double) intersection / union;
     }
 
+    private Set<String> getShingles(String input) {
+        return shingleCache.computeIfAbsent(input, s -> {
+            String normalized = normalize(s);
+            int currentK = k;
+            Set<String> shingles = Collections.emptySet();
+            while (shingles.isEmpty() && currentK > 0) {
+                shingles = buildShingles(normalized, currentK);
+                if (!shingles.isEmpty()) {
+                    break;
+                }
+                currentK--;
+            }
+            return shingles;
+        });
+    }
+
     private String normalize(String s) {
-        if (s == null) return "";
+        if (s == null) {
+            return "";
+        }
         String n = s.toLowerCase(Locale.ROOT).trim();
         n = Normalizer.normalize(n, Normalizer.Form.NFD).replaceAll("\\p{M}", "");
         n = n.replace('&', ' ');
@@ -101,4 +106,3 @@ public final class JaccardHelper extends StringComparator {
         return result;
     }
 }
-
