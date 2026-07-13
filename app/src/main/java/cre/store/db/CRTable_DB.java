@@ -478,17 +478,17 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
 	@Override
 	public void filterByCluster(List<Integer> sel) {
-		this.filterByCluster(sel);
+		this.filter.filterByCluster(sel);
 	}
 
 	@Override
 	public void setShowNull(boolean showNull) {
-		this.setShowNull(showNull);
+		this.filter.setShowNull(showNull);
 	}
 
 	@Override
 	public void showAll() {
-		this.showAll();
+		this.filter.showAll();
 	}
 
 	// #endregion

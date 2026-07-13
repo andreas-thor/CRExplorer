@@ -491,7 +491,7 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 
 	@Override
 	public void filterByCluster(List<Integer> sel) {
-		this.filterByCluster(sel);
+		this.filter.filterByCluster(sel);
 	}
 
 	@Override
