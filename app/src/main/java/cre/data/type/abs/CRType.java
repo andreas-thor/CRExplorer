@@ -60,6 +60,8 @@ public abstract class CRType<P extends PubType<?>> implements Comparable<CRType<
 	private Double PERC_ALL;
 	private Double CP_IN;       // Cumulative Percentile for Individual CR
 	private Double CP_EX;       // Cumulative Percentile excluding Individual CR ties
+	private Double CPIMP_IN;    // Cumulative Impact Percentage including ties
+	private Double CPIMP_EX;    // Cumulative Impact Percentage excluding ties
 	
 	private Integer N_PYEARS;	
 	private Double PYEAR_PERC;
@@ -81,6 +83,8 @@ public abstract class CRType<P extends PubType<?>> implements Comparable<CRType<
 		PERC_ALL = 0d;
 		CP_IN = 0d;
 		CP_EX = 0d;
+		CPIMP_IN = 0d;
+		CPIMP_EX = 0d;
 		
 		N_PYEARS = 0;
 		PYEAR_PERC = 0d;
@@ -290,6 +294,20 @@ public abstract class CRType<P extends PubType<?>> implements Comparable<CRType<
 	}
 	public void setCP_EX(Double cP_EX) {
 		CP_EX = cP_EX;
+	}
+
+	public Double getCPIMP_IN() {
+		return CPIMP_IN;
+	}
+	public void setCPIMP_IN(Double cPIMP_IN) {
+		CPIMP_IN = cPIMP_IN;
+	}
+
+	public Double getCPIMP_EX() {
+		return CPIMP_EX;
+	}
+	public void setCPIMP_EX(Double cPIMP_EX) {
+		CPIMP_EX = cPIMP_EX;
 	}
 	
 		

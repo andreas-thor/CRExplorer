@@ -64,6 +64,7 @@ tasks.register('testCRIndicators', Test) {
 	filter {
 		includeTestsMatching 'cre.CRIndicatorRegressionTest'
 		includeTestsMatching 'cre.IndicatorsExample'
+		includeTestsMatching 'cre.data.type.abs.CumulativeImpactPercentageTest'
 	}
 }
 

@@ -45,6 +45,10 @@ public class CRIndicatorRegressionTest {
 					CRTable.get().getCR(true).mapToDouble(cr -> cr.getCP_IN()).toArray(), DELTA);
 			assertArrayEquals(new double[] { 1d / 3d, 1d / 3d, 0d },
 					CRTable.get().getCR(true).mapToDouble(cr -> cr.getCP_EX()).toArray(), DELTA);
+			assertArrayEquals(new double[] { 8d / 11d, 8d / 11d, 1d },
+					CRTable.get().getCR(true).mapToDouble(cr -> cr.getCPIMP_IN()).toArray(), DELTA);
+			assertArrayEquals(new double[] { 0d, 0d, 8d / 11d },
+					CRTable.get().getCR(true).mapToDouble(cr -> cr.getCPIMP_EX()).toArray(), DELTA);
 
 			assertArrayEquals(new int[] { 1, 3, 1 },
 					CRTable.get().getCR(true).mapToInt(cr -> cr.getN_PCT(PERCENTAGE.P50)).toArray());
