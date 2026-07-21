@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import cre.CRELogger;
 import cre.data.type.abs.CRType.PERCENTAGE;
 
 class DB_Store { 
@@ -115,7 +116,7 @@ class DB_Store {
 			}	
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not queue or execute the CR indicator update batch.", e);
 		}
 		
 	}
@@ -128,7 +129,7 @@ class DB_Store {
 			}
 			dbCon.commit();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not finish the CR indicator update batch.", e);
 		}
 	}
 
@@ -137,7 +138,7 @@ class DB_Store {
 		try {
 			return StreamSupport.stream(new CRType_ResultSet(dbCon.prepareStatement("SELECT * FROM CR " + where).executeQuery()).getIterable().spliterator(), false);
 		} catch (Exception e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not select cited references from the database.", e);
 			Stream<CRType_DB> emptyStr = Stream.of();
 			return emptyStr;
 		}
@@ -148,7 +149,7 @@ class DB_Store {
 		try {
 			return StreamSupport.stream(new CRType_ResultSet_Block(blockAttribute, dbCon.prepareStatement("SELECT * FROM CR " + where).executeQuery()).getIterable().spliterator(), false);
 		} catch (Exception e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not select cited-reference blocks from the database.", e);
 			Stream<List<CRType_DB>> emptyStr = Stream.of();
 			return emptyStr;
 		}
@@ -163,7 +164,7 @@ class DB_Store {
 		try {
 			return StreamSupport.stream(new PubType_ResultSet(dbCon.prepareStatement("SELECT * FROM Pub " + where).executeQuery()).getIterable().spliterator(), false);
 		} catch (Exception e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not select publications from the database.", e);
 			Stream<PubType_DB> emptyStr = Stream.of();
 			return emptyStr;
 		}
@@ -184,8 +185,7 @@ class DB_Store {
 			rs.next();
 			return rs.getInt(1);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			CRELogger.get().logError("Could not execute the database count query.", e);
 			return -1;
 		}
 	}

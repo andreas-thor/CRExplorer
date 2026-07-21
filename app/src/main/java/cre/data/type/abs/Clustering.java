@@ -141,12 +141,14 @@ public interface Clustering<C extends CRType<?>> {
 
 
 		Long stop2 = System.currentTimeMillis();
-		CRELogger.get().logInfo(String.format("generateInitialClustering > generateAutoMatching > Time is %.1f seconds", (stop2-stop1)/1000.0));
+		CRELogger.get().logInfo(String.format("Initial automatic matching completed: durationSeconds=%.1f",
+				(stop2-stop1)/1000.0));
 
 		updateClustering(ClusteringType.INIT, null, min_threshold, false, false, false, false);
 
 		Long stop3 = System.currentTimeMillis();
-		CRELogger.get().logInfo(String.format("generateInitialClustering > updateClustering > Time is %.1f seconds", (stop3-stop2)/1000.0));
+		CRELogger.get().logInfo(String.format("Initial clustering update completed: durationSeconds=%.1f",
+				(stop3-stop2)/1000.0));
 	}
 	
 	

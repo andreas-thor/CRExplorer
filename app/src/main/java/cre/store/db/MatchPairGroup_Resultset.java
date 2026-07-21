@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 
+import cre.CRELogger;
 import cre.data.type.abs.MatchPairGroup;
 
 public class MatchPairGroup_Resultset implements Iterator<MatchPairGroup> {
@@ -45,7 +46,7 @@ public class MatchPairGroup_Resultset implements Iterator<MatchPairGroup> {
 			hasNextBlock = false;
 			return res;
 		} catch (Exception e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not read a match-pair group from the result set.", e);
 			return null;
 		}
 	}

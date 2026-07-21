@@ -8,6 +8,7 @@ import java.util.ListIterator;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import cre.CRELogger;
 import cre.ui.CRTableView;
 import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
@@ -24,7 +25,7 @@ public class CRTableView_MM extends CRTableView<CRType_MM> {
 		@Override
 		public CRType_MM get(int index) {
 			// TODO Auto-generated method stub
-			System.out.println("get " + index);
+			CRELogger.get().logDebug("CR table row requested: engine=MM, index=" + index);
 			return crTable.getCR().skip(index).findFirst().get();
 			// throw new UnsupportedOperationException("Unimplemented method 'get'");
 		}
@@ -33,7 +34,7 @@ public class CRTableView_MM extends CRTableView<CRType_MM> {
 		@Override
 		public void clear() {
 			// TODO Auto-generated method stub
-			System.out.println("Unimplemented method 'clear'");
+			CRELogger.get().logWarning("CR table item clear() is not implemented for the MM backend.");
 		}
 
 		@Override
@@ -180,13 +181,13 @@ public class CRTableView_MM extends CRTableView<CRType_MM> {
 		@Override
 		public void addListener(ListChangeListener<? super CRType_MM> listener) {
 			// TODO Auto-generated method stub
-			System.out.println("Unimplemented method 'addListener'");
+			CRELogger.get().logDebug("CR table list listener registration ignored by the MM backend.");
 		}
 
 		@Override
 		public void removeListener(ListChangeListener<? super CRType_MM> listener) {
 			// TODO Auto-generated method stub
-			System.out.println("Unimplemented method 'removeListener'");
+			CRELogger.get().logDebug("CR table list listener removal ignored by the MM backend.");
 		}
 
 		@Override

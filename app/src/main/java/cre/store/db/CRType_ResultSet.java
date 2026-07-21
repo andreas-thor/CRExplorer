@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 
+import cre.CRELogger;
 
 /**
  * Iterator to generate a stream of CRType_DB from SQL result set
@@ -28,7 +29,7 @@ class CRType_ResultSet implements Iterator<CRType_DB> {
 		try {
 			return this.rs.next();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not advance the CR result set.", e);
 			return false;
 		}
 	}
@@ -114,7 +115,7 @@ class CRType_ResultSet implements Iterator<CRType_DB> {
 
 			return cr;
 		} catch (Exception e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not map a CR database row.", e);
 			return null;
 		}
 	}

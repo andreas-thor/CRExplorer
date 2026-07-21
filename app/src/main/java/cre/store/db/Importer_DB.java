@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.stream.Collectors;
 
+import cre.CRELogger;
 import cre.data.type.abs.CRType;
 import cre.data.type.abs.PubType;
 import cre.store.mm.CRType_MM;
@@ -51,8 +52,7 @@ public class Importer_DB {
 			stmt.close();
 			dbCon.commit();		
 		} catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();			
+			CRELogger.get().logError("Could not prepare the database for import.", e);
 		}
     }
 
@@ -73,15 +73,13 @@ public class Importer_DB {
 				try {
 					insertCR(cr, pub.getID(), pub.getPY());
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					CRELogger.get().logError("Could not add a cited reference to the import batch.", e);
 				}
 			}
 			
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			CRELogger.get().logError("Could not add a publication to the import batch.", e);
 		}
 		
 		// TODO Auto-generated method stub
@@ -97,7 +95,7 @@ public class Importer_DB {
 		if (++insertCR_Counter>=BATCH_SIZE_MAX) {
 
 			testcounter += insertCR_Counter;
-			System.out.println(testcounter);
+			CRELogger.get().logDebug("Database import cited-reference batch count=" + testcounter);
 
 			insertCR_PrepStmt.executeBatch();
 			insertCR_Counter = 0;
@@ -134,26 +132,24 @@ public class Importer_DB {
                 insertPub_Counter = 0;
             }	
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+			CRELogger.get().logError("Could not execute pending import batches.", e);
         }
 		
 		// wrap-up import process
 		try {
 			Statement stmt = dbCon.createStatement();
 			for (String s: Queries.getQuery("Importer_DB", "after_import")) {
-				System.out.println(s);
+				CRELogger.get().logDebug("Executing database import finalizer: " + s);
 				stmt.execute(s);
 			}
 			stmt.close();
 			dbCon.commit();		
 
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+			CRELogger.get().logError("Could not finalize the database import.", e);
         }
 
-		System.out.println("...done!");        
+		CRELogger.get().logInfo("Database import completed.");
 
 	}
 

@@ -30,7 +30,7 @@ public abstract class CRChart_HighCharts extends CRChart {
 	public class ChartCallBack  {
 		
 		public void onRedraw(double min, double max) {
-			CRELogger.get().logInfo("HighChart On Redraw " + min + "/" + max);
+			CRELogger.get().logDebug("Highcharts redraw: min=" + min + ", max=" + max);
 			onYearRangeFilter(min, max);
 		}
 		
@@ -171,7 +171,7 @@ public abstract class CRChart_HighCharts extends CRChart {
 						));
 				
 			} catch (JSException e) {
-				e.printStackTrace();
+				CRELogger.get().logError("Could not update the Highcharts data.", e);
 				
 				
 			}
@@ -200,7 +200,7 @@ public abstract class CRChart_HighCharts extends CRChart {
 				webEngine.executeScript("c.zoom();");
 				
 			} catch (JSException e) {
-				e.printStackTrace();
+				CRELogger.get().logError("Could not reset the Highcharts zoom.", e);
 			}
 		}		
 	}

@@ -130,8 +130,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
 
 		} catch (ClassNotFoundException | SQLException | IOException | URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			CRELogger.get().logError("Could not initialize the database storage engine.", e);
 		}
 
 		// init();
@@ -145,8 +144,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 		try {
 			this.dbStore.init();
 		} catch (SQLException | URISyntaxException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			CRELogger.get().logError("Could not initialize the database tables.", e);
 		}
 
 		this.filter.setShowNull(true);
@@ -220,8 +218,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			CRELogger.get().logError("Could not update CR indicators and chart data from the database.", e);
 		}
 		
 		
@@ -349,8 +346,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			CRELogger.get().logError("Could not compute CR indicators from database rows.", e);
 		}
 	}
 
@@ -411,8 +407,8 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 		long ts3 = System.currentTimeMillis();
 		long ms3 = Runtime.getRuntime().totalMemory();
 
-		CRELogger.get().logInfo("Update time is " + ((ts3-ts2)/1000d) + " seconds");
-		CRELogger.get().logInfo("Update Memory usage " + ((ms3-ms2)/1024d/1024d) + " MBytes");
+		CRELogger.get().logInfo(String.format("CR indicator update completed: engine=DB, durationSeconds=%.3f, memoryDeltaMB=%.3f",
+				(ts3-ts2)/1000d, (ms3-ms2)/1024d/1024d));
 	}
 
 	// #endregion

@@ -144,7 +144,7 @@ public class CRE {
 				case "VOL": 	cr.setVOL(parser.getString()); break;
 				case "DOI": 	cr.setDOI(parser.getString()); break;
 				case "CID2": 	/* cr.setCID2(parser.getString()); */ break; 
-				default: CRELogger.get().logInfo("CRDATA.json >> Unknow Key with String Value: " + key); 
+				default: CRELogger.get().logDebug("CRDATA.json: unknown string key=" + key);
 				}
 				break;
 			case VALUE_NUMBER:
@@ -156,7 +156,7 @@ public class CRE {
 				case "VI": 		cr.setVI(parser.getInt()==1); break;
 				case "CO": 		cr.setCO(parser.getInt()); break;
 				case "type": 	cr.setFormatType (parser.getInt()); break;	// LEGACY: Type were enumerated 1,2,...; 0 = Unknown
-				default: CRELogger.get().logInfo("CRDATA.json >> Unknow Key with Number Value: " + key); 
+				default: CRELogger.get().logDebug("CRDATA.json: unknown number key=" + key);
 				}
 				break;
 			default:break;  
@@ -228,7 +228,7 @@ public class CRE {
 					case "DT": 	pub.setDT(parser.getString()); break;
 					case "FS": 	pub.setFS(parser.getString()); break;
 					case "UT": 	pub.setUT(parser.getString()); break;
-					default: CRELogger.get().logInfo("PUBDATA.json >> Unknow Key with String Value: " + key); 
+					default: CRELogger.get().logDebug("PUBDATA.json: unknown string key=" + key);
 					}
 					break;
 					
@@ -238,7 +238,7 @@ public class CRE {
 					case "AF":	pub.addAF(parser.getString()); break;
 					case "EM":	pub.addEM(parser.getString()); break;
 					case "AA":	pub.addAA(parser.getString()); break;
-					default: CRELogger.get().logInfo("PUBDATA.json >> Unknow Key with String Value: " + key); 
+					default: CRELogger.get().logDebug("PUBDATA.json: unknown string key=" + key);
 					}
 					break;
 				case 3: 
@@ -255,11 +255,11 @@ public class CRE {
 				case "CRLISTID":	
 					crIds.add(parser.getInt());	
 					break;
-				default: CRELogger.get().logInfo("PUBDATA.json >> Unknow Key with Number Value: " + key); 
+				default: CRELogger.get().logDebug("PUBDATA.json: unknown number key=" + key);
 				}
 				break;
 			default:
-				CRELogger.get().logInfo("DEFAULT");
+				CRELogger.get().logDebug("PUBDATA.json: default parser branch");
 
 				break;
 			}

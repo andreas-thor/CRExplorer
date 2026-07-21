@@ -116,7 +116,7 @@ public class Clustering_DB implements Clustering<CRType_DB> {
 
 			dbCon.commit();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not add manual CR matches.", e);
 		}
 
 		
@@ -149,7 +149,7 @@ public class Clustering_DB implements Clustering<CRType_DB> {
 				""";
 				
 			dbCon.createStatement().execute(blockingKey);
-			System.out.println(blockingKey);
+			CRELogger.get().logDebug("Automatic matching blocking-key statement: " + blockingKey);
 
 
 //			dbCon.createStatement().execute(
@@ -207,7 +207,7 @@ public class Clustering_DB implements Clustering<CRType_DB> {
 						dbCon.commit();
 					}
 				} catch (SQLException e) {
-					e.printStackTrace();
+					CRELogger.get().logError("Could not flush an automatic-match batch.", e);
 				}
 				return;
 			};
@@ -275,13 +275,14 @@ public class Clustering_DB implements Clustering<CRType_DB> {
 								dbCon.commit();
 								
 								if (c.incrementAndGet()==2000) {
-									CRELogger.get().logInfo("Total memory (bytes): " + Runtime.getRuntime().totalMemory());
-									CRELogger.get().logInfo("Free memory (bytes): " + Runtime.getRuntime().freeMemory());
+									CRELogger.get().logDebug("Automatic matching memory: totalBytes="
+											+ Runtime.getRuntime().totalMemory() + ", freeBytes="
+											+ Runtime.getRuntime().freeMemory());
 									c.set(0);
 								}
 							}
 						} catch (SQLException e) {
-							e.printStackTrace();
+							CRELogger.get().logError("Could not add an automatic CR match.", e);
 						}	
 						
 					});
@@ -319,7 +320,7 @@ public class Clustering_DB implements Clustering<CRType_DB> {
 
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not generate automatic CR matches.", e);
 		}
 
 	}
@@ -343,7 +344,7 @@ public class Clustering_DB implements Clustering<CRType_DB> {
 			return null;
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not undo the latest manual matching operation.", e);
 			return new HashSet<CRType_DB>();
 		}
 	}
@@ -392,7 +393,7 @@ public class Clustering_DB implements Clustering<CRType_DB> {
 
 
 			int noOfUpdates = -1;
-			CRELogger.get().logInfo(String.format("updateClustering Start"));
+			CRELogger.get().logInfo("CR clustering update started.");
 			Long stop1 = System.currentTimeMillis();
 			int statusBarSize = -1;
 			while ((noOfUpdates = updateclustering_PrepStmt.executeUpdate()) > 0) { 
@@ -406,7 +407,8 @@ public class Clustering_DB implements Clustering<CRType_DB> {
 				StatusBar.get().incProgressbar();
 				
 				Long stop2 = System.currentTimeMillis();
-				CRELogger.get().logInfo(String.format("updateClustering NoOfUpdates = %d, time = %.1f", noOfUpdates, (stop2-stop1)/1000.0));
+				CRELogger.get().logDebug(String.format("CR clustering iteration: updates=%d, durationSeconds=%.1f",
+						noOfUpdates, (stop2-stop1)/1000.0));
 				stop1 = System.currentTimeMillis();				
 			}
 			updateclustering_PrepStmt.close();
@@ -421,7 +423,7 @@ public class Clustering_DB implements Clustering<CRType_DB> {
 
 			
 		} catch (SQLException e) {
-			e.printStackTrace(); 	// TODO Auto-generated catch block
+			CRELogger.get().logError("Could not update CR clustering.", e);
 		}
 
 		
@@ -441,16 +443,14 @@ public class Clustering_DB implements Clustering<CRType_DB> {
 			StatusBar.get().setValue("Merging ");
 			Statement stmt = dbCon.createStatement();
 			for (String s: Queries.getQuery("crpub", "merge_cr")) {
-				CRELogger.get().logInfo(s);
+				CRELogger.get().logDebug("Executing cited-reference merge statement: " + s);
 				stmt.execute(s);
 			}
 			dbCon.commit();
 			CRTable.get().updateData();
 			StatusBar.get().setValue("Merging done");
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			CRELogger.get().logError(e.toString());
-			e.printStackTrace();
+			CRELogger.get().logError("Could not merge clustered cited references.", e);
 		}
 		
 
@@ -467,6 +467,7 @@ public class Clustering_DB implements Clustering<CRType_DB> {
 			stmt.close();
 			return res;
 		} catch (Exception e) {
+			CRELogger.get().logError("Could not count CR matches.", e);
 			return -1l;
 		}
 	}
@@ -482,6 +483,7 @@ public class Clustering_DB implements Clustering<CRType_DB> {
 			stmt.close();
 			return res;
 		} catch (Exception e) {
+			CRELogger.get().logError("Could not count CR clusters.", e);
 			return -1l;
 		}
 	}
@@ -498,7 +500,7 @@ public class Clustering_DB implements Clustering<CRType_DB> {
 			dbCon.commit();
 			return StreamSupport.stream(new MatchPairGroup_Resultset(rs).getIterable().spliterator(), false);
 		} catch (Exception e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not select CR match-pair groups.", e);
 			Stream<MatchPairGroup> emptyStr = Stream.of();
 			return emptyStr;
 		}

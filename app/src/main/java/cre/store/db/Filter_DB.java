@@ -6,6 +6,7 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import cre.CRELogger;
 import cre.data.type.abs.Filter;
 import cre.data.type.abs.Statistics.IntRange;
 
@@ -57,7 +58,7 @@ public class Filter_DB implements Filter {
 			dbCon.commit();
 			CRTable_DB.get().updateObservableCRList();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not update the CR visibility filter.", e);
 		}
 	}
 	    

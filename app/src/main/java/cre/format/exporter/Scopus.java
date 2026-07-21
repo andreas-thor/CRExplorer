@@ -95,7 +95,7 @@ public class Scopus   {
 
 		StatusBar.get().setValue ("Saving Scopus file done");
 
-		CRELogger.get().logInfo(String.format("debug_countNR: %d", debug_countNR.get()));
+		CRELogger.get().logDebug(String.format("Scopus export NR count=%d", debug_countNR.get()));
 	}
 	
 	// FIXME: wieder zurück auf private

@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 
+import cre.CRELogger;
 
 /**
  * Iterator to generate a stream of PubType_DB from SQL result set
@@ -28,7 +29,7 @@ public class PubType_ResultSet implements Iterator<PubType_DB> {
 		try {
 			return this.rs.next();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not advance the publication result set.", e);
 			return false;
 		}
 	}
@@ -66,6 +67,7 @@ public class PubType_ResultSet implements Iterator<PubType_DB> {
 			
 			return pub;
 		} catch (Exception e) {
+			CRELogger.get().logError("Could not map a publication database row.", e);
 			return null;
 		}
 	}

@@ -2,7 +2,7 @@ package cre.format.importer;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalTime;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -84,22 +84,20 @@ public enum ImportFormat {
 			StatusBar.get().initProgressbar(file.length(), String.format("Analyzing %4$s file %1$d of %2$d (%3$s) ...", (++idx), files.size(), file.getName(), this.getLabel()));
 
 			this.importReader.init(file);
-
-			LocalTime currentTime = LocalTime.now();
-			System.out.println("Aktuelle Uhrzeit: " + currentTime);						
-			StreamSupport.stream(this.importReader.getIterable().spliterator(), false)
-				.filter(pub -> pub != null)
-				.forEach(pub -> {
-					if (crTab.isAborted()) this.importReader.stop();
-					StatusBar.get().incProgressbar(pub.getLength());
-					crStatsInfo.updateStats(pub);
-	
-				});
-				currentTime = LocalTime.now();
-				System.out.println("Aktuelle Uhrzeit: " + currentTime);						
-	
-
-				this.importReader.close();
+			try (ImportReader reader = this.importReader) {
+				CRELogger.get().logDebug("Import analysis started: file=" + file.getName());
+				StreamSupport.stream(reader.getIterable().spliterator(), false)
+					.filter(pub -> pub != null)
+					.forEach(pub -> {
+						if (crTab.isAborted()) reader.stop();
+						StatusBar.get().incProgressbar(pub.getLength());
+						crStatsInfo.updateStats(pub);
+					});
+				CRELogger.get().logDebug("Import analysis completed: file=" + file.getName());
+			} catch (UncheckedIOException e) {
+				crTab.init();
+				throw e.getCause();
+			}
 				
 		}
 		
@@ -155,12 +153,13 @@ public enum ImportFormat {
 			StatusBar.get().initProgressbar(file.length(), String.format("Loading %4$s file %1$d of %2$d (%3$s) ...", (++idx), files.size(), file.getName(), this.getLabel()));
 
 			this.importReader.init(file);
-			StreamSupport.stream(this.importReader.getIterable().spliterator(), false)
+			try (ImportReader reader = this.importReader) {
+			StreamSupport.stream(reader.getIterable().spliterator(), false)
 				.filter(pub -> pub != null)
 				.forEach(pub -> {
 					
 					if (crTab.isAborted()) {
-						this.importReader.stop();
+						reader.stop();
 					}
 
 					StatusBar.get().incProgressbar(pub.getLength());
@@ -208,7 +207,10 @@ public enum ImportFormat {
 					
 					
 				});
-			this.importReader.close();
+			} catch (UncheckedIOException e) {
+				crTab.init();
+				throw e.getCause();
+			}
 				
 		}
 
@@ -236,8 +238,8 @@ public enum ImportFormat {
 		long ts2 = System.currentTimeMillis();
 		long ms2 = Runtime.getRuntime().totalMemory();
 
-		CRELogger.get().logInfo("Load time is " + ((ts2-ts1)/1000d) + " seconds");
-		CRELogger.get().logInfo("Load Memory usage " + ((ms2-ms1)/1024d/1024d) + " MBytes");
+		CRELogger.get().logInfo(String.format("Import completed: durationSeconds=%.3f, memoryDeltaMB=%.3f",
+				(ts2-ts1)/1000d, (ms2-ms1)/1024d/1024d));
 
 		
 		crTab.onAfterImport();

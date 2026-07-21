@@ -109,9 +109,8 @@ public abstract class CRChart_JFreeChart extends CRChart {
 		// update table when zoom changes in chart
 		plot.addChangeListener(pcevent -> {
 			if (!duringUpdate) {
-				CRELogger.get().logInfo("onChange");
-				CRELogger.get().logInfo(String.valueOf(dAxis.getLowerBound()));
-				CRELogger.get().logInfo(String.valueOf(dAxis.getUpperBound()));
+				CRELogger.get().logDebug("Chart axis changed: lower=" + dAxis.getLowerBound()
+						+ ", upper=" + dAxis.getUpperBound());
 				onYearRangeFilter(dAxis.getLowerBound(), dAxis.getUpperBound());
 			}
 		});
@@ -158,9 +157,8 @@ public abstract class CRChart_JFreeChart extends CRChart {
 	protected void setChartDomainRange(IntRange range) {
 		org.jfree.data.Range dAxisRange = chart.getXYPlot().getDomainAxis().getRange();
 //		if ((((int)Math.ceil (dAxisRange.getLowerBound())) != range[0]) || (((int)Math.floor(dAxisRange.getUpperBound())) != range[1])) { 
-			CRELogger.get().logInfo("Adjusting");
-			CRELogger.get().logInfo("Axis = " + dAxisRange.toString());
-			CRELogger.get().logInfo("Year = " + range.getMin() + ", " + range.getMax());
+			CRELogger.get().logDebug("Adjusting chart axis: axis=" + dAxisRange
+					+ ", yearMin=" + range.getMin() + ", yearMax=" + range.getMax());
 			duringUpdate = true;
 			if (range.getMin()==range.getMax()) {
 				chart.getXYPlot().getDomainAxis().setRange(range.getMin()-0.5, range.getMax()+0.5);
