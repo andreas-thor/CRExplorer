@@ -9,7 +9,7 @@ CRExplorer uses an internal file format "*.cre", which can be used as a "working
 
 ### Import
 
-**Web of Science**: CRExplorer opens one or several datasets from Web of Science (WoS). The datasets should be downloaded using the option **Save to Other File Formats**. As **Record Content** select **Full Record and Cited References** and as File Format select **Other Reference Software**. The records have to be searched in the WoS Core Collection in order to be able to save full records including the cited references (CRs).
+**Web of Science**: CRExplorer opens one or several datasets from Web of Science (WoS). The datasets should be downloaded using the option **Plain Text File**. As **Record Content** select **Full Record and Cited References**. The records have to be searched in the WoS Core Collection in order to be able to save full records including the cited references (CRs).
 
 **Scopus**: CRExplorer opens one or several datasets from Scopus. The file format **CSV** (including citations, abstracts, and references) should be chosen for downloading records.
 
