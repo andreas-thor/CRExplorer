@@ -244,7 +244,7 @@ public class WoS_txt extends ImportReader {
 
         cr.setAU(crsplit[0].trim());
 
-		// process author
+		// process authors
 		if (cr.getAU() != null && !cr.getAU().trim().isEmpty()) {
 
 			String author = cr.getAU().trim();
