@@ -210,187 +210,461 @@ public class WoS_txt extends ImportReader {
         return pub;
     }
 
-
     public static CRType_MM parseCR(String line) {
 
-
-        // line = "2009, J EXPT ZOOLOGY B";
-
-
         CRType_MM cr = new CRType_MM();
-        cr.setCR(line); // [3..-1] // .toUpperCase()
+        cr.setCR(line);
         cr.setFormatType(CRType.FORMATTYPE.WOS);
         cr.setRPY(null);
 
+        /*
+         * WoS author formats:
+         *
+         * OLD:
+         *   Abramovitch A., 2015, JOURNAL, V56, P837
+         *
+         * NEW:
+         *   Abramovitch, A, 2015, JOURNAL, V56, P837
+         *
+         * NEW without initials:
+         *   [Anonymous], 1987, ...
+         *
+         * NEW with multiple initials/names:
+         *   Chang, C H, 1991, ...
+         *   Tolin, David F., 2007, ...
+         */
 
-        String[] crsplit = /*cr.getCR()*/ line.split(",", 3);
+        String[] crsplit = line.split(",", 4);
 
+        int yearIndex = -1;
+        boolean newAuthorFormat = false;
 
-        int yearPos = 1;
-        while ((cr.getRPY() == null) && (yearPos >= 0)) {
-            String yearS = crsplit.length > 1 ? crsplit[yearPos].trim() : "";
-            if (yearS.length() <= 4) {
-                try {
-                    int year = Integer.parseInt(yearS);
-//					if (((year < rpyRange[0]) && (rpyRange[0]>0)) || ((year > rpyRange[1]) && (rpyRange[1]>0))) return null;
+        /*
+         * Determine whether the second comma-separated field
+         * is the publication year.
+         *
+         * OLD:
+         *   "Abramovitch A.", "2015", "JOURNAL..."
+         *
+         * NEW:
+         *   "Abramovitch", "A", "2015", "JOURNAL..."
+         *
+         * Therefore:
+         *
+         *   crsplit[1] == year  -> old format
+         *   crsplit[2] == year  -> new format
+         */
+
+        if (crsplit.length > 1) {
+            String second = crsplit[1].trim();
+
+            try {
+                int year = Integer.parseInt(second);
+
+                if (second.length() <= 4) {
                     cr.setRPY(year);
-                } catch (NumberFormatException e) {
+                    yearIndex = 1;
+                }
+            } catch (NumberFormatException e) {
+                // Not the year -> possibly new WoS author format
+            }
+        }
+
+        if (yearIndex == -1 && crsplit.length > 2) {
+            String third = crsplit[2].trim();
+
+            try {
+                int year = Integer.parseInt(third);
+
+                if (third.length() <= 4) {
+                    cr.setRPY(year);
+                    yearIndex = 2;
+                    newAuthorFormat = true;
+                }
+            } catch (NumberFormatException e) {
+                // No valid year found
+            }
+        }
+
+        /*
+         * ============================================================
+         * AUTHOR
+         * ============================================================
+         */
+
+        String author;
+
+        if (newAuthorFormat) {
+
+            /*
+             * New:
+             *
+             *   Abramovitch, A, 2015, ...
+             *
+             * crsplit[0] = Abramovitch
+             * crsplit[1] = A
+             */
+
+            String lastName = crsplit.length > 0
+                    ? crsplit[0].trim()
+                    : "";
+
+            String firstName = crsplit.length > 1
+                    ? crsplit[1].trim()
+                    : "";
+
+            author = lastName;
+
+            if (!firstName.isEmpty()) {
+                author += ", " + firstName;
+            }
+
+            cr.setAU(author);
+
+            cr.setAU_L(lastName.replaceAll("\\-", ""));
+
+            if (!firstName.isEmpty()) {
+                cr.setAU_F(firstName.substring(0, 1));
+            } else {
+                cr.setAU_F("");
+            }
+
+        } else {
+
+            /*
+             * Old:
+             *
+             *   Abramovitch A., 2015, ...
+             *
+             * crsplit[0] = Abramovitch A.
+             */
+
+            author = crsplit.length > 0
+                    ? crsplit[0].trim()
+                    : "";
+
+            cr.setAU(author);
+
+            if (!author.isEmpty()) {
+
+                /*
+                 * Special case:
+                 *
+                 * [Anonymous]
+                 *
+                 * There is no first name/initial.
+                 */
+                if (author.startsWith("[") && author.endsWith("]")) {
+
+                    cr.setAU_L(author.replaceAll("\\-", ""));
+                    cr.setAU_F("");
+
+                } else {
+
+                    /*
+                     * Old format:
+                     *
+                     *   Abramovitch A.
+                     *   van Grootheest DS
+                     *   Tolin David F.
+                     *
+                     * Everything except the last whitespace-separated
+                     * token is treated as the last name.
+                     */
+
+                    int lastSpace = author.lastIndexOf(' ');
+
+                    if (lastSpace > 0) {
+
+                        String lastName = author.substring(0, lastSpace).trim();
+                        String firstName = author.substring(lastSpace + 1).trim();
+
+                        cr.setAU_L(lastName.replaceAll("\\-", ""));
+
+                        if (!firstName.isEmpty()) {
+                            cr.setAU_F(firstName.substring(0, 1));
+                        } else {
+                            cr.setAU_F("");
+                        }
+
+                    } else {
+
+                        cr.setAU_L(author.replaceAll("\\-", ""));
+                        cr.setAU_F("");
+                    }
                 }
             }
-            yearPos--;
         }
 
-//		if ((cr.getRPY() == null) && ((rpyRange[0]>0) || (rpyRange[1]>0))) return null;
+        /*
+         * ============================================================
+         * JOURNAL
+         * ============================================================
+         */
 
-        cr.setAU(crsplit[0].trim());
+        int posJ;
 
-		// process authors
-		if (cr.getAU() != null && !cr.getAU().trim().isEmpty()) {
-
-			String author = cr.getAU().trim();
-
-			/*
-			 * ============================================================
-			 * NEW WoS FORMAT
-			 * ============================================================
-			 *
-			 * Examples:
-			 *
-			 *   Katrin, A.
-			 *   Smith, J.
-			 *   von Goethe, J.
-			 *   van der Berg, A.
-			 *   van't Hoff, J.
-			 *
-			 * ============================================================
-			 */
-
-			Matcher authorNew = sWoS_matchAuthorNew.matcher(author);
-
-			if (authorNew.matches()) {
-
-				String lastName = authorNew.group(1).trim();
-				String firstName = authorNew.group(2);
-
-				cr.setAU_L(lastName.replaceAll("\\-", ""));
-
-				if (firstName != null && !firstName.trim().isEmpty()) {
-					cr.setAU_F(firstName.trim().substring(0, 1));
-				} else {
-					cr.setAU_F("");
-				}
-			}
-
-			/*
-			 * ============================================================
-			 * OLD WoS FORMAT
-			 * ============================================================
-			 *
-			 * Examples:
-			 *
-			 *   Katrin A.
-			 *   Smith J.
-			 *   von Goethe J.
-			 *   van der Berg A.
-			 *   van't Hoff J.
-			 *
-			 * ============================================================
-			 */
-
-			else {
-
-				String lastName = null;
-				String firstName = null;
-
-				// Special old-format names starting with "von"
-				if (author.startsWith("von ")) {
-
-					Matcher m = Pattern.compile("^(.+?)\\s+([^ ]+)$").matcher(author);
-
-					if (m.matches()) {
-						lastName = m.group(1);
-						firstName = m.group(2);
-					}
-				}
-
-				// Special old-format names starting with "van der"
-				else if (author.startsWith("van der ")) {
-
-					Matcher m = Pattern.compile("^(.+?)\\s+([^ ]+)$").matcher(author);
-
-					if (m.matches()) {
-						lastName = m.group(1);
-						firstName = m.group(2);
-					}
-				}
-
-				// Special old-format names starting with "van't"
-				else if (author.startsWith("van't ")) {
-
-					Matcher m = Pattern.compile("^(.+?)\\s+([^ ]+)$").matcher(author);
-
-					if (m.matches()) {
-						lastName = m.group(1);
-						firstName = m.group(2);
-					}
-				}
-
-				// Normal old format
-				else {
-
-					Matcher authorOld = sWoS_matchAuthorOld.matcher(author);
-
-					if (authorOld.matches()) {
-						lastName = authorOld.group(1);
-						firstName = authorOld.group(2);
-					}
-				}
-
-				if (lastName != null) {
-					cr.setAU_L(lastName.trim().replaceAll("\\-", ""));
-
-					if (firstName != null && !firstName.trim().isEmpty()) {
-						cr.setAU_F(firstName.trim().substring(0, 1));
-					} else {
-						cr.setAU_F("");
-					}
-				}
-			}
-		}
-
-        // process all journals
-        int posJ = cr.getRPY() == null ? 1 : yearPos + 2;    // yearPos+1 ist der Index, wo das Jahr gefunden wurde
-        cr.setJ(crsplit.length > posJ ? crsplit[posJ].trim() : "");
-        cr.setJ_N(cr.getJ().equals(",") ? "" : cr.getJ().split(",")[0]);    // 1994er problem (Mail Robin) --> if (CR.J == ",") -> split.size()==0
-        String[] split = cr.getJ_N().split(" ");
-        if (split.length == 1) {
-            cr.setJ_S(split[0]);
+        if (yearIndex >= 0) {
+            posJ = yearIndex + 1;
         } else {
+            /*
+             * No year found.
+             * Keep the old fallback behavior.
+             */
+            posJ = 1;
+        }
+
+        String journal = "";
+
+        if (crsplit.length > posJ) {
+            journal = crsplit[posJ].trim();
+        }
+
+        cr.setJ(journal);
+
+        cr.setJ_N(
+                cr.getJ().equals(",")
+                        ? ""
+                        : cr.getJ().split(",")[0]
+        );
+
+        String[] split = cr.getJ_N().split(" ");
+
+        if (split.length == 1) {
+
+            cr.setJ_S(split[0]);
+
+        } else {
+
             cr.setJ_S("");
+
             for (String s : split) {
-                if (s.length() > 0) cr.setJ_S(cr.getJ_S() + s.charAt(0));
+                if (s.length() > 0) {
+                    cr.setJ_S(cr.getJ_S() + s.charAt(0));
+                }
             }
         }
 
+        /*
+         * ============================================================
+         * VOLUME, PAGES AND DOI
+         * ============================================================
+         */
 
-        // find Volume, Pages and DOI
         for (String it : cr.getJ().split(",")) {
-            Matcher WoS_matchPageVolumes = sWoS_matchPageVolumes.matcher(it.trim());
+
+            Matcher WoS_matchPageVolumes =
+                    sWoS_matchPageVolumes.matcher(it.trim());
+
             if (WoS_matchPageVolumes.matches()) {
-                if (WoS_matchPageVolumes.group(1).equals("P")) cr.setPAG(WoS_matchPageVolumes.group(2));
-                if (WoS_matchPageVolumes.group(1).equals("V")) cr.setVOL(WoS_matchPageVolumes.group(2));
+
+                if (WoS_matchPageVolumes.group(1).equals("P")) {
+                    cr.setPAG(WoS_matchPageVolumes.group(2));
+                }
+
+                if (WoS_matchPageVolumes.group(1).equals("V")) {
+                    cr.setVOL(WoS_matchPageVolumes.group(2));
+                }
             }
 
-            Matcher WoS_matchDOI = sWoS_matchDOI.matcher(it.trim());
+            Matcher WoS_matchDOI =
+                    sWoS_matchDOI.matcher(it.trim());
+
             if (WoS_matchDOI.matches()) {
-                cr.setDOI(WoS_matchDOI.group(1).replaceAll("  ", "").toUpperCase());
+
+                cr.setDOI(
+                        WoS_matchDOI.group(1)
+                                .replaceAll("  ", "")
+                                .toUpperCase()
+                );
             }
         }
 
         return cr;
-
-
     }
+
+
+
+//    public static CRType_MM parseCR(String line) {
+//
+//
+//        // line = "2009, J EXPT ZOOLOGY B";
+//
+//
+//        CRType_MM cr = new CRType_MM();
+//        cr.setCR(line); // [3..-1] // .toUpperCase()
+//        cr.setFormatType(CRType.FORMATTYPE.WOS);
+//        cr.setRPY(null);
+//
+//
+//        String[] crsplit = /*cr.getCR()*/ line.split(",", 3);
+//
+//
+//        int yearPos = 1;
+//        while ((cr.getRPY() == null) && (yearPos >= 0)) {
+//            String yearS = crsplit.length > 1 ? crsplit[yearPos].trim() : "";
+//            if (yearS.length() <= 4) {
+//                try {
+//                    int year = Integer.parseInt(yearS);
+////					if (((year < rpyRange[0]) && (rpyRange[0]>0)) || ((year > rpyRange[1]) && (rpyRange[1]>0))) return null;
+//                    cr.setRPY(year);
+//                } catch (NumberFormatException e) {
+//                }
+//            }
+//            yearPos--;
+//        }
+//
+////		if ((cr.getRPY() == null) && ((rpyRange[0]>0) || (rpyRange[1]>0))) return null;
+//
+//        cr.setAU(crsplit[0].trim());
+//
+//		// process authors
+//		if (cr.getAU() != null && !cr.getAU().trim().isEmpty()) {
+//
+//			String author = cr.getAU().trim();
+//
+//			/*
+//			 * ============================================================
+//			 * NEW WoS FORMAT
+//			 * ============================================================
+//			 *
+//			 * Examples:
+//			 *
+//			 *   Katrin, A.
+//			 *   Smith, J.
+//			 *   von Goethe, J.
+//			 *   van der Berg, A.
+//			 *   van't Hoff, J.
+//			 *
+//			 * ============================================================
+//			 */
+//
+//			Matcher authorNew = sWoS_matchAuthorNew.matcher(author);
+//
+//			if (authorNew.matches()) {
+//
+//				String lastName = authorNew.group(1).trim();
+//				String firstName = authorNew.group(2);
+//
+//				cr.setAU_L(lastName.replaceAll("\\-", ""));
+//
+//				if (firstName != null && !firstName.trim().isEmpty()) {
+//					cr.setAU_F(firstName.trim().substring(0, 1));
+//				} else {
+//					cr.setAU_F("");
+//				}
+//			}
+//
+//			/*
+//			 * ============================================================
+//			 * OLD WoS FORMAT
+//			 * ============================================================
+//			 *
+//			 * Examples:
+//			 *
+//			 *   Katrin A.
+//			 *   Smith J.
+//			 *   von Goethe J.
+//			 *   van der Berg A.
+//			 *   van't Hoff J.
+//			 *
+//			 * ============================================================
+//			 */
+//
+//			else {
+//
+//				String lastName = null;
+//				String firstName = null;
+//
+//				// Special old-format names starting with "von"
+//				if (author.startsWith("von ")) {
+//
+//					Matcher m = Pattern.compile("^(.+?)\\s+([^ ]+)$").matcher(author);
+//
+//					if (m.matches()) {
+//						lastName = m.group(1);
+//						firstName = m.group(2);
+//					}
+//				}
+//
+//				// Special old-format names starting with "van der"
+//				else if (author.startsWith("van der ")) {
+//
+//					Matcher m = Pattern.compile("^(.+?)\\s+([^ ]+)$").matcher(author);
+//
+//					if (m.matches()) {
+//						lastName = m.group(1);
+//						firstName = m.group(2);
+//					}
+//				}
+//
+//				// Special old-format names starting with "van't"
+//				else if (author.startsWith("van't ")) {
+//
+//					Matcher m = Pattern.compile("^(.+?)\\s+([^ ]+)$").matcher(author);
+//
+//					if (m.matches()) {
+//						lastName = m.group(1);
+//						firstName = m.group(2);
+//					}
+//				}
+//
+//				// Normal old format
+//				else {
+//
+//					Matcher authorOld = sWoS_matchAuthorOld.matcher(author);
+//
+//					if (authorOld.matches()) {
+//						lastName = authorOld.group(1);
+//						firstName = authorOld.group(2);
+//					}
+//				}
+//
+//				if (lastName != null) {
+//					cr.setAU_L(lastName.trim().replaceAll("\\-", ""));
+//
+//					if (firstName != null && !firstName.trim().isEmpty()) {
+//						cr.setAU_F(firstName.trim().substring(0, 1));
+//					} else {
+//						cr.setAU_F("");
+//					}
+//				}
+//			}
+//		}
+//
+//        // process all journals
+//        int posJ = cr.getRPY() == null ? 1 : yearPos + 2;    // yearPos+1 ist der Index, wo das Jahr gefunden wurde
+//        cr.setJ(crsplit.length > posJ ? crsplit[posJ].trim() : "");
+//        cr.setJ_N(cr.getJ().equals(",") ? "" : cr.getJ().split(",")[0]);    // 1994er problem (Mail Robin) --> if (CR.J == ",") -> split.size()==0
+//        String[] split = cr.getJ_N().split(" ");
+//        if (split.length == 1) {
+//            cr.setJ_S(split[0]);
+//        } else {
+//            cr.setJ_S("");
+//            for (String s : split) {
+//                if (s.length() > 0) cr.setJ_S(cr.getJ_S() + s.charAt(0));
+//            }
+//        }
+//
+//
+//        // find Volume, Pages and DOI
+//        for (String it : cr.getJ().split(",")) {
+//            Matcher WoS_matchPageVolumes = sWoS_matchPageVolumes.matcher(it.trim());
+//            if (WoS_matchPageVolumes.matches()) {
+//                if (WoS_matchPageVolumes.group(1).equals("P")) cr.setPAG(WoS_matchPageVolumes.group(2));
+//                if (WoS_matchPageVolumes.group(1).equals("V")) cr.setVOL(WoS_matchPageVolumes.group(2));
+//            }
+//
+//            Matcher WoS_matchDOI = sWoS_matchDOI.matcher(it.trim());
+//            if (WoS_matchDOI.matches()) {
+//                cr.setDOI(WoS_matchDOI.group(1).replaceAll("  ", "").toUpperCase());
+//            }
+//        }
+//
+//        return cr;
+//
+//
+//    }
 
 
 }
