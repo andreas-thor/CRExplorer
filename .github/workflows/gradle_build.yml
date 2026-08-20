@@ -9,7 +9,7 @@ name: Build CRExplorer (create jar by Gradle)
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "new-wos-format"]
   # pull_request:
   #   branches: [ "main" ]
 
