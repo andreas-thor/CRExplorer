@@ -21,7 +21,7 @@ java -cp crexplorer.jar cre.Script myscript.crs
 
 where ``myscript.crs`` should be replaced by the user's script filename.
 
-The current version includes the following improvements over the previous version:
+The current release includes the following improvements over the previous release:
 
 * **CPIMP**: Two new indicators based on cited references counts are provided (CPIMP-IN and CPIMP-EX), which can be used to assess the importance of cited publications under a peak.
 
