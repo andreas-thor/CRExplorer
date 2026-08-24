@@ -196,10 +196,8 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 		
 		duringUpdate = true;		// mutex to avoid chart updates during computation
 		
-		CRELogger.get().logInfo("update Data");
-		CRELogger.get().logInfo(String.valueOf(System.currentTimeMillis()));
-		
-		CRELogger.get().logInfo("Compute Ranges in CRTable_MM");
+		CRELogger.get().logInfo("CR indicator update started: engine=MM");
+		CRELogger.get().logDebug("Computing CR ranges: engine=MM");
 		
 		IntRange range_RPY = getMaxRangeRPY();
 		IntRange range_PY  = getMaxRangePY();
@@ -210,7 +208,7 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 		int[] CNT_RPY = new int[range_RPY.getSize()];	// number of CRs by RPY
 		
 		// Group CRs by RPY, compute NCR_ALL and NCR_RPY
-		CRELogger.get().logInfo("mapRPY_CRs");
+		CRELogger.get().logDebug("Grouping cited references by RPY: engine=MM");
 		CRTable.get().getCR().forEach(cr -> {
 			NCR_ALL[0] += cr.getN_CR();
 			if (cr.getRPY()!=null) {
@@ -242,8 +240,8 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 		long ts3 = System.currentTimeMillis();
 		long ms3 = Runtime.getRuntime().totalMemory();
 
-		CRELogger.get().logInfo("Update time is " + ((ts3-ts2)/1000d) + " seconds");
-		CRELogger.get().logInfo("Update Memory usage " + ((ms3-ms2)/1024d/1024d) + " MBytes");
+		CRELogger.get().logInfo(String.format("CR indicator update completed: engine=MM, durationSeconds=%.3f, memoryDeltaMB=%.3f",
+				(ts3-ts2)/1000d, (ms3-ms2)/1024d/1024d));
 		
 	}
 
@@ -297,7 +295,7 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 		
 			
 		computeCRIndicators(rpyIdx, crSize, pySize, NCR_ALL, NCR_RPY, NCR_CR_PY, NCR_CR, NCR_CR_all, NPYEARS_CR, NCR_PY, NCR, 
-			(int crIdx, int N_PYEARS, double PYEAR_PERC, double PERC_YR, double PERC_ALL, int[] N_PCT, int[] N_PCT_AboveAverage, String SEQUENCE, String TYPE) -> { 
+			(int crIdx, int N_PYEARS, double PYEAR_PERC, double PERC_YR, double PERC_ALL, double CP_IN, double CP_EX, double CPIMP_IN, double CPIMP_EX, int[] N_PCT, int[] N_PCT_AboveAverage, String SEQUENCE, String TYPE) -> {
 				CRType<?> cr = crList.get(crIdx);
 				
 				if (crIdx == 0) {
@@ -308,6 +306,10 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 				cr.setPYEAR_PERC (PYEAR_PERC);
 				cr.setPERC_YR 	 (PERC_YR);
 				cr.setPERC_ALL	 (PERC_ALL);
+				cr.setCP_IN		(CP_IN);
+				cr.setCP_EX		(CP_EX);
+				cr.setCPIMP_IN	(CPIMP_IN);
+				cr.setCPIMP_EX	(CPIMP_EX);
 				cr.setN_PCT		(N_PCT);
 				cr.setN_PCT_AboveAverage(N_PCT_AboveAverage);
 				cr.setSEQUENCE(SEQUENCE);
@@ -339,7 +341,9 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 		int debug_after = this.allPubs.size();
 
 		if (debug_after != debug_before+1) {
-			CRELogger.get().logInfo("debug_after != debug_before+1");
+			CRELogger.get().logWarning(String.format(
+					"Publication map size did not increase as expected: before=%d, after=%d",
+					debug_before, debug_after));
 		}
 		
 		
@@ -489,7 +493,7 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 
 	@Override
 	public void filterByCluster(List<Integer> sel) {
-		this.filterByCluster(sel);
+		this.filter.filterByCluster(sel);
 	}
 
 	@Override

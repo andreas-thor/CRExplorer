@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import cre.CRELogger;
 import cre.data.type.abs.Remover;
 import cre.data.type.abs.Statistics.IntRange;
 
@@ -72,7 +73,7 @@ public class Remover_DB implements Remover {
 			stmt.executeUpdate(String.format ("DELETE FROM CR WHERE %s",  predicate)); 
 			dbCon.commit();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not remove cited references from the database.", e);
 		}
 
 	}
@@ -128,7 +129,7 @@ public class Remover_DB implements Remover {
 			// remove CRs with N_CR=0
 			removeCR("CR_N_CR = 0"); 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not remove publications from the database.", e);
 		}
 		
 	}

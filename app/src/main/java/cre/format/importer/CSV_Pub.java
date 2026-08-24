@@ -135,7 +135,7 @@ public class CSV_Pub extends ImportReader  {
 	
 	@Override
 	public void close() throws IOException {
-		CRELogger.get().logInfo(String.format("debug_NCR: %d", debug_NCR));
+		CRELogger.get().logDebug(String.format("CSV publication NCR count=%d", debug_NCR));
 
 		csv.close();
 		super.close();

@@ -84,7 +84,7 @@ public class Scopus extends ImportReader  {
 	
 	@Override
 	public void close() throws IOException {
-		CRELogger.get().logInfo(String.format("debug_NCR: %d", debug_NCR));
+		CRELogger.get().logDebug(String.format("Scopus NCR count=%d", debug_NCR));
 
 		csv.close();
 		super.close();
@@ -174,7 +174,7 @@ public class Scopus extends ImportReader  {
 		
 		line = line.trim();
 		if (line.length() == 0) { 
-			CRELogger.get().logInfo("Hey, line is empty");
+			CRELogger.get().logDebug("Scopus import skipped an empty line");
 			return null;
 		}
 		
@@ -226,11 +226,11 @@ public class Scopus extends ImportReader  {
 				res.setJ(Scopus_matchYearTitle.group(3).trim());
 			}
 		} else {	// no year
-			CRELogger.get().logInfo("NO YEAR MATCHES");	
+			CRELogger.get().logDebug("Scopus import found no matching year");
 			String[] crsplit = line.split (",", 2);
 			res.setJ_N(crsplit[0].trim());
 			res.setJ(line.trim());
-			CRELogger.get().logInfo(line + "->" + res.getJ_N() + "/" + res.getJ());
+			CRELogger.get().logDebug("Scopus journal mapping: " + line + " -> " + res.getJ_N() + "/" + res.getJ());
 		}
 
 
@@ -261,7 +261,7 @@ public class Scopus extends ImportReader  {
 
 		if ((res.getJ().toLowerCase().indexOf("doi")>=0) && (res.getDOI() == null)) {
 			// TODO: J8 improve DOI identification
-			System.out.println ("DOI could not been identified in: " + res.getJ());
+			CRELogger.get().logDebug("DOI could not be identified in journal=" + res.getJ());
 		}
 		
 		

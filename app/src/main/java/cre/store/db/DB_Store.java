@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import cre.CRELogger;
 import cre.data.type.abs.CRType.PERCENTAGE;
 
 class DB_Store { 
@@ -81,7 +82,7 @@ class DB_Store {
 	
 	
 	
-	void updateCRIndicators (int crId, int N_PYEARS, double PYEAR_PERC, double PERC_YR, double PERC_ALL, int[] N_PCT, int[] N_PCT_AboveAverage, String SEQUENCE, String TYPE)  {
+	void updateCRIndicators (int crId, int N_PYEARS, double PYEAR_PERC, double PERC_YR, double PERC_ALL, double CP_IN, double CP_EX, double CPIMP_IN, double CPIMP_EX, int[] N_PCT, int[] N_PCT_AboveAverage, String SEQUENCE, String TYPE)  {
 		
 		try {
 			updateCRIndicators_PrepStmt.clearParameters();
@@ -89,19 +90,23 @@ class DB_Store {
 			updateCRIndicators_PrepStmt.setDouble 	( 2, PYEAR_PERC); 
 			updateCRIndicators_PrepStmt.setDouble 	( 3, PERC_YR); 
 			updateCRIndicators_PrepStmt.setDouble 	( 4, PERC_ALL); 
-			updateCRIndicators_PrepStmt.setInt		( 5, N_PCT[PERCENTAGE.P50.ordinal()]); 
-			updateCRIndicators_PrepStmt.setInt		( 6, N_PCT[PERCENTAGE.P75.ordinal()]); 
-			updateCRIndicators_PrepStmt.setInt		( 7, N_PCT[PERCENTAGE.P90.ordinal()]); 
-			updateCRIndicators_PrepStmt.setInt		( 8, N_PCT[PERCENTAGE.P99.ordinal()]); 
-			updateCRIndicators_PrepStmt.setInt		( 9, N_PCT[PERCENTAGE.P999.ordinal()]); 
-			updateCRIndicators_PrepStmt.setInt		(10, N_PCT_AboveAverage[PERCENTAGE.P50.ordinal()]); 
-			updateCRIndicators_PrepStmt.setInt		(11, N_PCT_AboveAverage[PERCENTAGE.P75.ordinal()]); 
-			updateCRIndicators_PrepStmt.setInt		(12, N_PCT_AboveAverage[PERCENTAGE.P90.ordinal()]); 
-			updateCRIndicators_PrepStmt.setInt		(13, N_PCT_AboveAverage[PERCENTAGE.P99.ordinal()]); 
-			updateCRIndicators_PrepStmt.setInt		(14, N_PCT_AboveAverage[PERCENTAGE.P999.ordinal()]); 
-			updateCRIndicators_PrepStmt.setString	(15, SEQUENCE); 
-			updateCRIndicators_PrepStmt.setString	(16, TYPE); 
-			updateCRIndicators_PrepStmt.setInt		(17, crId); 
+			updateCRIndicators_PrepStmt.setDouble 	( 5, CP_IN); 
+			updateCRIndicators_PrepStmt.setDouble 	( 6, CP_EX); 
+			updateCRIndicators_PrepStmt.setDouble 	( 7, CPIMP_IN);
+			updateCRIndicators_PrepStmt.setDouble 	( 8, CPIMP_EX);
+			updateCRIndicators_PrepStmt.setInt		( 9, N_PCT[PERCENTAGE.P50.ordinal()]);
+			updateCRIndicators_PrepStmt.setInt		(10, N_PCT[PERCENTAGE.P75.ordinal()]);
+			updateCRIndicators_PrepStmt.setInt		(11, N_PCT[PERCENTAGE.P90.ordinal()]);
+			updateCRIndicators_PrepStmt.setInt		(12, N_PCT[PERCENTAGE.P99.ordinal()]);
+			updateCRIndicators_PrepStmt.setInt		(13, N_PCT[PERCENTAGE.P999.ordinal()]);
+			updateCRIndicators_PrepStmt.setInt		(14, N_PCT_AboveAverage[PERCENTAGE.P50.ordinal()]);
+			updateCRIndicators_PrepStmt.setInt		(15, N_PCT_AboveAverage[PERCENTAGE.P75.ordinal()]);
+			updateCRIndicators_PrepStmt.setInt		(16, N_PCT_AboveAverage[PERCENTAGE.P90.ordinal()]);
+			updateCRIndicators_PrepStmt.setInt		(17, N_PCT_AboveAverage[PERCENTAGE.P99.ordinal()]);
+			updateCRIndicators_PrepStmt.setInt		(18, N_PCT_AboveAverage[PERCENTAGE.P999.ordinal()]);
+			updateCRIndicators_PrepStmt.setString	(19, SEQUENCE);
+			updateCRIndicators_PrepStmt.setString	(20, TYPE);
+			updateCRIndicators_PrepStmt.setInt		(21, crId);
 			updateCRIndicators_PrepStmt.addBatch();
 			
 			if (++updateCRIndicators_Counter>=BATCH_SIZE_MAX) {
@@ -111,7 +116,7 @@ class DB_Store {
 			}	
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not queue or execute the CR indicator update batch.", e);
 		}
 		
 	}
@@ -124,7 +129,7 @@ class DB_Store {
 			}
 			dbCon.commit();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not finish the CR indicator update batch.", e);
 		}
 	}
 
@@ -133,7 +138,7 @@ class DB_Store {
 		try {
 			return StreamSupport.stream(new CRType_ResultSet(dbCon.prepareStatement("SELECT * FROM CR " + where).executeQuery()).getIterable().spliterator(), false);
 		} catch (Exception e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not select cited references from the database.", e);
 			Stream<CRType_DB> emptyStr = Stream.of();
 			return emptyStr;
 		}
@@ -144,7 +149,7 @@ class DB_Store {
 		try {
 			return StreamSupport.stream(new CRType_ResultSet_Block(blockAttribute, dbCon.prepareStatement("SELECT * FROM CR " + where).executeQuery()).getIterable().spliterator(), false);
 		} catch (Exception e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not select cited-reference blocks from the database.", e);
 			Stream<List<CRType_DB>> emptyStr = Stream.of();
 			return emptyStr;
 		}
@@ -159,7 +164,7 @@ class DB_Store {
 		try {
 			return StreamSupport.stream(new PubType_ResultSet(dbCon.prepareStatement("SELECT * FROM Pub " + where).executeQuery()).getIterable().spliterator(), false);
 		} catch (Exception e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not select publications from the database.", e);
 			Stream<PubType_DB> emptyStr = Stream.of();
 			return emptyStr;
 		}
@@ -180,8 +185,7 @@ class DB_Store {
 			rs.next();
 			return rs.getInt(1);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			CRELogger.get().logError("Could not execute the database count query.", e);
 			return -1;
 		}
 	}

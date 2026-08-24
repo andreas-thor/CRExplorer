@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import cre.CRELogger;
 import cre.data.type.abs.Statistics;
 
 public class Statistics_DB implements Statistics {
@@ -29,7 +30,7 @@ public class Statistics_DB implements Statistics {
 			}
 			return res;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not execute the statistics query.", e);
 			return new long[] { -2, -2 };
 		}
 	}

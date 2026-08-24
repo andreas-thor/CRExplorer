@@ -130,8 +130,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
 
 		} catch (ClassNotFoundException | SQLException | IOException | URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			CRELogger.get().logError("Could not initialize the database storage engine.", e);
 		}
 
 		// init();
@@ -145,8 +144,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 		try {
 			this.dbStore.init();
 		} catch (SQLException | URISyntaxException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			CRELogger.get().logError("Could not initialize the database tables.", e);
 		}
 
 		this.filter.setShowNull(true);
@@ -220,8 +218,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			CRELogger.get().logError("Could not update CR indicators and chart data from the database.", e);
 		}
 		
 		
@@ -277,8 +274,8 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 					if ((lastRPY != -1) && (!invalidRPY_PY_Range)) {
 						int[] mapCrIdxToCrId_final = mapCrIdxToCrId;
 						computeCRIndicators(rpyIdx, crSize, pySize, NCR_ALL, NCR_RPY, NCR_CR_PY, NCR_CR, NCR_CR_all, NPYEARS_CR, NCR_PY, NCR, 
-								(int crIdx, int N_PYEARS, double PYEAR_PERC, double PERC_YR, double PERC_ALL, int[] N_PCT, int[] N_PCT_AboveAverage, String SEQUENCE, String TYPE) -> { 
-									dbStore.updateCRIndicators(mapCrIdxToCrId_final[crIdx], N_PYEARS, PYEAR_PERC, PERC_YR, PERC_ALL, N_PCT, N_PCT_AboveAverage, SEQUENCE, TYPE);
+								(int crIdx, int N_PYEARS, double PYEAR_PERC, double PERC_YR, double PERC_ALL, double CP_IN, double CP_EX, double CPIMP_IN, double CPIMP_EX, int[] N_PCT, int[] N_PCT_AboveAverage, String SEQUENCE, String TYPE) -> {
+									dbStore.updateCRIndicators(mapCrIdxToCrId_final[crIdx], N_PYEARS, PYEAR_PERC, PERC_YR, PERC_ALL, CP_IN, CP_EX, CPIMP_IN, CPIMP_EX, N_PCT, N_PCT_AboveAverage, SEQUENCE, TYPE);
 								}
 						);						
 					}
@@ -338,8 +335,8 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 			if ((lastRPY != -1) && (!invalidRPY_PY_Range)) {
 				int[] mapCrIdxToCrId_final = mapCrIdxToCrId;
 				computeCRIndicators(rpyIdx, crSize, pySize, NCR_ALL, NCR_RPY, NCR_CR_PY, NCR_CR, NCR_CR_all, NPYEARS_CR, NCR_PY, NCR, 
-						(int crIdx, int N_PYEARS, double PYEAR_PERC, double PERC_YR, double PERC_ALL, int[] N_PCT, int[] N_PCT_AboveAverage, String SEQUENCE, String TYPE) -> { 
-							dbStore.updateCRIndicators(mapCrIdxToCrId_final[crIdx], N_PYEARS, PYEAR_PERC, PERC_YR, PERC_ALL, N_PCT, N_PCT_AboveAverage, SEQUENCE, TYPE);
+						(int crIdx, int N_PYEARS, double PYEAR_PERC, double PERC_YR, double PERC_ALL, double CP_IN, double CP_EX, double CPIMP_IN, double CPIMP_EX, int[] N_PCT, int[] N_PCT_AboveAverage, String SEQUENCE, String TYPE) -> {
+							dbStore.updateCRIndicators(mapCrIdxToCrId_final[crIdx], N_PYEARS, PYEAR_PERC, PERC_YR, PERC_ALL, CP_IN, CP_EX, CPIMP_IN, CPIMP_EX, N_PCT, N_PCT_AboveAverage, SEQUENCE, TYPE);
 						}
 				);						
 			}
@@ -349,8 +346,7 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			CRELogger.get().logError("Could not compute CR indicators from database rows.", e);
 		}
 	}
 
@@ -411,8 +407,8 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 		long ts3 = System.currentTimeMillis();
 		long ms3 = Runtime.getRuntime().totalMemory();
 
-		CRELogger.get().logInfo("Update time is " + ((ts3-ts2)/1000d) + " seconds");
-		CRELogger.get().logInfo("Update Memory usage " + ((ms3-ms2)/1024d/1024d) + " MBytes");
+		CRELogger.get().logInfo(String.format("CR indicator update completed: engine=DB, durationSeconds=%.3f, memoryDeltaMB=%.3f",
+				(ts3-ts2)/1000d, (ms3-ms2)/1024d/1024d));
 	}
 
 	// #endregion
@@ -478,17 +474,17 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 
 	@Override
 	public void filterByCluster(List<Integer> sel) {
-		this.filterByCluster(sel);
+		this.filter.filterByCluster(sel);
 	}
 
 	@Override
 	public void setShowNull(boolean showNull) {
-		this.setShowNull(showNull);
+		this.filter.setShowNull(showNull);
 	}
 
 	@Override
 	public void showAll() {
-		this.showAll();
+		this.filter.showAll();
 	}
 
 	// #endregion

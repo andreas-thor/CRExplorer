@@ -22,6 +22,7 @@ import cre.data.type.abs.sim.StringComparator;
 import cre.data.type.abs.sim.StringComparator.SimAlgorithm;
 import cre.format.exporter.ExportFormat;
 import cre.format.importer.ImportFormat;
+import cre.store.db.CRTable_DB;
 import cre.ui.UISettings;
 import cre.ui.statusbar.StatusBar;
 import cre.ui.statusbar.StatusBarText;
@@ -138,9 +139,12 @@ public class StorageEngineShort {
 
 	private void checkForEqualOutputFiles_DB_vs_MM(Consumer<Void> dataLoader, Consumer<Void> dataModifier)	throws OutOfMemoryError, Exception {
 
+		File tmpFolder = TestData.getTestFile.apply("tmp");
+		tmpFolder.mkdirs();
+
 		// get filename by format 
 		final BiFunction<TABLE_IMPL_TYPES, String, File> creFile = (type, extension) -> {
-			String s = String.format("%s/tmp/out_%s.%s", TestData.getTestFile.apply("").getAbsolutePath(), type.toString(), extension);
+			String s = String.format("%s/out_%s.%s", tmpFolder.getAbsolutePath(), type.toString(), extension);
 			System.out.println(s);
 			return new File(s); 
 		};
@@ -148,6 +152,7 @@ public class StorageEngineShort {
 
 		// generate for both storage engines: cre file, csv_cr
 		for (TABLE_IMPL_TYPES type : CRTable.TABLE_IMPL_TYPES.values()) {
+			configureStorageEngine(type);
 			CRTable.type = type;
 			dataLoader.accept(null);
 			dataModifier.accept(null);
@@ -177,6 +182,13 @@ public class StorageEngineShort {
 		}
 		System.out.println("CSV_CR");
 		assertTrue(IOUtils.contentEquals(toCompare[0], toCompare[1]));
+	}
+
+	private void configureStorageEngine(TABLE_IMPL_TYPES type) {
+		if (type == TABLE_IMPL_TYPES.DB) {
+			CRTable_DB.url = "jdbc:sqlite::memory:";
+			CRTable_DB.createSchemaOnStartup = true;
+		}
 	}
 
 }

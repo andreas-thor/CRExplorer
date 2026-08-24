@@ -64,7 +64,7 @@ public class CitedReferencesExplorerFX extends Application {
 				new BufferedReader(new InputStreamReader(CitedReferencesExplorerFX.class.getResourceAsStream("/version.txt"))).lines().collect(Collectors.joining(""))
 			);
 		} catch (Exception e) {
-			CRELogger.get().logInfo("Could no update title.");
+			CRELogger.get().logWarning("Could not update application title.", e);
 		}
 	}
 

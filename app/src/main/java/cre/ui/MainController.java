@@ -234,6 +234,7 @@ public class MainController {
 						if (!exportFile(ExportFormat.CRE, false))
 							return;
 					} catch (Exception e) {
+						logOperationFailure("File export during application shutdown", e);
 						Platform.runLater(() -> {
 							new ExceptionStacktrace("Error during file export!", e).showAndWait();
 						});
@@ -305,7 +306,7 @@ public class MainController {
 
 	private void refreshTableValues() {
 		Platform.runLater(() -> {
-			CRELogger.get().logInfo("SortOrderSize = " + tableView.getSortOrder().size());
+			CRELogger.get().logDebug("CR table sort order changed: columns=" + tableView.getSortOrder().size());
 
 			if (tableView.getSortOrder().size() > 0) {
 				tableView.sort();
@@ -334,6 +335,18 @@ public class MainController {
 			.filter(cr -> cr != null)
 			.map(cr -> cr.getID())
 			.collect(Collectors.toList());
+	}
+
+	private void logOperationFailure(String operation, Throwable error) {
+		if (error == null) {
+			CRELogger.get().logError(operation + " failed without an exception.");
+		} else if (error instanceof AbortedException) {
+			CRELogger.get().logInfo(operation + " aborted by user request.");
+		} else if ((error instanceof UnsupportedFileFormatException) || (error instanceof FileTooLargeException)) {
+			CRELogger.get().logWarning(operation + " could not be completed.", error);
+		} else {
+			CRELogger.get().logError(operation + " failed.", error);
+		}
 	}
 
 
@@ -366,6 +379,7 @@ public class MainController {
 
 		serv.setOnFailed((WorkerStateEvent t) -> {
 			Throwable e = t.getSource().getException();
+			logOperationFailure("File analysis", e);
 			if (e instanceof UnsupportedFileFormatException) {
 				new ConfirmAlert("Error during file analysis!", true, new String[] { "Unsupported File Format." }).showAndWait();
 			} else if (e instanceof AbortedException) {
@@ -437,6 +451,7 @@ public class MainController {
 
 		serv.setOnFailed((WorkerStateEvent t) -> {
 			Throwable e = t.getSource().getException();
+			logOperationFailure("File import", e);
 			if (e instanceof FileTooLargeException) {
 				new ConfirmAlert("Error during file import!", true,
 						new String[] {
@@ -528,6 +543,7 @@ public class MainController {
 
 		serv.setOnFailed((WorkerStateEvent t) -> {
 			Throwable e = t.getSource().getException();
+			logOperationFailure("Crossref download", e);
 			if (e instanceof IOException) {
 				new ExceptionStacktrace("Error during Crossref download!", e).showAndWait();
 			} else if (e instanceof BadResponseCodeException) {
@@ -586,7 +602,9 @@ public class MainController {
 		});
 
 		serv.setOnFailed((WorkerStateEvent t) -> {
-			new ExceptionStacktrace("Error during file export!", t.getSource().getException()).showAndWait();
+			Throwable e = t.getSource().getException();
+			logOperationFailure("File export", e);
+			new ExceptionStacktrace("Error during file export!", e).showAndWait();
 		});
 
 		serv.start();
@@ -786,15 +804,13 @@ public class MainController {
 					updateTableCRList();
 
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					CRELogger.get().logError("Could not order the CR table by the search result.", e);
 				}
 
 			});
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			CRELogger.get().logError("Could not open or process the CR search dialog.", e);
 		}
 
 	}
@@ -1044,7 +1060,7 @@ public class MainController {
 		result.ifPresent(pair -> {
 			int userNumber = pair.getKey();
 			CosineJaccardMode mode = pair.getValue();
-			System.out.println("Zahl: " + userNumber + ", Modus: " + mode);
+			CRELogger.get().logDebug("Threshold input: value=" + userNumber + ", mode=" + mode);
 
 			new Thread(() -> {
 				// Clustering mit beiden Parametern starten

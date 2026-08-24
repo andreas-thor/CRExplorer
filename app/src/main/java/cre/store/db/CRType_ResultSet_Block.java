@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import cre.CRELogger;
+
 /**
  * Iterator to generate a stream of CRType_DB from SQL result set
  * @author Andreas
@@ -51,7 +53,7 @@ class CRType_ResultSet_Block implements Iterator<List<CRType_DB>> {
 			}
 			return result;
 		} catch (Exception e) {
-			e.printStackTrace();
+			CRELogger.get().logError("Could not read a CR block from the result set.", e);
 			return null;
 		}
 	}
@@ -85,6 +87,8 @@ class CRType_ResultSet_Block implements Iterator<List<CRType_DB>> {
 
 		cr.setPERC_YR(readDouble("CR_PERC_YR", 0d));
 		cr.setPERC_ALL(readDouble("CR_PERC_ALL", 0d));
+		cr.setCPIMP_IN(readDouble("CR_CPIMP_IN", 0d));
+		cr.setCPIMP_EX(readDouble("CR_CPIMP_EX", 0d));
 		cr.setN_PYEARS(readInt("CR_N_PYEARS", 0));
 		cr.setPYEAR_PERC(readDouble("CR_PYEAR_PERC", 0d));
 

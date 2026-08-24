@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 
+import cre.CRELogger;
 import cre.data.type.abs.Loader;
 import cre.store.mm.CRType_MM;
 import cre.store.mm.PubType_MM;
@@ -88,8 +89,7 @@ public class Loader_DB implements Loader {
 				pst_OnNewCR_Counter = 0;
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			CRELogger.get().logError("Could not add a cited reference to the load batch.", e);
 		}
 
 	}
@@ -150,8 +150,7 @@ public class Loader_DB implements Loader {
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			CRELogger.get().logError("Could not add a publication to the load batch.", e);
 		}		
 		
 	}
@@ -190,8 +189,7 @@ public class Loader_DB implements Loader {
 			
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			CRELogger.get().logError("Could not add a match pair to the load batch.", e);
 		}	
 
 	}
@@ -227,8 +225,7 @@ public class Loader_DB implements Loader {
 			
 			this.dbCon.createStatement().execute(Queries.getQuery("Loader_DB", "on_after_load").get(0));
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			CRELogger.get().logError("Could not finish loading database batches.", e);
 		}
 		
 	}

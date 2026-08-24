@@ -82,10 +82,9 @@ public class OberservableCRList_DB implements ObservableList<CRType_DB> {
             dbCon.commit();
             stmt.close();
 
-            CRELogger.get().logInfo(String.format("setSortOrder update: %d", i));
+            CRELogger.get().logDebug(String.format("Database sort order updated: rows=%d", i));
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            CRELogger.get().logError("Could not update the database sort order.", e);
         }
     }
 
@@ -95,7 +94,7 @@ public class OberservableCRList_DB implements ObservableList<CRType_DB> {
             .selectCR(String.format("WHERE CR_SORT_ORDER >= %d AND CR_SORT_ORDER < %d ORDER BY CR_SORT_ORDER", this.cache_Start, this.cache_Start+CACHE_SIZE))
             // .peek(x -> System.out.println(x.getID()))
             .toArray(CRType_DB[]::new);
-            CRELogger.get().logInfo(String.format("Update Cache (start=%d, length=%d)", this.cache_Start, this.cache.length));
+            CRELogger.get().logDebug(String.format("CR cache updated: start=%d, length=%d", this.cache_Start, this.cache.length));
 
     }
 
@@ -109,7 +108,9 @@ public class OberservableCRList_DB implements ObservableList<CRType_DB> {
         if ((this.cache_Start>=0) && (index>=this.cache_Start) && (index<this.cache_Start+CACHE_SIZE)) {
             int cachePos = index-this.cache_Start;
             if (cachePos>=this.cache.length) {
-                CRELogger.get().logInfo("Wäre ein Index out of Bounds");
+                CRELogger.get().logWarning(String.format(
+                        "CR cache does not contain requested row: index=%d, cacheStart=%d, cacheLength=%d",
+                        index, this.cache_Start, this.cache.length));
                 return null;
             }
             return this.cache[index-this.cache_Start];
@@ -125,7 +126,7 @@ public class OberservableCRList_DB implements ObservableList<CRType_DB> {
     public int size() {
         if (this.size == -1) {
             this.size = statistics.getNumberOfCRsByVisibility(true);
-            CRELogger.get().logInfo(String.format("size()=%d", this.size));
+            CRELogger.get().logDebug(String.format("Visible CR table size=%d", this.size));
 
         }
         // System.out.println(String.format("size()=%d", this.size));
@@ -142,7 +143,7 @@ public class OberservableCRList_DB implements ObservableList<CRType_DB> {
     @Override
     public void addListener(ListChangeListener<? super CRType_DB> listener) {
         // TODO Funktion wird aufgerufen --> HIER MUSS WAS REIN???
-        System.out.println("addListener");
+        CRELogger.get().logDebug("CR table list listener registration ignored by the DB backend.");
     }
 
     @Override

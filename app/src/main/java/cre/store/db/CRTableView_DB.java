@@ -21,8 +21,8 @@ public class CRTableView_DB extends CRTableView<CRType_DB> {
 
 		addEventHandler(SortEvent.ANY, event -> {
 
-			CRELogger.get().logInfo("HEY, Sorted???");
-			CRELogger.get().logInfo(String.valueOf (((CRTableView_DB) event.getSource()).getSortOrder().size()));
+			CRELogger.get().logDebug("CR table sort requested: engine=DB, columns="
+					+ ((CRTableView_DB) event.getSource()).getSortOrder().size());
 
 			this.crTable.getObservableCRList_DB().setSortOrder (
 				((CRTableView_DB) event.getSource()).getSortOrder().stream()
