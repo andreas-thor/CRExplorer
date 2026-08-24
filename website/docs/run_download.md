@@ -21,6 +21,15 @@ java -cp crexplorer.jar cre.Script myscript.crs
 
 where ``myscript.crs`` should be replaced by the user's script filename.
 
+The current version includes the following improvements over the previous version:
+
+* **CPIMP**: Two new indicators based on cited references counts are provided (CPIMP-IN and CPIMP-EX), which can be used to assess the importance of cited publications under a peak.
+
+* **Jaccard and cosine**: For the disambiguation of cited reference variants, two new methods (in addition to Levenshtein similarity) are provided: Jaccard similarity and cosine similarity.
+
+* **Excluding reference publication year**: Until now, the disambiguation of cited references could only take place within a single reference publication year. In the current version, the user has the option to disable this restriction.
+
+* **CrossRef**: CRExplorer can be run in database mode if the available memory on the user’s computer is insufficient for the dataset to be analyzed. The processed data is then stored in a local database on the user’s computer (instead of main memory).
 
 
 
