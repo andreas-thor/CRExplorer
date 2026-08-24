@@ -303,6 +303,21 @@
 <div class="highlight"><pre><span></span><code>java<span class="w"> </span>-cp<span class="w"> </span>crexplorer.jar<span class="w"> </span>cre.Script<span class="w"> </span>myscript.crs
 </code></pre></div>
 <p>where <code>myscript.crs</code> should be replaced by the user's script filename.</p>
+<p>The current release includes the following improvements over the previous release:</p>
+<ul>
+<li>
+<p><strong>CPIMP</strong>: Two new indicators based on cited references counts are provided (CPIMP-IN and CPIMP-EX), which can be used to assess the importance of cited publications under a peak.</p>
+</li>
+<li>
+<p><strong>Jaccard and cosine</strong>: For the disambiguation of cited reference variants, two new methods (in addition to Levenshtein similarity) are provided: Jaccard similarity and cosine similarity.</p>
+</li>
+<li>
+<p><strong>Excluding reference publication year</strong>: Until now, the disambiguation of cited references could only take place within a single reference publication year. In the current version, the user has the option to disable this restriction.</p>
+</li>
+<li>
+<p><strong>CrossRef</strong>: CRExplorer can be run in database mode if the available memory on the user’s computer is insufficient for the dataset to be analyzed. The processed data is then stored in a local database on the user’s computer (instead of main memory).</p>
+</li>
+</ul>
 <h2 id="previous-releases">Previous releases</h2>
 <p>CRExplorer version 1.9 was released on July 16, 2018. This version includes the following new features and improvements:</p>
 <ul>
