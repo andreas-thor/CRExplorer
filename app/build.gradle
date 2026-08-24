@@ -139,6 +139,22 @@ jar {
     manifest {
         attributes 'Main-Class': 'cre.CitedReferencesExplorer'
     }
+
+	// Keep the CRExplorer license and the third-party scope information in
+	// every binary distribution. Dependency-specific license files remain
+	// governed by their respective upstream projects.
+	from(rootProject.file('LICENSE')) {
+		into 'META-INF'
+		rename { 'LICENSE-CRExplorer.txt' }
+	}
+	from(rootProject.file('NOTICE')) {
+		into 'META-INF'
+		rename { 'NOTICE-CRExplorer.txt' }
+	}
+	from(rootProject.file('THIRD_PARTY_NOTICES.md')) {
+		into 'META-INF'
+	}
+
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
