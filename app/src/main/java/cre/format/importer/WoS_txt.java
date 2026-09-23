@@ -419,7 +419,7 @@ public class WoS_txt extends ImportReader {
         if (crsplit.length > posJ) {
             journal = crsplit[posJ].trim();
 
-            /*
+            /* Andreas (23.09.26)
             * With the old author format, split(",", 4) separates the
             * journal name from volume, pages and DOI:
             *
@@ -429,7 +429,9 @@ public class WoS_txt extends ImportReader {
             * [3] Volume, pages, DOI
             */
             if (posJ < crsplit.length - 1) {
+                // nur mit dem bisherigen journal fehlen Infos zu Volume etc. im String
                 journal += "," + crsplit[posJ + 1];
+
             }
         }
 
