@@ -22,3 +22,4 @@ most notably Highcharts JS, which is **not** licensed under Apache-2.0. See
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) before redistributing source or
 binary builds. The CRExplorer license does not grant rights to project names,
 logos, trademarks, publications, or third-party datasets.
+ 
