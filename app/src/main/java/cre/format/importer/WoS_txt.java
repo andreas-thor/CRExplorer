@@ -418,6 +418,19 @@ public class WoS_txt extends ImportReader {
 
         if (crsplit.length > posJ) {
             journal = crsplit[posJ].trim();
+
+            /*
+            * With the old author format, split(",", 4) separates the
+            * journal name from volume, pages and DOI:
+            *
+            * [0] Author
+            * [1] Year
+            * [2] Journal
+            * [3] Volume, pages, DOI
+            */
+            if (posJ < crsplit.length - 1) {
+                journal += "," + crsplit[posJ + 1];
+            }
         }
 
         cr.setJ(journal);
