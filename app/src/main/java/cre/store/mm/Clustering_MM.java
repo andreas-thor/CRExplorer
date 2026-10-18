@@ -273,9 +273,12 @@ public class Clustering_MM implements Clustering<CRType_MM> {
 		Set<CRCluster> clusters = crTab.getCR().filter(cr -> cr.getClusterSize()>1).map(cr -> cr.getCluster()).distinct().collect(Collectors.toSet());
 		StatusBar.get().setValue(String.format("Merging of %d clusters...", clusters.size()));
 
+
+		Set<CRType_MM> allCrMerge = new HashSet<>();
+
 		// merge clusters
-		clusters.forEach(cl -> {
-			
+		for (CRCluster cl : clusters) {
+
 			StatusBar.get().incProgressbar();
 			
 			// get mainCR = CR with highest number of citations
@@ -291,14 +294,18 @@ public class Clustering_MM implements Clustering<CRType_MM> {
 				});
 			}
 			
-			// remove merged CRs
-			crTab.removeCR(crMerge.stream().map(cr -> cr.getID()).toList());
+			allCrMerge.addAll(crMerge);
+
 
 
 			// crMerge.stream().forEach(cr -> this.crById.remove(cr.getID()));
 			// this.allCRs.keySet().removeAll(crMerge);
-		});
+		}
+
+		// remove merged CRs
+		crTab.removeCR(allCrMerge.stream().map(cr -> cr.getID()).toList());
 		
+
 		// reset clusters and match result
 		crTab.getCR().forEach(cr -> cr.setCluster(new CRCluster(cr)));
 		init();
