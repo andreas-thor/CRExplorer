@@ -473,6 +473,12 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	}
 
 	@Override
+	public void filterByCumulativeFrequency(CumulativeFrequencyIndicator indicator,
+			ComparisonOperator operator, double threshold) {
+		this.filter.filterByCumulativeFrequency(indicator, operator, threshold);
+	}
+
+	@Override
 	public void filterByCluster(List<Integer> sel) {
 		this.filter.filterByCluster(sel);
 	}

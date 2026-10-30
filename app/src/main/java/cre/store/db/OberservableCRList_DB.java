@@ -91,7 +91,7 @@ public class OberservableCRList_DB implements ObservableList<CRType_DB> {
     private void updateCache(int center) {
         this.cache_Start = Math.max(0, center - CACHE_SIZE/2);
         this.cache = this.dbStore
-            .selectCR(String.format("WHERE CR_SORT_ORDER >= %d AND CR_SORT_ORDER < %d ORDER BY CR_SORT_ORDER", this.cache_Start, this.cache_Start+CACHE_SIZE))
+            .selectCR(String.format("WHERE CR_VI AND CR_SORT_ORDER >= %d AND CR_SORT_ORDER < %d ORDER BY CR_SORT_ORDER", this.cache_Start, this.cache_Start+CACHE_SIZE))
             // .peek(x -> System.out.println(x.getID()))
             .toArray(CRType_DB[]::new);
             CRELogger.get().logDebug(String.format("CR cache updated: start=%d, length=%d", this.cache_Start, this.cache.length));

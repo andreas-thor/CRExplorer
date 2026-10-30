@@ -29,6 +29,24 @@ public class Filter_MM implements Filter {
 			this.crTab.getCR().forEach ( it -> { it.setVI(((it.getRPY()!=null) && (range.getMin()<=it.getRPY()) && (range.getMax()>=it.getRPY())) || ((it.getRPY()==null) && (this.showNull))); });
 		}
 	}
+
+	@Override
+	public void filterByCumulativeFrequency(CumulativeFrequencyIndicator indicator,
+			ComparisonOperator operator, double threshold) {
+		if (!this.crTab.isDuringUpdate()) {
+			this.crTab.getCR().forEach(cr -> {
+				double value;
+				switch (indicator) {
+					case CP_IN: value = cr.getCP_IN(); break;
+					case CP_EX: value = cr.getCP_EX(); break;
+					case CPIMP_IN: value = cr.getCPIMP_IN(); break;
+					case CPIMP_EX: value = cr.getCPIMP_EX(); break;
+					default: throw new IllegalArgumentException("Unsupported cumulative frequency indicator: " + indicator);
+				}
+				cr.setVI(operator.test(value, threshold));
+			});
+		}
+	}
 	
 
 	@Override

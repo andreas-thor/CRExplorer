@@ -81,6 +81,7 @@
 					
 					<CheckMenuItem text="Show Cited References w/o Years" onAction="#OnMenuViewShowCRsWOYears" selected="true" fx:id="showWOYear"/>
 					<MenuItem text="Filter by Reference Publication Year..." onAction="#OnMenuViewFilterByRPY"/>
+					<MenuItem text="Filter by Cumulative Frequencies in Percentages" onAction="#OnMenuViewFilterByCumulativeFrequency"/>
 					<MenuItem text="Show Cited References of selected Cluster(s) only" onAction="#OnMenuViewShowCluster"/>
 					<MenuItem text="Search Cited References..." disable="false" accelerator="Shortcut+F" onAction="#OnMenuViewSearch"/>
 					

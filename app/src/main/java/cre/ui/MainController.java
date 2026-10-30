@@ -35,6 +35,7 @@ import cre.ui.dialog.About;
 import cre.ui.dialog.CRInfo;
 import cre.ui.dialog.CRPubInfo;
 import cre.ui.dialog.ConfirmAlert;
+import cre.ui.dialog.CumulativeFrequencyThreshold;
 import cre.ui.dialog.DownloadCrossref;
 import cre.ui.dialog.DownloadCrossrefData;
 import cre.ui.dialog.ExceptionStacktrace;
@@ -766,6 +767,14 @@ public class MainController {
 	public void OnMenuViewFilterByRPY(ActionEvent event) {
 		new Range("Filter Cited References", "Select Range of Cited References Years", UISettings.RangeType.FilterByRPYRange, CRTable.get().getMaxRangeRPY()).showAndWait().ifPresent(range -> {
 			filterByRPY(range, false);
+		});
+	}
+
+	@FXML
+	public void OnMenuViewFilterByCumulativeFrequency(ActionEvent event) {
+		new CumulativeFrequencyThreshold().showAndWait().ifPresent(selection -> {
+			crTable.filterByCumulativeFrequency(selection.getIndicator(), selection.getOperator(), selection.getThreshold());
+			updateTableCRList();
 		});
 	}
 

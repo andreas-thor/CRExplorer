@@ -32,6 +32,22 @@ public class Filter_DB implements Filter {
 	}
 
 	@Override
+	public void filterByCumulativeFrequency(CumulativeFrequencyIndicator indicator,
+			ComparisonOperator operator, double threshold) {
+		String column;
+		switch (indicator) {
+			case CP_IN: column = "CR_CP_IN"; break;
+			case CP_EX: column = "CR_CP_EX"; break;
+			case CPIMP_IN: column = "CR_CPIMP_IN"; break;
+			case CPIMP_EX: column = "CR_CPIMP_EX"; break;
+			default: throw new IllegalArgumentException("Unsupported cumulative frequency indicator: " + indicator);
+		}
+		// Indicator columns are NULL for CRs without a reference publication year.
+		// The Java model exposes these values as 0.0, so use the same semantics here.
+		updateCR_VI(String.format("COALESCE(%s, 0.0) %s %s", column, operator, Double.toString(threshold)), null);
+	}
+
+	@Override
 	public void filterByCluster(List<Integer> sel) {
 		// String clList = sel.stream().map(cr -> "(" + cr.getClusterC1() + "," + cr.getClusterC2() + ")").collect (Collectors.joining( "," ));
 		String crList = sel.stream().map(crId -> String.valueOf(crId)).collect (Collectors.joining( "," ));

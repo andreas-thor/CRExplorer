@@ -492,6 +492,12 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	}
 
 	@Override
+	public void filterByCumulativeFrequency(CumulativeFrequencyIndicator indicator,
+			ComparisonOperator operator, double threshold) {
+		this.filter.filterByCumulativeFrequency(indicator, operator, threshold);
+	}
+
+	@Override
 	public void filterByCluster(List<Integer> sel) {
 		this.filter.filterByCluster(sel);
 	}
