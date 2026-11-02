@@ -163,6 +163,10 @@ Scopus or WoS data sets contain CRs without RPY. As a rule, these CRs are not co
 
 The graph is temporarily restricted to the minimum and maximum years included.
 
+### Filter by Cumulative Frequencies in Percentages
+
+The graph is temporarily restricted to CRs with citation impact percentiles selected by CP-IN, CP-EX, CPIMP-IN or CPIMP-EX.
+
 ### Show Cited References of selected cluster(s) only
 
 Restrict the CRs to only those which are in the same cluster(s) (used for disambiguation) as the selected CR(s).
