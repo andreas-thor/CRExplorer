@@ -2,6 +2,8 @@ package cre.data.type.abs;
 
 import java.util.List;
 
+import cre.data.type.abs.Filter.ComparisonOperator;
+import cre.data.type.abs.Filter.CumulativeFrequencyIndicator;
 import cre.data.type.abs.Statistics.IntRange;
 
 public interface Remover {
@@ -48,6 +50,12 @@ public interface Remover {
 	 */
 	
 	public abstract void removeCRByPERC_YR (String comp, double threshold);
+
+	/**
+	 * Remove all CRs matching a cumulative frequency indicator threshold.
+	 */
+	public abstract void removeCRByCumulativeFrequency(CumulativeFrequencyIndicator indicator,
+			ComparisonOperator operator, double threshold);
 	
 	
 	/**

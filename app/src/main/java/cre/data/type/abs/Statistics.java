@@ -3,6 +3,9 @@ package cre.data.type.abs;
 import java.util.HashMap;
 import java.util.Map;
 
+import cre.data.type.abs.Filter.ComparisonOperator;
+import cre.data.type.abs.Filter.CumulativeFrequencyIndicator;
+
 public interface Statistics {
 
 	public class IntRange {
@@ -100,6 +103,9 @@ public interface Statistics {
 	 */
 	
 	public long getNumberOfCRsByPercentYear (String comp, double threshold);
+
+	public long getNumberOfCRsByCumulativeFrequency(CumulativeFrequencyIndicator indicator,
+			ComparisonOperator operator, double threshold);
 
 	/**
 	 * Count / Remove publications based on year range (from <= x <= to)	

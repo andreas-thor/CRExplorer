@@ -446,6 +446,22 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 			case ">" : removeCR (cr -> cr.getPERC_YR() >  threshold); break;
 		}
 	}
+
+	@Override
+	public void removeCRByCumulativeFrequency(CumulativeFrequencyIndicator indicator,
+			ComparisonOperator operator, double threshold) {
+		removeCR(cr -> {
+			double value;
+			switch (indicator) {
+				case CP_IN: value = cr.getCP_IN(); break;
+				case CP_EX: value = cr.getCP_EX(); break;
+				case CPIMP_IN: value = cr.getCPIMP_IN(); break;
+				case CPIMP_EX: value = cr.getCPIMP_EX(); break;
+				default: throw new IllegalArgumentException("Unsupported cumulative frequency indicator: " + indicator);
+			}
+			return operator.test(value, threshold);
+		});
+	}
 	
 	@Override
 	public void removePubByCR (List<Integer> selCR) {
@@ -580,6 +596,12 @@ public class CRTable_MM extends CRTable<CRType_MM, PubType_MM> {
 	@Override
 	public long getNumberOfCRsByPercentYear(String comp, double threshold) {
 		return this.statistics.getNumberOfCRsByPercentYear (comp, threshold);
+	}
+
+	@Override
+	public long getNumberOfCRsByCumulativeFrequency(CumulativeFrequencyIndicator indicator,
+			ComparisonOperator operator, double threshold) {
+		return this.statistics.getNumberOfCRsByCumulativeFrequency(indicator, operator, threshold);
 	}
 
 	@Override

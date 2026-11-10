@@ -3,6 +3,8 @@ package cre.store.mm;
 import java.util.IntSummaryStatistics;
 
 import cre.data.type.abs.Statistics;
+import cre.data.type.abs.Filter.ComparisonOperator;
+import cre.data.type.abs.Filter.CumulativeFrequencyIndicator;
 
 public class Statistics_MM implements Statistics {
 
@@ -107,6 +109,24 @@ public class Statistics_MM implements Statistics {
 			case ">" : return CRTable_MM.get().getCR().filter( cr -> cr.getPERC_YR() >  threshold ).count();
 		}
 		return 0;
+	}
+
+	@Override
+	public long getNumberOfCRsByCumulativeFrequency(CumulativeFrequencyIndicator indicator,
+			ComparisonOperator operator, double threshold) {
+		return CRTable_MM.get().getCR()
+				.filter(cr -> operator.test(getCumulativeFrequency(cr, indicator), threshold))
+				.count();
+	}
+
+	private double getCumulativeFrequency(CRType_MM cr, CumulativeFrequencyIndicator indicator) {
+		switch (indicator) {
+			case CP_IN: return cr.getCP_IN();
+			case CP_EX: return cr.getCP_EX();
+			case CPIMP_IN: return cr.getCPIMP_IN();
+			case CPIMP_EX: return cr.getCPIMP_EX();
+			default: throw new IllegalArgumentException("Unsupported cumulative frequency indicator: " + indicator);
+		}
 	}
 
 	/**

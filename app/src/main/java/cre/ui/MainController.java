@@ -952,6 +952,28 @@ public class MainController {
 	}
 
 	@FXML
+	public void OnMenuDataRemoveByCumulativeFrequency() {
+		final String header = "Remove Cited References";
+		new CumulativeFrequencyThreshold(header, "Remove by Cumulative Frequencies in Percentages")
+				.showAndWait().ifPresent(selection -> {
+			long n = crTable.getNumberOfCRsByCumulativeFrequency(
+					selection.getIndicator(), selection.getOperator(), selection.getThreshold());
+			String condition = String.format("%s %s %.1f%%", selection.getIndicator(),
+					selection.getOperator(), 100 * selection.getThreshold());
+			new ConfirmAlert(header, n == 0, new String[] {
+					String.format("No Cited References with %s.", condition),
+					String.format("Would you like to remove all %d Cited References with %s?", n, condition)
+			}).showAndWait().ifPresent(btn -> {
+				if (btn == ButtonType.YES) {
+					crTable.removeCRByCumulativeFrequency(
+							selection.getIndicator(), selection.getOperator(), selection.getThreshold());
+					updateTableCRList();
+				}
+			});
+		});
+	}
+
+	@FXML
 	public void OnMenuDataRetainCRById() {
 
 		new TextInput("Retain Cited References By Id", "Specify list if CR Ids").showAndWait().ifPresent(list -> {

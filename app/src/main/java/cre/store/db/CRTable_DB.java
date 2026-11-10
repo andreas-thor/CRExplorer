@@ -452,6 +452,13 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	}
 
 	@Override
+	public void removeCRByCumulativeFrequency(CumulativeFrequencyIndicator indicator,
+			ComparisonOperator operator, double threshold) {
+		this.remover.removeCRByCumulativeFrequency(indicator, operator, threshold);
+		this.updateData();
+	}
+
+	@Override
 	public void removePubByCR(List<Integer> selCR) {
 		this.remover.removePubByCR(selCR);
 		this.updateData();
@@ -561,6 +568,12 @@ public class CRTable_DB extends CRTable<CRType_DB, PubType_DB> {
 	@Override
 	public long getNumberOfCRsByPercentYear(String comp, double threshold) {
 		return this.statistics.getNumberOfCRsByPercentYear (comp, threshold);
+	}
+
+	@Override
+	public long getNumberOfCRsByCumulativeFrequency(CumulativeFrequencyIndicator indicator,
+			ComparisonOperator operator, double threshold) {
+		return this.statistics.getNumberOfCRsByCumulativeFrequency(indicator, operator, threshold);
 	}
 
 	@Override

@@ -8,6 +8,8 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 import cre.CRELogger;
+import cre.data.type.abs.Filter.ComparisonOperator;
+import cre.data.type.abs.Filter.CumulativeFrequencyIndicator;
 import cre.data.type.abs.Remover;
 import cre.data.type.abs.Statistics.IntRange;
 
@@ -50,6 +52,20 @@ public class Remover_DB implements Remover {
 	@Override
 	public void removeCRByPERC_YR(String comp, double threshold) {
 		removeCR(String.format(Locale.US, "COALESCE(CR_PERC_YR,0) %s %f", comp, threshold));	// locale US to force decimal point
+	}
+
+	@Override
+	public void removeCRByCumulativeFrequency(CumulativeFrequencyIndicator indicator,
+			ComparisonOperator operator, double threshold) {
+		String column;
+		switch (indicator) {
+			case CP_IN: column = "CR_CP_IN"; break;
+			case CP_EX: column = "CR_CP_EX"; break;
+			case CPIMP_IN: column = "CR_CPIMP_IN"; break;
+			case CPIMP_EX: column = "CR_CPIMP_EX"; break;
+			default: throw new IllegalArgumentException("Unsupported cumulative frequency indicator: " + indicator);
+		}
+		removeCR(String.format("COALESCE(%s, 0.0) %s %s", column, operator, Double.toString(threshold)));
 	}
 
 	@Override

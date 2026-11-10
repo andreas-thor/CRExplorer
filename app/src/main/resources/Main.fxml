@@ -58,6 +58,7 @@
 					<MenuItem text="Remove by Reference Publication Year..." onAction="#OnMenuDataRemoveByRPY" />
 					<MenuItem text="Remove by Number of Cited References..." onAction="#OnMenuDataRemoveByNCR" />
 					<MenuItem text="Remove by Percent in Year..." onAction="#OnMenuDataRemoveByPERC_YEAR" />
+					<MenuItem text="Remove by Cumlative Frequencies in Percentages" onAction="#OnMenuDataRemoveByCumulativeFrequency" />
 
 					<SeparatorMenuItem />
 					

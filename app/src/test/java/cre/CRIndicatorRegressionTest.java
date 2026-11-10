@@ -135,6 +135,28 @@ public class CRIndicatorRegressionTest {
 		}
 	}
 
+	@Test
+	public void cumulativeFrequencyRemovalWorksForBothStorageEngines() throws Exception {
+		for (TABLE_IMPL_TYPES type : CRTable.TABLE_IMPL_TYPES.values()) {
+			CRTable.type = type;
+			if (type == TABLE_IMPL_TYPES.DB) {
+				CRTable_DB.url = "jdbc:sqlite::memory:";
+				CRTable_DB.createSchemaOnStartup = true;
+			}
+
+			CRTable.get().setNpctRange(0);
+			loadReferenceDistribution(true);
+
+			long matches = CRTable.get().getNumberOfCRsByCumulativeFrequency(
+					CumulativeFrequencyIndicator.CPIMP_EX, ComparisonOperator.LTE, 0.5);
+			assertEquals(3, matches);
+
+			CRTable.get().removeCRByCumulativeFrequency(
+					CumulativeFrequencyIndicator.CPIMP_EX, ComparisonOperator.LTE, 0.5);
+			assertEquals(1, CRTable.get().getNumberOfCRs());
+		}
+	}
+
 	private void assertVisibility(CumulativeFrequencyIndicator indicator, ComparisonOperator operator,
 			double threshold, Boolean[] expected) {
 		CRTable.get().filterByCumulativeFrequency(indicator, operator, threshold);

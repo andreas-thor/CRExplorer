@@ -39,8 +39,12 @@ public class CumulativeFrequencyThreshold extends Dialog<CumulativeFrequencyThre
 	private final TextField threshold;
 
 	public CumulativeFrequencyThreshold() {
-		setTitle("Filter Cited References");
-		setHeaderText("Filter by Cumulative Frequencies in Percentages");
+		this("Filter Cited References", "Filter by Cumulative Frequencies in Percentages");
+	}
+
+	public CumulativeFrequencyThreshold(String title, String header) {
+		setTitle(title);
+		setHeaderText(header);
 		getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
 		indicator = new ComboBox<>(FXCollections.observableArrayList(CumulativeFrequencyIndicator.values()));

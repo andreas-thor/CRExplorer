@@ -9,7 +9,7 @@ public interface Filter {
 	public enum CumulativeFrequencyIndicator {
 		CP_IN("CP_IN"),
 		CP_EX("CP_EX"),
-		CPIMP_IN("CPIMP_In"),
+		CPIMP_IN("CPIMP_IN"),
 		CPIMP_EX("CPIMP_EX");
 
 		private final String label;

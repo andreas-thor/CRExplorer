@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import cre.CRELogger;
+import cre.data.type.abs.Filter.ComparisonOperator;
+import cre.data.type.abs.Filter.CumulativeFrequencyIndicator;
 import cre.data.type.abs.Statistics;
 
 public class Statistics_DB implements Statistics {
@@ -105,6 +107,23 @@ public class Statistics_DB implements Statistics {
 	@Override
 	public long getNumberOfCRsByPercentYear(String comp, double threshold) {
 		return executeSelect(String.format("SELECT COUNT(*) FROM CR WHERE CR_PERC_YR %s %f", comp, threshold))[0];
+	}
+
+	@Override
+	public long getNumberOfCRsByCumulativeFrequency(CumulativeFrequencyIndicator indicator,
+			ComparisonOperator operator, double threshold) {
+		return executeSelect(String.format("SELECT COUNT(*) FROM CR WHERE COALESCE(%s, 0.0) %s %s",
+				getCumulativeFrequencyColumn(indicator), operator, Double.toString(threshold)))[0];
+	}
+
+	private String getCumulativeFrequencyColumn(CumulativeFrequencyIndicator indicator) {
+		switch (indicator) {
+			case CP_IN: return "CR_CP_IN";
+			case CP_EX: return "CR_CP_EX";
+			case CPIMP_IN: return "CR_CPIMP_IN";
+			case CPIMP_EX: return "CR_CPIMP_EX";
+			default: throw new IllegalArgumentException("Unsupported cumulative frequency indicator: " + indicator);
+		}
 	}
 
 	@Override
