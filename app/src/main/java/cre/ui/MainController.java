@@ -2,8 +2,11 @@ package cre.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -958,8 +961,11 @@ public class MainController {
 				.showAndWait().ifPresent(selection -> {
 			long n = crTable.getNumberOfCRsByCumulativeFrequency(
 					selection.getIndicator(), selection.getOperator(), selection.getThreshold());
-			String condition = String.format("%s %s %.1f%%", selection.getIndicator(),
-					selection.getOperator(), 100 * selection.getThreshold());
+
+			DecimalFormat format = new DecimalFormat("0.##########", DecimalFormatSymbols.getInstance(Locale.getDefault()));
+			String threshold = format.format(100 * selection.getThreshold());
+			String condition = String.format("%s %s %s%%", selection.getIndicator(), selection.getOperator(), threshold);					
+					
 			new ConfirmAlert(header, n == 0, new String[] {
 					String.format("No Cited References with %s.", condition),
 					String.format("Would you like to remove all %d Cited References with %s?", n, condition)
