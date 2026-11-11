@@ -123,6 +123,10 @@ All CRs with a number of CR counts (column **N_CR**) within the specified range 
 
 CRs can be removed by using thresholds for the column PERC_YR. Thus, it is possible to remove lowly CRs whereby “lowly” is defined in terms of the citation distribution in the RPYs.
 
+### Remove by Cumulative Frequencies in Percentages
+
+CRs can be removed by using thresholds for citation impact percentiles CP-IN, CP-EX, CPIMP-IN or CPIMP-EX.
+
 ### Retain Cited References by ID
 
 One can select the citation environment of a specific CR (or of two or even more CRs) in the form of all co-cited CRs and analyze these CRs (e.g., for applying RPYS-CO, see [Marx et al., 2017](https://doi.org/10.1007/s11192-016-2177-x). The specific CRs can be prominent and seminal works which are used as a kind of marker or tracer references for a specific topic in a field. We assume that papers which cite the selected CRs are potential candidates for citing also many other CRs relevant in a specific historical context. This method takes advantage of the fact that concurrently cited (co-cited) papers are more or less closely related to each other ([Small, 1977](https://doi.org/10.1177/030631277700700202)).
