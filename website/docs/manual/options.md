@@ -121,11 +121,11 @@ All CRs with a number of CR counts (column **N_CR**) within the specified range 
 
 ### Remove by Percent in Year
 
-CRs can be removed by using thresholds for the column PERC_YR. Thus, it is possible to remove lowly CRs whereby “lowly” is defined in terms of the citation distribution in the RPYs.
+CRs can be removed by using thresholds for the column PERC_YR. Thus, it is possible to remove lowly CRs whereby “lowly” is defined in terms of the citation distribution in the RPYs. Note that the column will be recalculated for the dataset after deletion.
 
 ### Remove by Cumulative Frequencies in Percentages
 
-CRs can be removed by using thresholds for citation impact percentiles CP-IN, CP-EX, CPIMP-IN or CPIMP-EX.
+CRs can be removed by using thresholds for citation impact percentiles CP-IN, CP-EX, CPIMP-IN or CPIMP-EX. Note that the citation impact percentile indicators will be recalculated for the dataset after deletion.
 
 ### Retain Cited References by ID
 
